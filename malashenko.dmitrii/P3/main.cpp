@@ -22,9 +22,6 @@ namespace malasenko {
     size_t cols;
     int * nums;
   };
-  
-  
-
 
   matrix readMtx(std::istream & in) {
     matrix mtx;
@@ -70,7 +67,7 @@ namespace malasenko {
     return res;
   }
 
-  int lftBotClk(int ** mtx, size_t rows, size_t cols) {
+  int lftBotClk(int * mtx, size_t rows, size_t cols) {
     if (cols == 0 || rows == 0) return;
 
     size_t total = rows * cols;
@@ -114,10 +111,63 @@ namespace malasenko {
       botom--;
     }
   }
-  
+
 }
 
 
-int main() {
+int main(int argc, char ** argv) {
+  if (argc < 4) {
+    std::cerr << "Not enough arguments" << "\n";
+    return 1;
+  } else if (argc > 4) {
+    std::cerr << "Too many arguments" << "\n";
+    return 1;
+  }
+  try {
+    int _ = std::stoi(argv[1]);
+  }
+  catch(const std::invalid_argument& e)
+  {
+    std::cerr << "First parameter is not a number" << "\n";
+    return 1;
+  }
 
+  if ((argv[1] != "2") && (argv[1] != "1")) {
+    std::cerr << "Wrong arguments" << "\n";
+    return 1;
+  } 
+
+    
+  namespace mal = malasenko;
+  
+  std::ifstream input(argv[2]);
+  if (!input) {
+    std::cerr << "Problem with input file opening" << "\n";
+    return 1;
+  }
+
+  mal::matrix mtx = mal::readMtx(input);
+  input.close();
+
+  size_t rows = mtx.rows;
+  size_t cols = mtx.cols;
+  int * nums = mtx.nums;
+
+  if (!nums) {
+    std::cerr << "Problem with matrix" << "\n";
+    return 2;
+  }
+
+  std::ofstream output(argv[3]);
+  if (!output) {
+    std::cerr << "Problem with output file opening" << "\n";
+    return 1;
+  }
+  output << mal::cntLocMax(nums, rows, cols);
+  mal::lftBotClk(nums, rows, cols);
+  output << nums;
+
+  free(nums);
+
+  return 0;
 }
