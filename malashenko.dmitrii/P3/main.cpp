@@ -61,8 +61,8 @@ namespace malasenko {
       return;
     }
     size_t total = rows * cols;
-    int i = rows - 1, j = 0;
-    int step = 0, cnt = 0;
+    size_t i = rows - 1, j = 0;
+    size_t step = 0, cnt = 0;
     int top = 0,  botom = rows - 1, left = 0, right = cols - 1;
     while (cnt != total) {
       while (i > top && cnt < total) {
