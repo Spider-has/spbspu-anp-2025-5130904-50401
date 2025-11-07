@@ -68,28 +68,28 @@ namespace malasenko {
       while (i > top && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
-        i--; 
+        i--;
       }
       left++;
         
       while (j < right && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
-        j++; 
+        j++;
       }
       top++;
 
       while (i < botom && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
-        i++; 
+        i++;
       }
       right--;
       
       while (j > left && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
-        j--; 
+        j--;
       }
       botom--;
     }
@@ -116,7 +116,7 @@ int main(int argc, char ** argv) {
   if ((*argv[1] != '2') || (*argv[1] != '1')) {
     std::cerr << "Wrong arguments\n";
     return 1;
-  } 
+  }
 
     
   namespace mal = malasenko;
