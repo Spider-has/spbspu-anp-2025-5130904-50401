@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <memory>
 #include <fstream>
+
 namespace malasenko {
 
   struct matrix {
@@ -118,7 +119,6 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-    
   namespace mal = malasenko;
 
   std::ifstream input(argv[2]);
@@ -158,7 +158,6 @@ int main(int argc, char ** argv) {
   output << mal::cntLocMax(nums, rows, cols) << ' ';
   mal::lftBotClk(nums, rows, cols);
   output << rows << ' ' << cols << ' ';
-
   for (size_t i = 0; i < rows *cols; ++i) {
     output << nums[i] << ' ';
   }
