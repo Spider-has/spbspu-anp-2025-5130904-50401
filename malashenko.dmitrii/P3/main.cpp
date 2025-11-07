@@ -60,7 +60,6 @@ namespace malasenko {
     if (cols <= 0 || rows <= 0) {
       return;
     }
-
     size_t total = rows * cols;
     int i = rows - 1, j = 0;
     int step = 0, cnt = 0;
@@ -72,21 +71,18 @@ namespace malasenko {
         i--;
       }
       left++;
-        
       while (j < right && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
         j++;
       }
       top++;
-
       while (i < botom && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
         i++;
       }
       right--;
-      
       while (j > left && cnt < total) {
         mtx[i * cols + j] -= ++step;
         cnt++;
@@ -130,7 +126,6 @@ int main(int argc, char ** argv) {
   mal::matrix mtx;
   try {
     mtx = mal::readMtx(input);
-    
   } catch (const std::exception &) {
     std::cerr << "Problem with file reading\n";
     return 2;
