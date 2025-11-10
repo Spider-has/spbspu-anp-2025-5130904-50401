@@ -14,6 +14,15 @@ namespace malasenko {
     int * nums;
   };
 
+  std::ostream & outMtx(std::ostream & out, const int* matrix, size_t rows, size_t cols) {
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        out << matrix[i * cols + j] << " ";
+      }
+    }
+    return out;
+  }
+
   matrix readMtx(std::istream & in) {
     matrix mtx;
     in >> mtx.rows >> mtx.cols;
@@ -102,16 +111,15 @@ int main(int argc, char ** argv) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  try {
-    int _ = std::stoi(argv[1]);
-  }
-  catch(const std::invalid_argument &) {
-    std::cerr << "First parameter is not a number\n";
-    return 1;
-  }
 
-  if ((*argv[1] != '2') || (*argv[1] != '1')) {
-    std::cerr << "Wrong arguments\n";
+  
+  try {
+    if (std::stoi(argv[1]) != 2 && std::stoi(argv[1]) != 1){
+      std::cerr << "Wrong arguments" << "\n";
+      return 1;
+    }
+  } catch (const std::invalid_argument& e) {
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
 
@@ -152,10 +160,8 @@ int main(int argc, char ** argv) {
 
   output << mal::cntLocMax(nums, rows, cols) << ' ';
   mal::lftBotClk(nums, rows, cols);
-  output << rows << ' ' << cols << ' ';
-  for (size_t i = 0; i < rows *cols; ++i) {
-    output << nums[i] << ' ';
-  }
+  mal::outMtx(output, nums, rows, cols);
+
   free(nums);
   return 0;
 }
