@@ -25,16 +25,29 @@ namespace malasenko {
 
   matrix readMtx(std::istream & in) {
     matrix mtx;
-    in >> mtx.rows >> mtx.cols;
+    if (!(in >> mtx.rows >> mtx.cols)) {
+      std::cerr << "failed to read matrix dimensions\n";
+      mtx.nums = nullptr;
+      return mtx;
+    }
+
+
     int * nums = reinterpret_cast< int * >(malloc(mtx.rows * mtx.cols * sizeof(int)));
     if (!nums) {
       std::cerr << "malloc error\n";
       mtx.nums = nullptr;
       return mtx;
     }
+
     for (size_t i = 0; i < mtx.rows * mtx.cols; ++i) {
-      in >> nums[i];
+      if (!(in >> nums[i])) {
+        std::cerr << "not enough data in file\n";
+        free(nums);
+        mtx.nums = nullptr;
+        return mtx;
+      }
     }
+
     mtx.nums = nums;
     return mtx;
   }
