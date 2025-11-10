@@ -64,10 +64,8 @@ namespace malasenko {
           bool isLocMax = true;
           for (int i_ind = -1; i_ind < 2; ++i_ind) {
             for (int j_ind = -1; j_ind < 2; ++j_ind) {
-              if (i_ind != 0 && j_ind != 0) {
-                if (num <= mtx[(i + i_ind) * cols + (j + j_ind)]) {
-                  isLocMax = false;
-                }
+              if (!(i_ind == 0 && j_ind == 0)) {
+                isLocMax = isLocMax && (num > mtx[(i + i_ind) * cols + (j + j_ind)]);
               }
             }
           }
