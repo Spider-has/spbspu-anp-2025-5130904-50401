@@ -111,8 +111,6 @@ int main(int argc, char ** argv) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
-
-  
   try {
     if (std::stoi(argv[1]) != 2 && std::stoi(argv[1]) != 1){
       std::cerr << "Wrong arguments" << "\n";
