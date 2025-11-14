@@ -19,8 +19,57 @@ namespace madieva
     if (number ==  '2') {
       delete []array;
     }
-  }  
-}
+  }
+  bool read_matrix(std::ifstream& input, size_t rows, size_t cols, int * array)
+  {
+    for (size_t i = 0; i < rows * cols; i++) {
+      input >> array[i];
+      if (input.fail()) {
+        return false;
+      }
+    }
+    return true;
+  }
+  void change_in_spiral(int * matrix, size_t rows, size_t cols) {
+    size_t top = 0;
+    size_t left = 0;
+    size_t bottom = rows - 1;
+    size_t right = cols - 1;
+    int subtraction = 1;
+    matrix[bottom * cols + left] -= subtraction;
+    while (left <= right && top <= bottom) {
+      for (size_t i =  bottom; i > top; --i) {
+        matrix[i * cols + left] -= subtraction;
+        subtraction++;
+      }
+      if (left == right) {
+        break;
+      }
+      for (size_t i =  left; i < right; ++i) {
+        matrix[top * cols + i] -= subtraction;
+        subtraction++;
+      }
+      if (bottom == top) {
+        break;
+      }
+      for (size_t i =  top + 1; i <=  bottom; ++i) {
+        matrix[i * cols + right] -= subtraction;
+        subtraction++;
+      }
+      if (left + 1 == right) {
+        break;
+      }
+      for (size_t i =  right; i > left; --i) {
+        matrix[bottom * cols + i] -= subtraction;
+        subtraction++;
+      }
+      right--;
+      left++;
+      top++;
+      bottom--;
+    }
+  }
+ }
 
 int main(int argc, char ** argv)
 {
@@ -70,6 +119,11 @@ int main(int argc, char ** argv)
     matrix = madieva::create_array(arg[0], rows, cols);
   } catch (const std::bad_alloc& e) {
     std::cerr << "Out of memory\n";
+    return 2;
+  }
+  if (!madieva::read_matrix) {
+    std::cerr << "Error reading matrix\n";
+    madieva::free_array(matrix, arg[1]);
     return 2;
   }
   input.close();
