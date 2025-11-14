@@ -69,6 +69,16 @@ namespace madieva
       bottom--;
     }
   }
+  void write_matrix(std::ofstream &output, size_t rows, size_t cols, int *array) {
+    output << rows << " " << cols << "\n";
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        output << array[i * cols + j] << " ";
+      }
+      output << "\n";
+    }
+    output << "\n";
+  }
  }
 
 int main(int argc, char ** argv)
@@ -126,6 +136,13 @@ int main(int argc, char ** argv)
     madieva::free_array(matrix, arg[1]);
     return 2;
   }
+  madieva::change_in_spiral(matrix, rows, cols);
+  std::ofstream output(outputFile);
+  if (!output.is_open()) {
+    std::cerr << "Error opening output file\n";
+    return 2;
+  }
+  madieva::write_matrix(output, rows, cols, matrix);
   input.close();
   madieva::free_array(matrix, arg[0]);
   return 0;
