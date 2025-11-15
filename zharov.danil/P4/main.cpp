@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <cctype> 
+#include <cctype>
 
 namespace zharov
 {
@@ -28,7 +28,7 @@ int main()
     std::cerr << "Bad alloc\n";
     return 1;
   }
-  char * res_1 = nullptr; 
+  char * res_1 = nullptr;
   char * res_2 = nullptr;
   try {
     res_1 = zharov::LatRmv(str, len);
@@ -79,7 +79,7 @@ char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, c
     }
   }
   str[len] = '\0';
-  
+
   if (is_skipws) {
     in >> std::skipws;
   }
