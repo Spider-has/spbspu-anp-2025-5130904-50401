@@ -96,7 +96,6 @@ namespace madieva
     return counter;
   }
  }
-
 int main(int argc, char ** argv)
 {
   if (argc < 4) {
@@ -135,7 +134,7 @@ int main(int argc, char ** argv)
   }
   if (rows == 0 && cols == 0) {
     std::ofstream output(outputFile);
-    output << 0 << " " << 0 << "\n"; 
+    output << 0 << " " << 0 << "\n";
     return 0;
 }
   int* matrix = nullptr;
