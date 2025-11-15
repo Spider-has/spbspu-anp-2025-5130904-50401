@@ -3,7 +3,7 @@
 namespace madieva
 {
   const size_t max_static_size = 10000;
-  int * create_array(char number, size_t rows, size_t cols) {
+  int * createArray(char number, size_t rows, size_t cols) {
     if (number == '1') {
       if (rows * cols > max_static_size) {
         throw std::bad_alloc();
@@ -15,12 +15,12 @@ namespace madieva
       return new int[rows * cols];
     }
   }
-  void free_array(int * array, char number) {
+  void freeArray(int * array, char number) {
     if (number ==  '2') {
       delete []array;
     }
   }
-  bool read_matrix(std::ifstream& input, size_t rows, size_t cols, int * array)
+  bool readMatrix(std::ifstream& input, size_t rows, size_t cols, int * array)
   {
     for (size_t i = 0; i < rows * cols; i++) {
       input >> array[i];
@@ -30,7 +30,7 @@ namespace madieva
     }
     return true;
   }
-  void change_in_spiral(int * matrix, size_t rows, size_t cols) {
+  void changeInSpiral(int * matrix, size_t rows, size_t cols) {
     size_t top = 0;
     size_t left = 0;
     size_t bottom = rows - 1;
@@ -69,17 +69,14 @@ namespace madieva
       bottom--;
     }
   }
-  void write_matrix(std::ofstream &output, size_t rows, size_t cols, const int *array) {
-    output << rows << " " << cols << "\n";
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        output << array[i * cols + j] << " ";
-      }
-      output << "\n";
+  void writeMatrix(std::ofstream &output, size_t rows, size_t cols, const int *array) {
+    output << rows << " " << cols;
+    for (size_t i = 0; i < rows * cols; ++i) {
+      output << " " << array[i];
     }
     output << "\n";
   }
-  int different_element_in_cols(const int * array, size_t rows, size_t cols) {
+  int differentElementInCols(const int * array, size_t rows, size_t cols) {
     size_t counter = 0;
     size_t repeat = 0;
     for(size_t i = 0; i < cols; i++) {
@@ -107,11 +104,11 @@ int main(int argc, char ** argv)
     return 1;
   }
   if (argv[1][0] < '0' || argv[1][0] > '9') {
-    std::cerr << "First parameter us not a number\n";
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
   if (argv[1][0] != '1' && argv[1][0] != '2') {
-    std::cerr << "First pharameter is out of range\n";
+    std::cerr << "First parameter is out of range\n";
     return 1;
   }
   const char* arg = argv[1];
@@ -139,27 +136,27 @@ int main(int argc, char ** argv)
 }
   int* matrix = nullptr;
   try {
-    matrix = madieva::create_array(arg[0], rows, cols);
+    matrix = madieva::createArray(arg[0], rows, cols);
   } catch (const std::bad_alloc& e) {
     std::cerr << "Out of memory\n";
     return 2;
   }
-  if (!madieva::read_matrix(input, rows, cols, matrix)) {
+  if (!madieva::readMatrix(input, rows, cols, matrix)) {
     std::cerr << "Error reading matrix\n";
-    madieva::free_array(matrix, arg[0]);
+    madieva::freeArray(matrix, arg[0]);
     return 2;
   }
   input.close();
-  size_t quantity = madieva::different_element_in_cols(matrix, rows, cols);
-  madieva::change_in_spiral(matrix, rows, cols);
+  size_t quantity = madieva::differentElementInCols(matrix, rows, cols);
+  madieva::changeInSpiral(matrix, rows, cols);
   std::ofstream output(outputFile);
   if (!output.is_open()) {
     std::cerr << "Error opening output file\n";
-    madieva::free_array(matrix, arg[0]);
+    madieva::freeArray(matrix, arg[0]);
     return 2;
   }
-  madieva::write_matrix(output, rows, cols, matrix);
+  madieva::writeMatrix(output, rows, cols, matrix);
   output << quantity << "\n";
-  madieva::free_array(matrix, arg[0]);
+  madieva::freeArray(matrix, arg[0]);
   return 0;
 }
