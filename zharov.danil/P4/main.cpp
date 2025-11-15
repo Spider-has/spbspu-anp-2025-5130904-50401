@@ -4,10 +4,10 @@
 
 namespace zharov
 {
-  char * getline(std::istream & in, size_t size, size_t k, size_t & len, const char end);
-  void extension(char *& str, size_t old_size, size_t new_size);
+  char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
+  void extend(char *& str, size_t old_size, size_t new_size);
   char * LatRmv(const char * str, size_t len);
-  char * Sht_Sym(const char * str, size_t len);
+  char * ShtSym(const char * str, size_t len);
 }
 
 int main()
@@ -18,7 +18,7 @@ int main()
   const char end = '\n';
   char * str = nullptr;
   try {
-    str = zharov::getline(std::cin, size, k, len, end);
+    str = zharov::getLine(std::cin, size, k, len, end);
     if (!std::cin) {
       delete[] str;
       std::cerr << "Bad enter\n";
@@ -32,7 +32,7 @@ int main()
   char * res_2 = nullptr;
   try {
     res_1 = zharov::LatRmv(str, len);
-    res_2 = zharov::Sht_Sym(str,len);
+    res_2 = zharov::ShtSym(str,len);
   } catch(const std::bad_alloc &) {
     delete[] str;
     delete[] res_1;
@@ -46,7 +46,7 @@ int main()
   delete[] str;
 }
 
-void zharov::extension(char *& str, size_t old_size, size_t new_size)
+void zharov::extend(char *& str, size_t old_size, size_t new_size)
 {
   char * new_str = new char[new_size+1];
   for (size_t i = 0; i < old_size; ++i) {
@@ -56,7 +56,7 @@ void zharov::extension(char *& str, size_t old_size, size_t new_size)
   str = new_str;
 }
 
-char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, char end)
+char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, char end)
 {
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
@@ -70,7 +70,7 @@ char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, c
     ++len;
     if (size == len) {
       try {
-        zharov::extension(str, size, size + k);
+        zharov::extend(str, size, size + k);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
@@ -100,7 +100,7 @@ char * zharov::LatRmv(const char * str, size_t len)
   return new_str;
 }
 
-char * zharov::Sht_Sym(const char * str, size_t len)
+char * zharov::ShtSym(const char * str, size_t len)
 {
   char * new_str = new char[27];
   bool found = false;
