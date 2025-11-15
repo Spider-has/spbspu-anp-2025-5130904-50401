@@ -1,10 +1,12 @@
 #include <iostream>
 #include <iomanip>
+#include <cctype> 
 
 namespace zharov
 {
   char * getline(std::istream & in, size_t size, size_t k, size_t & len, const char end);
   void extension(char *& str, size_t old_size, size_t new_size);
+  char * LatRmv(const char * str, size_t len);
 }
 
 int main()
@@ -25,8 +27,16 @@ int main()
     std::cerr << "Bad alloc\n";
     return 1;
   }
-
-  std::cout << str << "\n";
+  char * res_1 = nullptr; 
+  try {
+    res_1 = zharov::LatRmv(str, len);
+  } catch(const std::bad_alloc &) {
+    delete[] str;
+    std::cerr << "Bad alloc\n";
+    return 1;
+  }
+  std::cout << res_1 << "\n";
+  delete[] res_1;
   delete[] str;
 }
 
@@ -68,4 +78,18 @@ char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, c
     in >> std::skipws;
   }
   return str;
+}
+
+char * zharov::LatRmv(const char * str, size_t len)
+{
+  char * new_str = new char[len+1];
+  size_t c = 0;
+  for (size_t i = 0; i < len; ++i) {
+    if (!isalpha(str[i])) {
+      new_str[c] = str[i];
+      ++c;
+    }
+  }
+  new_str[c] = '\0';
+  return new_str;
 }
