@@ -79,6 +79,22 @@ namespace madieva
     }
     output << "\n";
   }
+  int different_element_in_cols(int * array, size_t rows, size_t cols) {
+    size_t counter = 0;
+    size_t repeat = 0;
+    for(size_t i = 0; i < cols; i++) {
+      for (size_t j = 0; j < rows - 1; j++) {
+        if (array[j * cols + i] == array[(j + 1) * cols + i]) {
+          repeat++;
+        }
+      }
+      if (repeat == 0) {
+        counter++;
+      }
+      repeat = 0;
+    }
+    return counter;
+  }
  }
 
 int main(int argc, char ** argv)
@@ -137,6 +153,7 @@ int main(int argc, char ** argv)
     return 2;
   }
   input.close();
+  size_t quantity = madieva::different_element_in_cols(matrix, rows, cols);
   madieva::change_in_spiral(matrix, rows, cols);
   std::ofstream output(outputFile);
   if (!output.is_open()) {
@@ -145,6 +162,7 @@ int main(int argc, char ** argv)
     return 2;
   }
   madieva::write_matrix(output, rows, cols, matrix);
+  output << quantity << "\n";
   madieva::free_array(matrix, arg[0]);
   return 0;
 }
