@@ -53,7 +53,12 @@ char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, c
     str[len] = sym;
     ++len;
     if (size == len) {
-      zharov::extension(str, size, size + k);
+      try {
+        zharov::extension(str, size, size + k);
+      } catch (const std::bad_alloc &) {
+        delete[] str;
+        throw;
+      }
       size += k;
     }
   }
