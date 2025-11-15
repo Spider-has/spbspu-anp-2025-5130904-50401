@@ -79,7 +79,7 @@ namespace madieva
     }
     output << "\n";
   }
-  int different_element_in_cols(int * array, size_t rows, size_t cols) {
+  int different_element_in_cols(const int * array, size_t rows, size_t cols) {
     size_t counter = 0;
     size_t repeat = 0;
     for(size_t i = 0; i < cols; i++) {
@@ -118,8 +118,6 @@ int main(int argc, char ** argv)
   const char* arg = argv[1];
   const char* inputFile = argv[2];
   const char* outputFile = argv[3];
-
-
   std::ifstream input(inputFile);
   if (!input.is_open()) {
     std::cerr << "Error when opening input file\n";
