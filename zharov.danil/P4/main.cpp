@@ -4,24 +4,33 @@
 namespace zharov
 {
   char * getline(std::istream & in, size_t size, size_t k, size_t & len, const char end);
-  void extension(char * str, size_t old_size, size_t new_size);
+  void extension(char *& str, size_t old_size, size_t new_size);
 }
 
 int main()
 {
-  char * str = new char[6];
-  size_t size = 5;
-
-  std::cin >>std::noskipws;
-
-  for (size_t i = 0; i < size; ++i) {
-    std::cin >> str[i];
+  size_t size = 10;
+  size_t k = 5;
+  size_t len = 0;
+  const char end = '\n';
+  char * str = nullptr;
+  try {
+    str = zharov::getline(std::cin, size, k, len, end);
+    if (!std::cin) {
+      delete[] str;
+      std::cerr << "Bad enter\n";
+      return 1;
+    }
+  } catch (const std::bad_alloc &) {
+    std::cerr << "Bad alloc\n";
+    return 1;
   }
 
   std::cout << str << "\n";
+  delete[] str;
 }
 
-void zharov::extension(char * str, size_t old_size, size_t new_size)
+void zharov::extension(char *& str, size_t old_size, size_t new_size)
 {
   char * new_str = new char[new_size+1];
   for (size_t i = 0; i < old_size; ++i) {
@@ -29,7 +38,6 @@ void zharov::extension(char * str, size_t old_size, size_t new_size)
   }
   delete[] str;
   str = new_str;
-  delete new_str;
 }
 
 char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, char end)
@@ -45,7 +53,7 @@ char * zharov::getline(std::istream & in, size_t size, size_t k, size_t & len, c
     str[len] = sym;
     ++len;
     if (size == len) {
-      extension(str, size, size + k);
+      zharov::extension(str, size, size + k);
       size += k;
     }
   }
