@@ -69,7 +69,7 @@ namespace madieva
       bottom--;
     }
   }
-  void write_matrix(std::ofstream &output, size_t rows, size_t cols, int *array) {
+  void write_matrix(std::ofstream &output, size_t rows, size_t cols, const int *array) {
     output << rows << " " << cols << "\n";
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
@@ -121,7 +121,7 @@ int main(int argc, char ** argv)
   }
   if (rows == 0 && cols == 0) {
     std::ofstream output(outputFile);
-    output << 0 << 0 << "\n"; 
+    output << 0 << " " << 0 << "\n"; 
     return 0;
 }
   int* matrix = nullptr;
@@ -131,20 +131,20 @@ int main(int argc, char ** argv)
     std::cerr << "Out of memory\n";
     return 2;
   }
-  if (!madieva::read_matrix) {
+  if (!madieva::read_matrix(input, rows, cols, matrix)) {
     std::cerr << "Error reading matrix\n";
-    madieva::free_array(matrix, arg[1]);
+    madieva::free_array(matrix, arg[0]);
     return 2;
   }
+  input.close();
   madieva::change_in_spiral(matrix, rows, cols);
   std::ofstream output(outputFile);
   if (!output.is_open()) {
     std::cerr << "Error opening output file\n";
+    madieva::free_array(matrix, arg[0]);
     return 2;
   }
   madieva::write_matrix(output, rows, cols, matrix);
-  input.close();
   madieva::free_array(matrix, arg[0]);
   return 0;
 }
-
