@@ -4,6 +4,7 @@
 
 namespace zharov
 {
+  char ** splitLine(char * str, const char sep);
   char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
   void extend(char ** str, size_t old_size, size_t new_size);
   char * LatRmv(const char * str, char * res);
@@ -54,6 +55,31 @@ void zharov::extend(char ** str, size_t old_size, size_t new_size)
   }
   delete[] * str;
   * str = new_str;
+}
+
+char ** splitLine(char * str, const char sep)
+{
+  size_t c = 0;
+  bool is_last_space = true; 
+  size_t i = 0;
+  for (; str[i] != '\0'; ++i) {
+    if (str[i] == " ") {
+      if (!is_last_space) {
+        ++c
+      }
+    } else {
+      is_last_space = false;
+    }
+  }
+  if (str[i-1] != " ") {
+    ++c;
+  }
+
+  char ** arr_str = new char * [c];
+  i = 0;
+  for (; str[i] != '\0'; ++i) {
+    
+  }
 }
 
 char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, char end)
