@@ -4,7 +4,8 @@
 
 namespace zharov
 {
-  char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
+  char ** getArrStr(std::istream & in, size_t size_arr, size_t step_arr, size_t & len_arr, const char end);
+  char * getLine(std::istream & in, size_t size, size_t step, size_t & len, const char end);
   void extend(char ** str, size_t old_size, size_t new_size);
   char * LatRmv(const char * str, char * res);
   char * ShtSym(const char * str, char * res);
@@ -13,12 +14,12 @@ namespace zharov
 int main()
 {
   size_t size = 10;
-  size_t k = 5;
+  size_t step = 5;
   size_t len = 0;
   const char end = '\n';
   char * str = nullptr;
   try {
-    str = zharov::getLine(std::cin, size, k, len, end);
+    str = zharov::getLine(std::cin, size, step, len, end);
     if (!std::cin) {
       delete[] str;
       std::cerr << "Bad enter\n";
@@ -48,7 +49,7 @@ int main()
 
 void zharov::extend(char ** str, size_t old_size, size_t new_size)
 {
-  char * new_str = new char[new_size+1];
+  char * new_str = new char[new_size + 1];
   for (size_t i = 0; i < old_size; ++i) {
     new_str[i] = (* str)[i];
   }
@@ -56,7 +57,40 @@ void zharov::extend(char ** str, size_t old_size, size_t new_size)
   * str = new_str;
 }
 
-char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, char end)
+char ** getArrStr(std::istream & in, size_t size_arr, size_t step_arr,
+  size_t & len_arr, const char end)
+{
+  char ** arr_str = new char * [size_arr];
+  bool is_skipws = in.flags() & std::ios_base::skipws;
+  if (is_skipws) {
+    in >> std::noskipws;
+  }
+
+  char sym = ' ';
+  while (in >> sym && sym != end) {
+    in.putback(sym);
+    size_t str_len = 0;
+    char * str = zharov::getLine(in, 10, 5, str_len, ' ');
+    if (len_arr == size_arr) {
+      char** new_arr = new char*[size_arr + step_arr];
+      for (size_t i = 0; i < len_arr; ++i) {
+        new_arr[i] = arr_str[i];
+      }
+      delete[] arr_str;
+      arr_str = new_arr;
+      size_arr += step_arr;
+    }
+    arr_str[len_arr] = str;
+    ++len_arr;
+  }
+
+  if (is_skipws) {
+    in >> std::skipws;
+  }
+  return arr_str;
+}
+
+char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len, char end)
 {
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
@@ -70,12 +104,12 @@ char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, c
     ++len;
     if (size == len) {
       try {
-        zharov::extend(& str, size, size + k);
+        zharov::extend(& str, size, size + step);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
       }
-      size += k;
+      size += step;
     }
   }
   str[len] = '\0';
