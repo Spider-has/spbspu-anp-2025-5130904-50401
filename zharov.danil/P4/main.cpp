@@ -70,9 +70,27 @@ char ** getArrStr(std::istream & in, size_t size_arr, size_t step_arr,
   while (in >> sym && sym != end) {
     in.putback(sym);
     size_t str_len = 0;
-    char * str = zharov::getLine(in, 10, 5, str_len, ' ');
+    char * str = nullptr;
+    try {
+      str = zharov::getLine(in, 10, 5, str_len, ' ');
+    } catch (const std::bad_alloc &) {
+      for (size_t i = 0; i < len_arr; ++i) {
+        delete[] arr_str[i];
+      }
+      delete[] arr_str;
+      throw;
+    }
     if (len_arr == size_arr) {
-      char** new_arr = new char*[size_arr + step_arr];
+      char ** new_arr = nullptr;
+      try {
+        new_arr = new char*[size_arr + step_arr];
+      } catch (const std::bad_alloc &) {
+        for (size_t i = 0; i < len_arr; ++i) {
+          delete[] arr_str[i];
+        }
+        delete[] arr_str;
+        throw;
+      }
       for (size_t i = 0; i < len_arr; ++i) {
         new_arr[i] = arr_str[i];
       }
