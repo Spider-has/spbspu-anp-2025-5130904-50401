@@ -5,9 +5,9 @@
 namespace zharov
 {
   char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
-  void extend(char *& str, size_t old_size, size_t new_size);
-  char * LatRmv(const char * str, size_t len);
-  char * ShtSym(const char * str, size_t len);
+  void extend(char ** str, size_t old_size, size_t new_size);
+  char * LatRmv(const char * str, char * res);
+  char * ShtSym(const char * str, char * res);
 }
 
 int main()
@@ -28,11 +28,11 @@ int main()
     std::cerr << "Bad alloc\n";
     return 1;
   }
-  char * res_1 = nullptr;
-  char * res_2 = nullptr;
+  char * res_1 = new char[len + 1];
+  char * res_2 = new char[27];
   try {
-    res_1 = zharov::LatRmv(str, len);
-    res_2 = zharov::ShtSym(str,len);
+    res_1 = zharov::LatRmv(str, res_1);
+    res_2 = zharov::ShtSym(str, res_2);
   } catch(const std::bad_alloc &) {
     delete[] str;
     delete[] res_1;
@@ -46,14 +46,14 @@ int main()
   delete[] str;
 }
 
-void zharov::extend(char *& str, size_t old_size, size_t new_size)
+void zharov::extend(char ** str, size_t old_size, size_t new_size)
 {
   char * new_str = new char[new_size+1];
   for (size_t i = 0; i < old_size; ++i) {
-    new_str[i] = str[i];
+    new_str[i] = (* str)[i];
   }
-  delete[] str;
-  str = new_str;
+  delete[] * str;
+  * str = new_str;
 }
 
 char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, char end)
@@ -70,7 +70,7 @@ char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, c
     ++len;
     if (size == len) {
       try {
-        zharov::extend(str, size, size + k);
+        zharov::extend(& str, size, size + k);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
@@ -86,38 +86,36 @@ char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, c
   return str;
 }
 
-char * zharov::LatRmv(const char * str, size_t len)
+char * zharov::LatRmv(const char * str, char * res)
 {
-  char * new_str = new char[len+1];
   size_t c = 0;
-  for (size_t i = 0; i < len; ++i) {
+  for (size_t i = 0; str[i] != '\0'; ++i) {
     if (!isalpha(str[i])) {
-      new_str[c] = str[i];
+      res[c] = str[i];
       ++c;
     }
   }
-  new_str[c] = '\0';
-  return new_str;
+  res[c] = '\0';
+  return res;
 }
 
-char * zharov::ShtSym(const char * str, size_t len)
+char * zharov::ShtSym(const char * str, char * res)
 {
-  char * new_str = new char[27];
   bool found = false;
   size_t c = 0;
   for (char letter = 'a'; letter <= 'z'; letter++){
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
       if (letter == (str[i])) {
         found = true;
         break;
       }
     }
     if (!found) {
-      new_str[c] = letter;
+      res[c] = letter;
       ++c;
     }
     found = false;
   }
-  new_str[c] = '\0';
-  return new_str;
+  res[c] = '\0';
+  return res;
 }
