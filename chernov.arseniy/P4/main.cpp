@@ -1,11 +1,13 @@
 #include <iostream>
 #include <iomanip>
 #include <memory>
+#include <cctype>
 
 namespace chernov {
   void resize(char ** str, size_t old_size, size_t new_size);
   char * getline(std::istream & input, size_t & size, size_t step_size);
   int hasSam(const char * str1, const char * str2, size_t size1, size_t size2);
+  void latRmv(char * new_str, const char * old_str, size_t old_size);
 }
 
 void chernov::resize(char ** str, size_t old_size, size_t new_size)
@@ -64,6 +66,18 @@ int chernov::hasSam(const char * str1, const char * str2, size_t size1, size_t s
   return 0;
 }
 
+void chernov::latRmv(char * new_str, const char * old_str, size_t old_size)
+{
+  size_t i = 0;
+  for (size_t j = 0; j < old_size; ++j) {
+    if (!std::isalpha(old_str[j])) {
+      new_str[i] = old_str[j];
+      ++i;
+    }
+  }
+  new_str[i] = 0;
+}
+
 int main()
 {
   std::istream& input = std::cin;
@@ -84,4 +98,11 @@ int main()
   char second_str[] = "abs";
   int result_has_sam = chernov::hasSam(str, second_str, size, second_size);
   std::cout << "HAS-SAM: " << result_has_sam << "\n";
+
+  char * result_lat_rmv = reinterpret_cast< char * >(malloc(sizeof(char) * size));
+  chernov::latRmv(result_lat_rmv, str, size);
+  std::cout << "LAT-RMV: " << result_lat_rmv << "\n";
+  free(result_lat_rmv);
+
+  free(str);
 }
