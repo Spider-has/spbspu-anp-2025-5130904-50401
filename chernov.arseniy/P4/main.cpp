@@ -90,6 +90,7 @@ int main()
     return 1;
   }
   if (!input) {
+    free(str);
     std::cerr << "badError\n";
     return 2;
   }
