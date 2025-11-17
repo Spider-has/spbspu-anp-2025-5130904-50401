@@ -71,6 +71,7 @@ int main()
   std::cout << uni_str << "\n";
 
   free(str);
+  free(uni_str);
 }
 
 bool khasnulin::get_skip_ws_state(std::istream &in)
