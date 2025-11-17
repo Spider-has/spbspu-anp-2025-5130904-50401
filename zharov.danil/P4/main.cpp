@@ -23,7 +23,6 @@ int main()
   try {
     str = zharov::getLine(std::cin, size, step, len, end);
     if (std::cin.bad()) {
-      delete[] str;
       std::cerr << "Bad enter\n";
       return 1;
     }
@@ -49,29 +48,31 @@ int main()
     while (line[c] != '\0') {
       ++c;
     }
-    char * res_1 = new char[c + 1];
+    char * res_1 = nullptr;
     try {
-      res_1 = zharov::LatRmv(line, res_1);
+      res_1 = new char[c + 1];
     } catch(const std::bad_alloc &) {
-      delete[] line;
-      delete[] res_1;
+      delete[] str;
+      zharov::destroyArr(arr_str, len_arr);
       std::cerr << "Bad alloc\n";
       return 1;
     }
+    res_1 = zharov::LatRmv(line, res_1);
     std::cout << "LAT-RMV №" << i + 1 << ": " << res_1 << "\n";
     delete[] res_1;
   }
   for (size_t i = 0; i < len_arr; ++i) {
     char * line = arr_str[i];
-    char * res_2 = new char[27];
+    char * res_2 = nullptr;
     try {
-      res_2 = zharov::ShtSym(line, res_2);
+      res_2 = new char[27];
     } catch(const std::bad_alloc &) {
-      delete[] line;
-      delete[] res_2;
+      delete[] str;
+      zharov::destroyArr(arr_str, len_arr);
       std::cerr << "Bad alloc\n";
       return 1;
     }
+    res_2 = zharov::ShtSym(line, res_2);
     std::cout << "SHT_SYM №" << i + 1 << ": " << res_2 << "\n";
     delete[] res_2;
   }
