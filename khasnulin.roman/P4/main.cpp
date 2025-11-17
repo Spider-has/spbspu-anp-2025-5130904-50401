@@ -37,6 +37,7 @@ namespace khasnulin
 
   char *SHR_SYM(char *result, const char *origin_str, size_t size);
 
+  char *UNI_TWO(char *result, const char *str1, size_t size1, const char *str2, size_t size2);
 }
 
 int main()
@@ -49,13 +50,23 @@ int main()
     return 1;
   }
 
-  std::cout << str << "\n";
-  std::cout << size << "\n";
-
   const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
   char new_str[new_str_size] = {};
   khasnulin::SHR_SYM(new_str, str, size);
   std::cout << new_str << "\n";
+
+  const char str2[] = "def_";
+  const size_t size2 = 4;
+
+  char *uni_str = khasnulin::make_str(size + size2);
+  if (!uni_str)
+  {
+    free(str);
+    std::cerr << khasnulin::ErrMessages::bad_alloc << "\n";
+    return 1;
+  }
+  khasnulin::UNI_TWO(uni_str, str, size, str2, size2);
+  std::cout << uni_str << "\n";
 
   free(str);
 }
@@ -210,5 +221,24 @@ char *khasnulin::SHR_SYM(char *result, const char *origin_str, size_t size)
     }
   }
   result[new_str_len] = 0;
+  return result;
+}
+
+char *khasnulin::UNI_TWO(char *result, const char *str1, size_t size1, const char *str2, size_t size2)
+{
+  size_t minS = min(size1, size2);
+  for (size_t i = 0; i < minS; i++)
+  {
+    result[i * 2] = str1[i];
+    result[i * 2 + 1] = str2[i];
+  }
+  const char *max_str = minS == size1 ? str2 : str1;
+  size_t maxS = minS == size1 ? size2 : size1;
+  size_t res_i = minS * 2;
+  for (size_t i = minS; i < maxS; i++)
+  {
+    result[res_i] = max_str[i];
+    res_i++;
+  }
   return result;
 }
