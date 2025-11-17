@@ -106,7 +106,7 @@ void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
   for (size_t i = 0; i < old_size; ++i) {
     new_arr[i] = (* arr_str)[i];
   }
-  zharov::destroyArr(* arr_str, old_size);
+  delete[] * arr_str;
   * arr_str = new_arr;
 }
 
@@ -177,8 +177,6 @@ char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len
   char * str = new char[size + 1];
   char sym = ' ';
   while (in >> sym && sym != end) {
-    str[len] = sym;
-    ++len;
     if (size == len) {
       try {
         zharov::extendStr(& str, size, size + step + 1);
@@ -188,6 +186,8 @@ char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len
       }
       size += step;
     }
+    str[len] = sym;
+    ++len;
   }
   str[len] = '\0';
 
