@@ -22,7 +22,7 @@ int main()
   char * str = nullptr;
   try {
     str = zharov::getLine(std::cin, size, step, len, end);
-    if (std::cin.bad()) {
+    if (std::cin.fail()) {
       std::cerr << "Bad enter\n";
       return 1;
     }
