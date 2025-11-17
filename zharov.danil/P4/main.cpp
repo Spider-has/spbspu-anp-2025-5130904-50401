@@ -24,6 +24,7 @@ int main()
     str = zharov::getLine(std::cin, size, step, len, end);
     if (std::cin.fail()) {
       std::cerr << "Bad enter\n";
+      delete[] str;
       return 1;
     }
   } catch (const std::bad_alloc &) {
