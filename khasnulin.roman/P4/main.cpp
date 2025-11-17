@@ -1,0 +1,161 @@
+#include <cctype>
+#include <cstddef>
+#include <ios>
+#include <iostream>
+#include <istream>
+namespace khasnulin
+{
+
+  namespace ErrMessages
+  {
+    const char *bad_alloc = "Failed to allocate dynamic memory for the input data.";
+  }
+
+  size_t min(size_t lhs, size_t rhs);
+
+  bool get_skip_ws_state(std::istream &in);
+  void set_no_ws_skip_stream_state(std::istream &in, bool skip_ws);
+  void return_skip_ws_previous_state(std::istream &in, bool skip_ws);
+
+  const size_t len_increment = 50;
+  char *make_str(size_t size);
+
+  char *get_resized_str(const char *str, size_t oldSize, size_t newSize);
+  void resize_str(char *&str, size_t oldSize, size_t newSize);
+
+  bool check_ensure_capacity(char *&str, size_t i, size_t &size);
+
+  char *get_line(std::istream &in, size_t &size);
+
+  char *get_line_with_ws(std::istream &in, size_t &size);
+
+}
+
+int main()
+{
+  size_t size;
+  char *str = khasnulin::get_line_with_ws(std::cin, size);
+  if (!str)
+  {
+    std::cerr << khasnulin::ErrMessages::bad_alloc << "\n";
+    return 1;
+  }
+
+  std::cout << str << "\n";
+  std::cout << size << "\n";
+
+  free(str);
+}
+
+bool khasnulin::get_skip_ws_state(std::istream &in)
+{
+  return in.flags() & std::ios_base::skipws;
+}
+
+void khasnulin::set_no_ws_skip_stream_state(std::istream &in, bool skip_ws)
+{
+  if (skip_ws)
+  {
+    in >> std::noskipws;
+  }
+}
+
+void khasnulin::return_skip_ws_previous_state(std::istream &in, bool skip_ws)
+{
+  if (skip_ws)
+  {
+    in >> std::skipws;
+  }
+}
+
+char *khasnulin::make_str(size_t size)
+{
+  return reinterpret_cast<char *>(malloc(sizeof(char) * size));
+}
+
+size_t khasnulin::min(size_t lhs, size_t rhs)
+{
+  return lhs < rhs ? lhs : rhs;
+}
+
+char *khasnulin::get_resized_str(const char *str, size_t oldSize, size_t newSize)
+{
+  char *newStr = make_str(newSize);
+  if (!newStr)
+  {
+    return nullptr;
+  }
+  size_t minS = min(oldSize, newSize);
+  for (size_t i = 0; i < minS; i++)
+
+  {
+    newStr[i] = str[i];
+  }
+  return newStr;
+}
+
+void khasnulin::resize_str(char *&str, size_t oldSize, size_t newSize)
+{
+  char *newStr = get_resized_str(str, oldSize, newSize);
+  free(str);
+  str = newStr;
+}
+
+bool khasnulin::check_ensure_capacity(char *&str, size_t i, size_t &size)
+{
+  if (i == size)
+  {
+    resize_str(str, size, size + len_increment);
+    if (!str)
+    {
+      size = 0;
+      return false;
+    }
+    size += len_increment;
+  }
+  return true;
+}
+
+char *khasnulin::get_line(std::istream &in, size_t &size)
+{
+  char *str = make_str(len_increment);
+  if (!str)
+  {
+    size = 0;
+    return nullptr;
+  }
+
+  size = len_increment;
+  size_t i = 0;
+
+  char ch;
+  while (in >> ch && ch != '\n')
+  {
+    if (!check_ensure_capacity(str, i, size))
+    {
+      return nullptr;
+    }
+    str[i] = ch;
+    i++;
+  }
+  resize_str(str, size, i + 1);
+  if (!str)
+  {
+    size = 0;
+    return nullptr;
+  }
+  size = i;
+  str[i] = 0;
+  return str;
+}
+
+char *khasnulin::get_line_with_ws(std::istream &in, size_t &size)
+{
+  bool skip_ws = get_skip_ws_state(in);
+  set_no_ws_skip_stream_state(in, skip_ws);
+
+  char *str = get_line(in, size);
+
+  return_skip_ws_previous_state(in, skip_ws);
+  return str;
+}
