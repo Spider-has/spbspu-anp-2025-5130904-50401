@@ -3,6 +3,7 @@
 #include <ios>
 #include <iostream>
 #include <istream>
+
 namespace khasnulin
 {
 
@@ -10,6 +11,7 @@ namespace khasnulin
   {
     const char *bad_alloc = "Failed to allocate dynamic memory for the input data.";
   }
+  const size_t eng_alpabet_size = 26;
 
   size_t min(size_t lhs, size_t rhs);
 
@@ -29,6 +31,12 @@ namespace khasnulin
 
   char *get_line_with_ws(std::istream &in, size_t &size);
 
+  bool is_symb_included(const char *str, size_t size, char symb);
+
+  void fill_eng_alphabet(char *str);
+
+  char *SHR_SYM(char *result, const char *origin_str, size_t size);
+
 }
 
 int main()
@@ -43,6 +51,11 @@ int main()
 
   std::cout << str << "\n";
   std::cout << size << "\n";
+
+  const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
+  char new_str[new_str_size] = {};
+  khasnulin::SHR_SYM(new_str, str, size);
+  std::cout << new_str << "\n";
 
   free(str);
 }
@@ -158,4 +171,44 @@ char *khasnulin::get_line_with_ws(std::istream &in, size_t &size)
 
   return_skip_ws_previous_state(in, skip_ws);
   return str;
+}
+
+void khasnulin::fill_eng_alphabet(char *str)
+{
+  char startSymb = 'a';
+  for (size_t i = 0; i < eng_alpabet_size; i++)
+  {
+    str[i] = startSymb;
+    startSymb++;
+  }
+}
+
+bool khasnulin::is_symb_included(const char *str, size_t size, char symb)
+{
+  for (size_t i = 0; i < size; i++)
+  {
+    if (std::tolower(str[i]) == std::tolower(symb))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+char *khasnulin::SHR_SYM(char *result, const char *origin_str, size_t size)
+{
+  char eng_alhp[eng_alpabet_size + 1] = {};
+  fill_eng_alphabet(eng_alhp);
+  eng_alhp[eng_alpabet_size] = '\0';
+  size_t new_str_len = 0;
+  for (size_t i = 0; i < eng_alpabet_size; i++)
+  {
+    if (!is_symb_included(origin_str, size, eng_alhp[i]))
+    {
+      result[new_str_len] = eng_alhp[i];
+      new_str_len++;
+    }
+  }
+  result[new_str_len] = 0;
+  return result;
 }
