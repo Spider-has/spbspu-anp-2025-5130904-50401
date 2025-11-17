@@ -27,6 +27,11 @@ int main()
 
   goltsov::getline(std::cin, & str, size);
 
+  if (std::cin.eof())
+  {
+    return 1;
+  }
+
   size_t new_size = 0;
   char* new_str = goltsov::SPC_RMV(str, size, new_size);
 
@@ -82,6 +87,12 @@ void goltsov::getline(std::istream& in, char** str, size_t& size)
     str[0][size-1] = a;
     goltsov::increase_size(str, size);
   }
+
+  if (in.eof())
+  {
+    return;
+  }
+
   str[0][size-1] = '\0';
 
   if (is_skipws)
