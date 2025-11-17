@@ -43,7 +43,6 @@ int main()
     return 1;
   }
 
-  std::cout << '\n';
   for (size_t i = 0; i < len_arr; ++i) {
     char * line = arr_str[i];
     size_t c = 0;
@@ -62,7 +61,6 @@ int main()
     std::cout << "LAT-RMV №" << i + 1 << ": " << res_1 << "\n";
     delete[] res_1;
   }
-  std::cout << '\n';
   for (size_t i = 0; i < len_arr; ++i) {
     char * line = arr_str[i];
     char * res_2 = new char[27];
@@ -113,7 +111,7 @@ void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
 char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
 {
   char ** arr_str = new char * [size];
-  bool is_last_space = true;
+  bool is_last_sep = true;
   size_t i = 0;
   size_t start_i = 0;
   for (; str[i] != '\0'; ++i) {
@@ -127,7 +125,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
     }
 
     if (str[i] == sep) {
-      if (!is_last_space) {
+      if (!is_last_sep) {
         char * new_str = nullptr;
         try {
           new_str = new char[i - start_i + 1];
@@ -139,14 +137,14 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
         }
         arr_str[len] = new_str;
         ++len;
-        is_last_space = true;
+        is_last_sep = true;
       }
       start_i = i + 1;
     } else {
-      is_last_space = false;
+      is_last_sep = false;
     }
   }
-  if (str[i-1] != sep) {
+  if (!is_last_sep) {
     char * new_str = nullptr;
     try {
       new_str = new char[i - start_i + 1];
