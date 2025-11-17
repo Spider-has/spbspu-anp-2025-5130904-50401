@@ -59,7 +59,7 @@ int main()
   const char str2[] = "def_";
   const size_t size2 = 4;
 
-  char *uni_str = khasnulin::make_str(size + size2);
+  char *uni_str = khasnulin::make_str(size + size2 + 1);
   if (!uni_str)
   {
     free(str);
@@ -243,5 +243,7 @@ char *khasnulin::UNI_TWO(char *result, const char *str1, size_t size1, const cha
     result[res_i] = max_str[i];
     res_i++;
   }
+  result[res_i] = '\0';
+
   return result;
 }
