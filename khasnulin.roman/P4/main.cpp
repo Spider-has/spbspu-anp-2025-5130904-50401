@@ -10,6 +10,7 @@ namespace khasnulin
   namespace ErrMessages
   {
     const char *bad_alloc = "Failed to allocate dynamic memory for the input data.";
+    const char *empty_input = "Empty input error";
   }
   const size_t eng_alpabet_size = 26;
 
@@ -50,28 +51,38 @@ int main()
     return 1;
   }
 
-  const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
-  char new_str[new_str_size] = {};
-
-  khasnulin::SHR_SYM(new_str, str, size);
-  std::cout << new_str << "\n";
-
-  const char str2[] = "def_";
-  const size_t size2 = 4;
-
-  char *uni_str = khasnulin::make_str(size + size2 + 1);
-  if (!uni_str)
+  if (size)
   {
+
+    const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
+    char new_str[new_str_size] = {};
+
+    khasnulin::SHR_SYM(new_str, str, size);
+    std::cout << new_str << "\n";
+
+    const char str2[] = "def_";
+    const size_t size2 = 4;
+
+    char *uni_str = khasnulin::make_str(size + size2 + 1);
+    if (!uni_str)
+    {
+      free(str);
+      std::cerr << khasnulin::ErrMessages::bad_alloc << "\n";
+      return 1;
+    }
+
+    khasnulin::UNI_TWO(uni_str, str, size, str2, size2);
+    std::cout << uni_str << "\n";
+
     free(str);
-    std::cerr << khasnulin::ErrMessages::bad_alloc << "\n";
+    free(uni_str);
+  }
+  else
+  {
+    std::cerr << khasnulin::ErrMessages::empty_input << "\n";
+    free(str);
     return 1;
   }
-
-  khasnulin::UNI_TWO(uni_str, str, size, str2, size2);
-  std::cout << uni_str << "\n";
-
-  free(str);
-  free(uni_str);
 }
 
 bool khasnulin::get_skip_ws_state(std::istream &in)
