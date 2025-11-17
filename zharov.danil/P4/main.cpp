@@ -121,6 +121,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
         zharov::extendArr(& arr_str, size, size + step);
       } catch (const std::bad_alloc &) {
         zharov::destroyArr(arr_str, len);
+        throw;
       }
       size += step;
     }
@@ -132,6 +133,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
           new_str = new char[i - start_i + 1];
         } catch (const std::bad_alloc &) {
           zharov::destroyArr(arr_str, len);
+          throw;
         }
         for (size_t j = 0; j < i - start_i; ++j) {
           new_str[j] = str[start_i + j];
@@ -151,6 +153,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
       new_str = new char[i - start_i + 1];
     } catch (const std::bad_alloc &) {
       zharov::destroyArr(arr_str, len);
+      throw;
     }
     for (size_t j = 0; j < i - start_i; ++j) {
       new_str[j] = str[start_i + j];
@@ -210,7 +213,7 @@ char * zharov::ShtSym(const char * str, char * res)
   size_t c = 0;
   for (char letter = 'a'; letter <= 'z'; letter++){
     for (size_t i = 0; str[i] != '\0'; ++i) {
-      if (letter == (str[i])) {
+      if (letter == tolower((str[i]))) {
         found = true;
         break;
       }
