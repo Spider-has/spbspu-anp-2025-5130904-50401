@@ -52,6 +52,7 @@ int main()
 
   const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
   char new_str[new_str_size] = {};
+
   khasnulin::SHR_SYM(new_str, str, size);
   std::cout << new_str << "\n";
 
@@ -65,6 +66,7 @@ int main()
     std::cerr << khasnulin::ErrMessages::bad_alloc << "\n";
     return 1;
   }
+
   khasnulin::UNI_TWO(uni_str, str, size, str2, size2);
   std::cout << uni_str << "\n";
 
