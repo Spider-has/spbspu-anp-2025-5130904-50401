@@ -113,7 +113,7 @@ void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
 char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
 {
   char ** arr_str = new char * [size];
-  bool is_last_space = true; 
+  bool is_last_space = true;
   size_t i = 0;
   size_t start_i = 0;
   for (; str[i] != '\0'; ++i) {
@@ -129,7 +129,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
     if (str[i] == sep) {
       if (!is_last_space) {
         char * new_str = nullptr;
-        try { 
+        try {
           new_str = new char[i - start_i + 1];
         } catch (const std::bad_alloc &) {
           zharov::destroyArr(arr_str, len);
@@ -148,7 +148,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
   }
   if (str[i-1] != sep) {
     char * new_str = nullptr;
-    try { 
+    try {
       new_str = new char[i - start_i + 1];
     } catch (const std::bad_alloc &) {
       zharov::destroyArr(arr_str, len);
