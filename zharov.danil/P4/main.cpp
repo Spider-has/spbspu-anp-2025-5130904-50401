@@ -5,10 +5,12 @@
 namespace zharov
 {
   char ** splitLine(char * str, const char sep);
+  void extendArr(char *** str, size_t old_size, size_t new_size);
   char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
-  void extend(char ** str, size_t old_size, size_t new_size);
+  void extendStr(char ** str, size_t old_size, size_t new_size);
   char * LatRmv(const char * str, char * res);
   char * ShtSym(const char * str, char * res);
+  void destroyArr(char ** arr, size_t len);
 }
 
 int main()
@@ -47,9 +49,17 @@ int main()
   delete[] str;
 }
 
-void zharov::extend(char ** str, size_t old_size, size_t new_size)
+void zharov::destroyArr(char ** arr, size_t len)
 {
-  char * new_str = new char[new_size+1];
+  for (size_t i = 0; i < len; ++i) {
+    delete[] arr[i];
+  }
+  delete[] arr;
+}
+
+void zharov::extendStr(char ** str, size_t old_size, size_t new_size)
+{
+  char * new_str = new char[new_size];
   for (size_t i = 0; i < old_size; ++i) {
     new_str[i] = (* str)[i];
   }
@@ -57,7 +67,17 @@ void zharov::extend(char ** str, size_t old_size, size_t new_size)
   * str = new_str;
 }
 
-char ** splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
+void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
+{
+  char ** new_arr = new char * [new_size];
+  for (size_t i = 0; i < old_size; ++i) {
+    new_arr[i] = (* arr_str)[i];
+  }
+  destroyArr(* arr_str, old_size);
+  * arr_str = new_arr;
+}
+
+char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
 {
   char ** arr_str = new char * [size];
   bool is_last_space = true; 
@@ -65,6 +85,11 @@ char ** splitLine(char * str, const char sep, size_t size, size_t step, size_t &
   size_t i = 0;
   size_t start_i = 0;
   for (; str[i] != '\0'; ++i) {
+    if (c == size) {
+      extendArr(& arr_str, size, size + step);
+      size += step;
+    }
+    
     if (str[i] == sep) {
       if (!is_last_space) {
         char * new_str = new char[i - start_i + 1];
@@ -106,7 +131,7 @@ char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, c
     ++len;
     if (size == len) {
       try {
-        zharov::extend(& str, size, size + k);
+        zharov::extendStr(& str, size, size + k + 1);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
