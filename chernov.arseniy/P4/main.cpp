@@ -4,7 +4,7 @@
 
 namespace chernov {
   void resize(char ** str, size_t old_size, size_t new_size);
-  char * getline(std::istream & in, size_t & size);
+  char * getline(std::istream & input, size_t & size, size_t step_size);
 
 }
 
@@ -12,6 +12,7 @@ void chernov::resize(char ** str, size_t old_size, size_t new_size)
 {
   char * new_str = reinterpret_cast< char * >(malloc(sizeof(char) * new_size)){};
   if (new_str == nullptr) {
+    free(*str);
     throw std::bad_alloc("badAllocError");
   }
   size_t size = std::min(old_size, new_size);
@@ -22,18 +23,17 @@ void chernov::resize(char ** str, size_t old_size, size_t new_size)
   *str = new_str;
 }
 
-char * chernov::getline(std::istream & in, size_t & size)
+char * chernov::getline(std::istream & input, size_t & size, const size_t step_size)
 {
   bool is_skipws = in.flag() & std::ios_base::skipws;
   if (is_skipws) {
     is >> std::noskipws;
   }
-  size_t batch_size = 10;
   size_t str_size = 0, i = 0;
   char * str = nullptr;
   while (in) {
     if (i == str_size) {
-      chernov::resize(&str, str_size, str_size + batch_size);
+      chernov::resize(&str, str_size, str_size + step_size);
       str_size += batch_size;
     }
     char ch = 0;
@@ -44,9 +44,6 @@ char * chernov::getline(std::istream & in, size_t & size)
     str[i] = ch;
     ++i;
   }
-  if (in.fail()) {
-    throw std::runtime_error("inputError");
-  }
   str[i] = 0;
   size = i;
   if (is_skipws) {
@@ -55,5 +52,31 @@ char * chernov::getline(std::istream & in, size_t & size)
   return str;
 }
 
+int hasSam(const char * str1, const char * str2, size_t size1, size_t size2)
+{
+  for (size_t i = 0; i < size1; ++i) {
+    for (size_t j = 0; j < size2; ++j) {
+      if (str1[i] == str2[j]) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 int main()
-{}
+{
+  std::istream& input = std::cin;
+  size_t size = 0, step_size = 10;
+  try {
+    char * str = getline(input, size, step_size);
+  } catch (const std::bad_alloc & e) {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
+  if (!input) {
+    std::cerr << "badError\n";
+    return 2;
+  }
+  
+}
