@@ -29,6 +29,7 @@ int main()
 
   if (std::cin.eof())
   {
+    delete[] str;
     return 1;
   }
 
