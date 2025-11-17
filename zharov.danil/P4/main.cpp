@@ -22,7 +22,7 @@ int main()
   char * str = nullptr;
   try {
     str = zharov::getLine(std::cin, size, step, len, end);
-    if (std::cin.bad()) {
+    if (std::cin.fail()) {
       std::cerr << "Bad enter\n";
       delete[] str;
       return 1;
@@ -34,7 +34,7 @@ int main()
 
   char ** arr_str = nullptr;
   size_t len_arr = 0;
-  const char sep = '\0';
+  const char sep = ' ';
   try {
     arr_str = zharov::splitLine(str, sep, size, step, len_arr);
   } catch (const std::bad_alloc &) {
@@ -176,7 +176,7 @@ char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len
 
   char * str = new char[size + 1];
   char sym = ' ';
-  while (in >> sym && sym != end && !in.eof()) {
+  while (in >> sym && sym != end) {
     str[len] = sym;
     ++len;
     if (size == len) {
