@@ -4,7 +4,7 @@
 
 namespace zharov
 {
-  char ** splitLine(char * str, const char sep);
+  char ** splitLine(char * str, const char sep, size_t size, size_t step, size_t & len);
   void extendArr(char *** str, size_t old_size, size_t new_size);
   char * getLine(std::istream & in, size_t size, size_t k, size_t & len, const char end);
   void extendStr(char ** str, size_t old_size, size_t new_size);
@@ -18,11 +18,11 @@ int main()
   size_t size = 10;
   size_t k = 5;
   size_t len = 0;
-  const char end = '\n';
+  const char end = '\0';
   char * str = nullptr;
   try {
     str = zharov::getLine(std::cin, size, k, len, end);
-    if (!std::cin) {
+    if (std::cin.bad()) {
       delete[] str;
       std::cerr << "Bad enter\n";
       return 1;
@@ -140,7 +140,7 @@ char * zharov::getLine(std::istream & in, size_t size, size_t k, size_t & len, c
 
   char * str = new char[size + 1];
   char sym = ' ';
-  while (in >> sym && sym != end) {
+  while (in >> sym && sym != end && !in.eof()) {
     str[len] = sym;
     ++len;
     if (size == len) {
