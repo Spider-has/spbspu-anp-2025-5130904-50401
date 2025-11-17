@@ -138,6 +138,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
         for (size_t j = 0; j < i - start_i; ++j) {
           new_str[j] = str[start_i + j];
         }
+        new_str[i - start_i] = '\0';
         arr_str[len] = new_str;
         ++len;
         is_last_sep = true;
@@ -147,7 +148,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
       is_last_sep = false;
     }
   }
-  if (!is_last_sep) {
+  if (!is_last_sep || i == 0) {
     char * new_str = nullptr;
     try {
       new_str = new char[i - start_i + 1];
@@ -158,6 +159,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
     for (size_t j = 0; j < i - start_i; ++j) {
       new_str[j] = str[start_i + j];
     }
+    new_str[i - start_i] = '\0';
     arr_str[len] = new_str;
     ++len;
   }
