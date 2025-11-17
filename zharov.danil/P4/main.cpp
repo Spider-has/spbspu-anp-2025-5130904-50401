@@ -18,7 +18,7 @@ int main()
   size_t size = 10;
   size_t step = 5;
   size_t len = 0;
-  const char end = '\0';
+  const char end = '\n';
   char * str = nullptr;
   try {
     str = zharov::getLine(std::cin, size, step, len, end);
@@ -34,7 +34,7 @@ int main()
 
   char ** arr_str = nullptr;
   size_t len_arr = 0;
-  const char sep = '\n';
+  const char sep = '\0';
   try {
     arr_str = zharov::splitLine(str, sep, size, step, len_arr);
   } catch (const std::bad_alloc &) {
