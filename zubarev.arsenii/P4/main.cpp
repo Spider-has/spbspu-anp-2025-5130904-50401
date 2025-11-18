@@ -52,7 +52,6 @@ char* zubarev::getline(std::istream& in, s_t& s)
   while (true) {
     in >> let;
     if (!in) {
-      std::cerr << "Wrong input" << "\n";
       return nullptr;
     }
     if (let == '\n') {
@@ -122,7 +121,7 @@ int zubarev::inputUNI_TWO()
 
   itogStr[count] = '\0';
 
-  outputMatrix(std::cout, itogStr, itogSize);
+  outputMatrix(std::cout, itogStr, itogSize-1);
   delete[] mainStr;
   delete[] itogStr;
   return 0;
