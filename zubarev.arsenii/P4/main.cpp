@@ -96,6 +96,7 @@ int zubarev::inputUNI_TWO()
 
   char* mainStr = getline(std::cin, mainSize);
   if (!mainStr) {
+    std::cerr << "Input wrong\n";
     return 1;
   }
 
@@ -145,8 +146,8 @@ int zubarev::inputSHR_SYM()
   s_t size = 0;
   char* mainStr = getline(std::cin, size);
   if (!mainStr) {
-    mainStr = nullptr;
-    size = 0;
+    std::cerr << "Input wrong\n";
+    return 1;
   }
 
   s_t itogSize = 0;
