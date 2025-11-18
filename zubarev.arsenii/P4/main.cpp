@@ -1,5 +1,5 @@
 #include <iostream>
-// #include <iomanip>
+#include <iomanip>
 #include <cctype>
 
 namespace zubarev
@@ -10,16 +10,23 @@ namespace zubarev
   char* getline(std::istream& in, s_t& s);
   std::ostream& outputMatrix(std::ostream& out, const char* const str, const s_t size);
   size_t strlen(const char* s);
-  int inputUNI_TWO();
+  int inputUNI_TWO(const char* const mainStr, s_t mainSize);
   bool inStr(const char* const str, const s_t size, const char let);
-  int inputSHR_SYM();
-} // namespace zubarev
+  int inputSHR_SYM(const char* const mainStr, s_t mainSize);
+}
 
 int main()
 {
   namespace zub = zubarev;
-  zub::inputUNI_TWO();
-  zub::inputSHR_SYM();
+  size_t mainSize = 0;
+  char* mainStr = zub::getline(std::cin, mainSize);
+  if (!mainStr) {
+    std::cerr << "Input wrong\n";
+    return 1;
+  }
+  zub::inputUNI_TWO(mainStr, mainSize);
+  zub::inputSHR_SYM(mainStr, mainSize);
+  delete[] mainStr;
 }
 
 void zubarev::push_back(char** arr, s_t& size, char value)
@@ -88,17 +95,10 @@ size_t zubarev::strlen(const char* s)
   return len;
 }
 
-int zubarev::inputUNI_TWO()
+int zubarev::inputUNI_TWO(const char* const mainStr, s_t mainSize)
 {
   const char* secondStr = "def_";
   size_t secondSize = strlen(secondStr);
-  size_t mainSize = 0;
-
-  char* mainStr = getline(std::cin, mainSize);
-  if (!mainStr) {
-    std::cerr << "Input wrong\n";
-    return 1;
-  }
 
   size_t itogSize = secondSize + mainSize;
   char* itogStr = nullptr;
@@ -123,7 +123,6 @@ int zubarev::inputUNI_TWO()
   itogStr[count] = '\0';
 
   outputMatrix(std::cout, itogStr, itogSize - 1);
-  delete[] mainStr;
   delete[] itogStr;
   return 0;
 }
@@ -138,23 +137,16 @@ bool zubarev::inStr(const char* const str, const s_t size, const char let)
   return false;
 }
 
-int zubarev::inputSHR_SYM()
+int zubarev::inputSHR_SYM(const char* const mainStr, s_t mainSize)
 {
   const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
   const s_t alpSize = strlen(alphabet);
-
-  s_t size = 0;
-  char* mainStr = getline(std::cin, size);
-  if (!mainStr) {
-    std::cerr << "Input wrong\n";
-    return 1;
-  }
 
   s_t itogSize = 0;
   char* itogStr = nullptr;
 
   for (s_t i = 0; i < alpSize; ++i) {
-    if (!(inStr(mainStr, size, alphabet[i]))) {
+    if (!(inStr(mainStr, mainSize, alphabet[i]))) {
       push_back(&itogStr, itogSize, alphabet[i]);
     }
   }
@@ -162,7 +154,6 @@ int zubarev::inputSHR_SYM()
   push_back(&itogStr, itogSize, '\0');
 
   outputMatrix(std::cout, itogStr, itogSize);
-  delete[] mainStr;
   delete[] itogStr;
   return 0;
 }
