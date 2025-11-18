@@ -1,6 +1,3 @@
-//malloc/free
-//CNT-LOC-MAX
-//LFT-BOT-CLK
 #include <iostream>
 #include <cstddef>
 #include <memory>
@@ -8,11 +5,7 @@
 
 namespace malasenko {
 
-  struct matrix {
-    size_t rows;
-    size_t cols;
-    int * nums;
-  };
+
 
   std::ostream & outMtx(std::ostream & out, const int* matrix, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
@@ -23,33 +16,25 @@ namespace malasenko {
     return out;
   }
 
-  matrix readMtx(std::istream & in) {
-    matrix mtx;
-    if (!(in >> mtx.rows >> mtx.cols)) {
-      std::cerr << "failed to read matrix dimensions\n";
-      mtx.nums = nullptr;
-      return mtx;
-    }
-
-
-    int * nums = reinterpret_cast< int * >(malloc(mtx.rows * mtx.cols * sizeof(int)));
-    if (!nums) {
+  int * createMtx(size_t rows, size_t cols) {
+    int * nums = nullptr; 
+    try {
+      nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
+    } catch (const std::bad_alloc &) {
       std::cerr << "malloc error\n";
-      mtx.nums = nullptr;
-      return mtx;
+      return nullptr;
     }
+    return nums;
+  }
 
-    for (size_t i = 0; i < mtx.rows * mtx.cols; ++i) {
+  std::istream & readMtx(std::istream & in, int * nums, size_t & rows, size_t & cols) {
+    for (size_t i = 0; i < rows * cols; ++i) {
       if (!(in >> nums[i])) {
         std::cerr << "not enough data in file\n";
-        free(nums);
-        mtx.nums = nullptr;
-        return mtx;
+        return in;
       }
     }
-
-    mtx.nums = nums;
-    return mtx;
+    return in;
   }
 
   int cntLocMax(int * mtx, size_t rows, size_t cols) {
@@ -122,15 +107,20 @@ int main(int argc, char ** argv) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
+
+  int mode = 0;
   try {
-    if (std::stoi(argv[1]) != 2 && std::stoi(argv[1]) != 1){
-      std::cerr << "Wrong arguments" << "\n";
-      return 1;
-    }
-  } catch (const std::invalid_argument& e) {
+    mode = std::stoi(argv[1]);
+  } catch (const std::exception &) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
+
+  if (mode != 2 && mode != 1) {
+    std::cerr << "Wrong arguments" << "\n";
+    return 1;
+  }
+
 
   namespace mal = malasenko;
 
@@ -140,37 +130,53 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-  mal::matrix mtx;
-  try {
-    mtx = mal::readMtx(input);
-  } catch (const std::exception &) {
-    std::cerr << "Problem with file reading\n";
-    return 2;
+
+  int * nums = nullptr;
+  int statNums[10000] = {};
+  size_t rows = 0;
+  size_t cols = 0;
+
+  if (!(input >> rows >> cols)) {
+    std::cerr << "failed to read matrix dimensions\n";
+    return 1;
   }
 
-  input.close();
 
-  size_t rows = mtx.rows;
-  size_t cols = mtx.cols;
-  int * nums = mtx.nums;
+  nums = (mode == 1) ? statNums : mal::createMtx(rows, cols);
 
   if (!nums) {
     std::cerr << "Problem with matrix\n";
-    free(nums);
+    if (mode == 2) {
+      free(nums);
+      
+    };
     return 2;
+  }
+
+  if (!mal::readMtx(input, nums, rows, cols)) {
+    std::cerr << "Problem with file reading\n";
+    if (mode == 2) {
+      free(nums);
+    };
+    return 1;
   }
 
   std::ofstream output(argv[3]);
   if (!output) {
     std::cerr << "Problem with output file opening\n";
-    free(nums);
+    if (mode == 2) {
+      free(nums);
+    };
     return 1;
   }
+
 
   output << mal::cntLocMax(nums, rows, cols) << ' ';
   mal::lftBotClk(nums, rows, cols);
   mal::outMtx(output, nums, rows, cols);
 
-  free(nums);
+  if (mode == 2) {
+    free(nums);
+  };
   return 0;
 }
