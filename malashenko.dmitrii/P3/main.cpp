@@ -5,8 +5,6 @@
 
 namespace malasenko {
 
-
-
   std::ostream & outMtx(std::ostream & out, const int* matrix, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
@@ -17,7 +15,7 @@ namespace malasenko {
   }
 
   int * createMtx(size_t rows, size_t cols) {
-    int * nums = nullptr; 
+    int * nums = nullptr;
     try {
       nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
     } catch (const std::bad_alloc &) {
@@ -121,7 +119,6 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-
   namespace mal = malasenko;
 
   std::ifstream input(argv[2]);
@@ -129,7 +126,6 @@ int main(int argc, char ** argv) {
     std::cerr << "Problem with input file opening\n";
     return 1;
   }
-
 
   int * nums = nullptr;
   int statNums[10000] = {};
@@ -141,14 +137,12 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-
   nums = (mode == 1) ? statNums : mal::createMtx(rows, cols);
 
   if (!nums) {
     std::cerr << "Problem with matrix\n";
     if (mode == 2) {
       free(nums);
-      
     };
     return 2;
   }
@@ -169,7 +163,6 @@ int main(int argc, char ** argv) {
     };
     return 1;
   }
-
 
   output << mal::cntLocMax(nums, rows, cols) << ' ';
   mal::lftBotClk(nums, rows, cols);
