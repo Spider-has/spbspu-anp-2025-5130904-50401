@@ -130,7 +130,7 @@ int zubarev::inputUNI_TWO()
 
 bool zubarev::inStr(const char* const str, const s_t size, const char let)
 {
-  for (int i = 0; i < size; ++i) {
+  for (s_t i = 0; i < size; ++i) {
     if (std::tolower(str[i]) == std::tolower(let)) {
       return true;
     }
