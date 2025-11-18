@@ -13,7 +13,7 @@ namespace zubarev
   int inputUNI_TWO();
   bool inStr(const char* const str, const s_t size, const char let);
   int inputSHR_SYM();
-}
+} // namespace zubarev
 
 int main()
 {
@@ -121,7 +121,7 @@ int zubarev::inputUNI_TWO()
 
   itogStr[count] = '\0';
 
-  outputMatrix(std::cout, itogStr, itogSize-1);
+  outputMatrix(std::cout, itogStr, itogSize - 1);
   delete[] mainStr;
   delete[] itogStr;
   return 0;
@@ -145,7 +145,8 @@ int zubarev::inputSHR_SYM()
   s_t size = 0;
   char* mainStr = getline(std::cin, size);
   if (!mainStr) {
-    return 1;
+    mainStr = nullptr;
+    size = 0;
   }
 
   s_t itogSize = 0;
