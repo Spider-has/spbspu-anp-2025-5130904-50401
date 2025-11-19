@@ -8,10 +8,8 @@ namespace kuznetsov {
   void extend(char** str, size_t oldSize, size_t newSize);
   void removeVow(char* buff, const char* str);
   int checkSeqSym(const char* str);
-
 }
 
-// new/delete  RMV-VOW  SEQ-SYM
 int main()
 {
   namespace kuz = kuznetsov;
@@ -101,3 +99,4 @@ int kuznetsov::checkSeqSym(const char* str)
   }
   return 0;
 }
+
