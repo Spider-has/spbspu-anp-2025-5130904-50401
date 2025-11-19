@@ -7,7 +7,7 @@ namespace kuznetsov {
   char* getLine(std::istream& in, size_t& size);
   void extend(char** str, size_t oldSize, size_t newSize);
   void removeVow(char* buff, const char* str);
-  int seqSym();
+  int checkSeqSym(const char* str);
 
 }
 
@@ -27,6 +27,7 @@ int main()
   kuz::removeVow(buffer, str);
 
   std::cout << buffer << '\n';
+  std::cout << kuz::checkSeqSym(str) << '\n';
 
   delete[] buffer;
   delete[] str;
@@ -89,4 +90,14 @@ void kuznetsov::removeVow(char* buff, const char* str)
       nextPast++;
     }
   }
+}
+
+int kuznetsov::checkSeqSym(const char* str)
+{
+  for (size_t i = 1; str[i] != '\n'; ++i) {
+    if (str[i-1] == str[i]) {
+      return 1;
+    }
+  }
+  return 0;
 }
