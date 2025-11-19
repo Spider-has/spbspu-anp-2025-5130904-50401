@@ -38,6 +38,42 @@ size_t vasyakin::extend(char*& a, size_t k, size_t k1)
   a = new_arr;
   return 0;
 }
+size_t vasyakin::getline(std::istream& input, size_t& k, char*& str)
+{
+  str = reinterpret_cast<char*>(malloc(sizeof(char)));
+  if (str == nullptr)
+  {
+    return 1;
+  }
+  str[0] = '\0';
+  k = 0;
+  bool is_skipws = input.flags() & std::ios_base::skipws;
+  if (is_skipws)
+  {
+    input >> std::noskipws;
+  }
+  char i = 0;
+  while (input >> i && i != '\n')
+  {
+    if (k + 1 > vasyakin::MAX - 1)
+    {
+      return 2;
+    }
+    size_t check = extend(str, k, k + 2);
+    if (check == 1)
+    {
+      return 1;
+    }
+    str[k] = i;
+    str[k + 1] = '\0';
+    ++k;
+  }
+  if (is_skipws)
+  {
+    input >> std::skipws;
+  }
+  return 0;
+}
 int main()
 {
   return 0;
