@@ -154,5 +154,13 @@ int main()
     }
     return 1;
   }
+  const char* str1 = "abc";
+  vasyakin::cutLetters(str, result1);
+  vasyakin::excludeCharsFromSecond(str, str1, result2);
+  std::cout << result1 << '\n';
+  std::cout << result2 << '\n';
+  free(str);
+  free(result1);
+  free(result2);
   return 0;
 }
