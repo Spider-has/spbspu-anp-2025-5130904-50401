@@ -131,5 +131,11 @@ int main()
     free(str);
     return 1;
   }
+  if (str[0] == '\0')
+  {
+    std::cerr << "Empty string" << '\n';
+    free(str);
+    return 1;
+  }
   return 0;
 }
