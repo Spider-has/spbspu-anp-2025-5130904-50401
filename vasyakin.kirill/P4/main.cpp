@@ -87,6 +87,28 @@ void vasyakin::cutLetters(const char* str, char* str1)
   }
   str1[j] = '\0';
 }
+void vasyakin::excludeCharsFromSecond(const char* str1, const char* str2, char* result)
+{
+  size_t j = 0;
+  for (size_t i = 0; str1[i] != '\0'; ++i)
+  {
+    bool flag = false;
+    for (size_t k = 0; str2[k] != '\0'; ++k)
+    {
+      if (str1[i] == str2[k])
+      {
+        flag = true;
+        break;
+      }
+    }
+    if (!flag)
+    {
+      result[j] = str1[i];
+      j++;
+    }
+  }
+  result[j] = '\0';
+}
 int main()
 {
   return 0;
