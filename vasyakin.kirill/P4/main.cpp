@@ -23,6 +23,21 @@ size_t vasyakin::stringLength(const char* str)
   }
   return count + 1;
 }
+size_t vasyakin::extend(char*& a, size_t k, size_t k1)
+{
+  char* new_arr = reinterpret_cast<char*>(malloc(sizeof(char) * k1));
+  if (new_arr == nullptr)
+  {
+    return 1;
+  }
+  for (size_t i = 0; i < k; ++i)
+  {
+    new_arr[i] = a[i];
+  }
+  free(a);
+  a = new_arr;
+  return 0;
+}
 int main()
 {
   return 0;
