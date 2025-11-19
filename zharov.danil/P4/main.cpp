@@ -8,8 +8,8 @@ namespace zharov
   void extendArr(char *** str, size_t old_size, size_t new_size);
   char * getLine(std::istream & in, size_t size, size_t step, size_t & len, const char end);
   void extendStr(char ** str, size_t old_size, size_t new_size);
-  char * LatRmv(const char * str, char * res);
-  char * ShtSym(const char * str, char * res);
+  char * getLatRmv(const char * str, char * res);
+  char * getShtSym(const char * str, char * res);
   void destroyArr(char ** arr, size_t len);
 }
 
@@ -58,7 +58,7 @@ int main()
       std::cerr << "Bad alloc\n";
       return 1;
     }
-    res_1 = zharov::LatRmv(line, res_1);
+    res_1 = zharov::getLatRmv(line, res_1);
     std::cout << "LAT-RMV №" << i + 1 << ": " << res_1 << "\n";
     delete[] res_1;
   }
@@ -73,7 +73,7 @@ int main()
       std::cerr << "Bad alloc\n";
       return 1;
     }
-    res_2 = zharov::ShtSym(line, res_2);
+    res_2 = zharov::getShtSym(line, res_2);
     std::cout << "SHT_SYM №" << i + 1 << ": " << res_2 << "\n";
     delete[] res_2;
   }
@@ -197,7 +197,7 @@ char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len
   return str;
 }
 
-char * zharov::LatRmv(const char * str, char * res)
+char * zharov::getLatRmv(const char * str, char * res)
 {
   size_t c = 0;
   for (size_t i = 0; str[i] != '\0'; ++i) {
@@ -210,7 +210,7 @@ char * zharov::LatRmv(const char * str, char * res)
   return res;
 }
 
-char * zharov::ShtSym(const char * str, char * res)
+char * zharov::getShtSym(const char * str, char * res)
 {
   bool found = false;
   size_t c = 0;
