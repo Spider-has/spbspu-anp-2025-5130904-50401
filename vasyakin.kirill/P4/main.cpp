@@ -125,5 +125,11 @@ int main()
     free(str);
     return 2; 
   }
+  if (std::cin.fail() && !std::cin.eof())
+  {
+    std::cerr << "Input stream in fail state" << '\n';
+    free(str);
+    return 1;
+  }
   return 0;
 }
