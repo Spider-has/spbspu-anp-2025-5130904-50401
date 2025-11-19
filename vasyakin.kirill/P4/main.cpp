@@ -137,6 +137,38 @@ int main()
     free(str);
     return 1;
   }
+  size_t k2 = 0;
+  char* str1 = nullptr;
+  size_t check2 = vasyakin::getline(std::cin, k2, str1);
+  if (check2 == 1)
+  {
+    std::cerr << "Memory allocation failed" << '\n';
+    free(str);
+    return 1;
+  }
+  else if (check2 == 2)
+  {
+    std::cerr << "Overflow error" << '\n';
+    free(str);
+    free(str1);
+    return 2;
+  }
+  if (std::cin.fail() && !std::cin.eof())
+  {
+    std::cerr << "Input stream in fail state for second string" << '\n';
+    free(str);
+    free(str1);
+    return 1;
+  }
+  if (str1[0] == '\0')
+  {
+    free(str1);
+    str1 = reinterpret_cast< char* >(malloc(sizeof(char)));
+    if (str1 != nullptr)
+    {
+      str1[0] = '\0';
+    }
+  }
   size_t str_len = vasyakin::stringLength(str);
   char* result1 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
   char* result2 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
@@ -154,7 +186,6 @@ int main()
     }
     return 1;
   }
-  const char* str1 = "abc";
   vasyakin::cutLetters(str, result1);
   vasyakin::excludeCharsFromSecond(str, str1, result2);
   std::cout << result1 << '\n';
