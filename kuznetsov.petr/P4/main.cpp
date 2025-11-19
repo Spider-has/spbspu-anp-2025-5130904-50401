@@ -17,6 +17,11 @@ int main()
   char* str = nullptr;
   try {
     str = kuz::getLine(std::cin, size);
+    if (!std::cin) {
+      delete[] str;
+      return 1;
+    }
+
   } catch (const std::bad_alloc& e){
     std::cerr << "Bad alloc " << e.what() << '\n';
     return 1;
