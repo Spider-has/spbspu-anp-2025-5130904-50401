@@ -25,7 +25,7 @@ size_t vasyakin::stringLength(const char* str)
 }
 size_t vasyakin::extend(char*& a, size_t k, size_t k1)
 {
-  char* new_arr = reinterpret_cast<char*>(malloc(sizeof(char) * k1));
+  char* new_arr = reinterpret_cast< char* >(malloc(sizeof(char) * k1));
   if (new_arr == nullptr)
   {
     return 1;
@@ -40,7 +40,7 @@ size_t vasyakin::extend(char*& a, size_t k, size_t k1)
 }
 size_t vasyakin::getline(std::istream& input, size_t& k, char*& str)
 {
-  str = reinterpret_cast<char*>(malloc(sizeof(char)));
+  str = reinterpret_cast< char* >(malloc(sizeof(char)));
   if (str == nullptr)
   {
     return 1;
@@ -79,7 +79,7 @@ void vasyakin::cutLetters(const char* str, char* str1)
   size_t j = 0;
   for (size_t i = 0; str[i] != '\0'; ++i)
   {
-    if (!std::isalpha(static_cast<unsigned char>(str[i])))
+    if (!std::isalpha(static_cast< unsigned char >(str[i])))
     {
       str1[j] = str[i];
       j++;
@@ -138,8 +138,8 @@ int main()
     return 1;
   }
   size_t str_len = vasyakin::stringLength(str);
-  char* result1 = reinterpret_cast<char*>(malloc(sizeof(char) * str_len));
-  char* result2 = reinterpret_cast<char*>(malloc(sizeof(char) * str_len));
+  char* result1 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
+  char* result2 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
   if (!result1 || !result2)
   {
     std::cerr << "Memory allocation failed" << '\n';
