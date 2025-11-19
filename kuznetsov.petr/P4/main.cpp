@@ -25,7 +25,15 @@ int main()
     std::cerr << "Bad alloc " << e.what() << '\n';
     return 1;
   }
-  char* buffer = new char[size]{};
+  char* buffer = nullptr;
+  try {
+     buffer = new char[size]{};
+  } catch (const std::bad_alloc& e) {
+    delete[] str;
+    std::cerr << "Bad alloc buffer\n";
+    return 2;
+  }
+
   kuz::removeVow(buffer, str);
 
   std::cout << buffer << '\n';
