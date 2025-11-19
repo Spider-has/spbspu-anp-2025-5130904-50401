@@ -137,5 +137,22 @@ int main()
     free(str);
     return 1;
   }
+  size_t str_len = vasyakin::stringLength(str);
+  char* result1 = reinterpret_cast<char*>(malloc(sizeof(char) * str_len));
+  char* result2 = reinterpret_cast<char*>(malloc(sizeof(char) * str_len));
+  if (!result1 || !result2)
+  {
+    std::cerr << "Memory allocation failed" << '\n';
+    free(str);
+    if (result1)
+    {
+      free(result1);
+    }
+    if (result2)
+    {
+      free(result2);
+    }
+    return 1;
+  }
   return 0;
 }
