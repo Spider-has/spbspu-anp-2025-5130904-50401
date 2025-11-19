@@ -74,6 +74,19 @@ size_t vasyakin::getline(std::istream& input, size_t& k, char*& str)
   }
   return 0;
 }
+void vasyakin::cutLetters(const char* str, char* str1)
+{
+  size_t j = 0;
+  for (size_t i = 0; str[i] != '\0'; ++i)
+  {
+    if (!std::isalpha(static_cast<unsigned char>(str[i])))
+    {
+      str1[j] = str[i];
+      j++;
+    }
+  }
+  str1[j] = '\0';
+}
 int main()
 {
   return 0;
