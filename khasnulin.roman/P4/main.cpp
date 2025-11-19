@@ -53,7 +53,6 @@ int main()
 
   if (size)
   {
-
     const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
     char new_str[new_str_size] = {};
 
