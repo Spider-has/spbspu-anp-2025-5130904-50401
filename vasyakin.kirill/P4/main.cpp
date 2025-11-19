@@ -14,6 +14,15 @@ namespace vasyakin
   size_t getline(std::istream& input, size_t& k, char*& str);
   const size_t MAX = std::numeric_limits< size_t >::max();
 }
+size_t vasyakin::stringLength(const char* str)
+{
+  size_t count = 0;
+  while(str[count] != '\0')
+  {
+    count++;
+  }
+  return count + 1;
+}
 int main()
 {
   return 0;
