@@ -123,7 +123,7 @@ int main()
   {
     std::cerr << "Overflow error" << '\n';
     free(str);
-    return 2; 
+    return 2;
   }
   if (std::cin.fail() && !std::cin.eof())
   {
