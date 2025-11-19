@@ -21,12 +21,11 @@ int main()
       delete[] str;
       return 1;
     }
-
   } catch (const std::bad_alloc& e){
     std::cerr << "Bad alloc " << e.what() << '\n';
     return 1;
   }
-  char* buffer = new char[size];
+  char* buffer = new char[size]{};
   kuz::removeVow(buffer, str);
 
   std::cout << buffer << '\n';
