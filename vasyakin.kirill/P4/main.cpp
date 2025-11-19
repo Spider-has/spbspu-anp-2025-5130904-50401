@@ -111,5 +111,19 @@ void vasyakin::excludeCharsFromSecond(const char* str1, const char* str2, char* 
 }
 int main()
 {
+  size_t k = 0;
+  char * str = nullptr;
+  size_t check = vasyakin::getline(std::cin, k, str);
+  if (check == 1)
+  {
+    std::cerr << "Memory allocation failed" << '\n';
+    return 1;
+  }
+  else if (check == 2)
+  {
+    std::cerr << "Overflow error" << '\n';
+    free(str);
+    return 2; 
+  }
   return 0;
 }
