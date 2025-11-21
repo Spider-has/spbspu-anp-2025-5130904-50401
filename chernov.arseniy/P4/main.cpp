@@ -81,10 +81,13 @@ void chernov::latRmv(char * new_str, const char * old_str, size_t old_size)
 int main()
 {
   std::istream& input = std::cin;
-  size_t size = 0, step_size = 10;
+  size_t size = 0, second_size = 0, step_size = 10;
   char * str = nullptr;
+  char * second_str = nullptr;
+
   try {
     str = chernov::getline(input, size, step_size);
+    second_str = chernov::getline(input, second_size, step_size);
   } catch (const std::bad_alloc & e) {
     std::cerr << "badAllocError\n";
     return 1;
@@ -95,8 +98,6 @@ int main()
     return 2;
   }
 
-  size_t second_size = 3;
-  char second_str[] = "abs";
   int result_has_sam = chernov::hasSam(str, second_str, size, second_size);
   std::cout << "HAS-SAM: " << result_has_sam << "\n";
 
