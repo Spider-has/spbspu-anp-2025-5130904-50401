@@ -6,7 +6,8 @@
 namespace sedov
 {
   char * extend(char * a, size_t k, size_t d);
-  char * getline(std::istream & in, size_t s & s);
+  char * getline(std::istream & in, size_t & s);
+  size_t getDifLat(const char * a, size_t s);
 }
 
 int main()
@@ -73,4 +74,30 @@ char * sedov::getline(std::istream & in, size_t & s)
     in >> std::skipws;
   }
   return str;
+}
+
+size_t sedov::getDifLat(const char * a, size_t s)
+{
+  size_t arrOfAlpha[52] = {0};
+  for (size_t i = 0; i < s; ++i)
+  {
+    char ind = a[i];
+    if (ind >= 'a' && ind <= 'z')
+    {
+      arrOfAlpha[ind - 'a']++;
+    }
+    else if (ind >= 'A' && ind <= 'Z')
+    {
+      arrOfAlpha[ind - 'A' + 26]++;
+    }
+  }
+  size_t count = 0;
+  for (size_t i = 0; i < 52; ++i)
+  {
+    if (arrOfAlpha[i])
+    {
+      count++;
+    }
+  }
+  return count;
 }
