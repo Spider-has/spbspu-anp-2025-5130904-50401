@@ -2,12 +2,15 @@
 #include <cstddef>
 #include <iomanip>
 #include <memory>
+#include <cctype>
 
 namespace sedov
 {
   char * extend(char * a, size_t k, size_t d);
   char * getline(std::istream & in, size_t & s);
   size_t getDifLat(const char * a, size_t s);
+  size_t getCountOfVowels(const char * a, size_t s);
+  void getRmvVow(const char * a, size_t s, char * str);
 }
 
 int main()
@@ -100,4 +103,35 @@ size_t sedov::getDifLat(const char * a, size_t s)
     }
   }
   return count;
+}
+
+size_t sedov::getCountOfVowels(const char * a, size_t s)
+{
+  size_t count = 0;
+  for (size_t i = 0; i < s; ++i)
+  {
+    char ind = a[i];
+    char lInd = std::tolower(ind);
+    if (lInd == 'a' || lInd == 'e' || lInd == 'i' || lInd == 'o' || lInd == 'u' || lInd == 'y')
+    {
+      count++;
+    }
+  }
+  return count;
+}
+
+void sedov::getRmvVow(const char * a, size_t s, char * str)
+{
+  size_t count = 0;
+  for (size_t i = 0; i < s; ++i)
+  {
+    char ind = a[i];
+    char lInd = std::tolower(ind);
+    if (lInd != 'a' && lInd != 'e' && lInd != 'i' && lInd != 'o' && lInd != 'u' && lInd != 'y')
+    {
+      str[count] = a[i];
+      ++count;
+    }
+  }
+  str[count] = '\0';
 }
