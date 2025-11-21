@@ -16,13 +16,13 @@ namespace sedov
 int main()
 {
   size_t size = 0;
-  char * str1 = reinterpret_cast< char * >(malloc(sizeof(char)));
-  str1 = sedov::getline(std::cin, size);
+  char * str1 = sedov::getline(std::cin, size);
   if (str1 == nullptr)
   {
     std::cerr << "Bad alloc\n";
     return 1;
   }
+
   size_t res1 = sedov::getDifLat(str1, size);
   size_t countOfVowels = sedov::getCountOfVowels(str1, size);
   char * str2 = reinterpret_cast< char * >(malloc(sizeof(char) * (size - countOfVowels + 1)));
@@ -68,10 +68,9 @@ char * sedov::getline(std::istream & in, size_t & s)
   {
     in >> std::noskipws;
   }
-  char t = 0;
-  while (in >> t && t != '\n')
+  while (in >> str[s] && str[s] != '\n')
   {
-    str = extend(str, s, s + 2);
+    str = extend(str, s, s + 1);
     if (str == nullptr)
     {
       if (isSkipWs)
@@ -80,7 +79,6 @@ char * sedov::getline(std::istream & in, size_t & s)
       }
       return str;
     }
-    str[s] = t;
     str[s + 1] = '\0';
     ++s;
   }
