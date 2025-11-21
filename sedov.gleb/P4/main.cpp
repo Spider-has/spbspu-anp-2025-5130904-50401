@@ -22,7 +22,12 @@ int main()
     std::cerr << "Bad alloc\n";
     return 1;
   }
-
+  if (std::cin.eof())
+  {
+    std::cerr << "Error, end of file\n";
+    free(str1);
+    return 2;
+  }
   size_t res1 = sedov::getDifLat(str1, size);
   size_t countOfVowels = sedov::getCountOfVowels(str1, size);
   char * str2 = reinterpret_cast< char * >(malloc(sizeof(char) * (size - countOfVowels + 1)));
