@@ -73,7 +73,8 @@ char * sedov::getline(std::istream & in, size_t & s)
   {
     in >> std::noskipws;
   }
-  while (in >> str[s] && str[s] != '\n')
+  char t = 0;
+  while (in >> t && t != '\n')
   {
     str = extend(str, s, s + 1);
     if (str == nullptr)
@@ -84,6 +85,7 @@ char * sedov::getline(std::istream & in, size_t & s)
       }
       return str;
     }
+    str[s] = t;
     str[s + 1] = '\0';
     ++s;
   }
