@@ -107,4 +107,5 @@ int main()
   free(result_lat_rmv);
 
   free(str);
+  free(second_str);
 }
