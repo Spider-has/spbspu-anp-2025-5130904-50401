@@ -46,9 +46,7 @@ char * chernov::getline(std::istream & input, size_t & size, const size_t step_s
     str[i] = ch;
     ++i;
   }
-  if (str != nullptr) {
-    str[i] = 0;
-  }
+  str[i] = 0;
   size = i;
   if (is_skipws) {
     input >> std::skipws;
@@ -83,25 +81,22 @@ void chernov::latRmv(char * new_str, const char * old_str, size_t old_size)
 int main()
 {
   std::istream& input = std::cin;
-  size_t size = 0, second_size = 0, step_size = 10;
+  size_t size = 0, step_size = 10;
   char * str = nullptr;
-  char * second_str = nullptr;
-
   try {
     str = chernov::getline(input, size, step_size);
-    second_str = chernov::getline(input, second_size, step_size);
   } catch (const std::bad_alloc & e) {
-    free(str);
     std::cerr << "badAllocError\n";
     return 1;
   }
   if (!input) {
     free(str);
-    free(second_str);
     std::cerr << "badError\n";
     return 2;
   }
 
+  size_t second_size = 3;
+  char second_str[] = "abs";
   int result_has_sam = chernov::hasSam(str, second_str, size, second_size);
   std::cout << "HAS-SAM: " << result_has_sam << "\n";
 
@@ -111,5 +106,4 @@ int main()
   free(result_lat_rmv);
 
   free(str);
-  free(second_str);
 }
