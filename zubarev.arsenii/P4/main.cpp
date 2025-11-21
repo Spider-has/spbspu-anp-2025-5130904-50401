@@ -14,7 +14,7 @@ namespace zubarev
   int inputUNI_TWO(const char* mainStr, size_t mainSize);
   void solveUNI_TWO(const char* mainStr, size_t mainSize, char* finalStr);
   int inputSHR_SYM(const char* const mainStr, size_t mainSize);
-  void solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf, size_t bufSize);
+  void solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf);
 }
 
 int main()
@@ -149,25 +149,24 @@ int zubarev::inputSHR_SYM(const char* const mainStr, size_t mainSize)
   size_t itogSize = 0;
   char* itogStr = nullptr;
   try {
+    itogSize = 27;
     itogStr = new char[itogSize + 1];
-    itogSize = 28;
+
   } catch (const std::bad_alloc&) {
     std::cerr << "Memory allocation failed for square matrix\n";
     return 1;
   }
 
-  solveSHR_SYM(mainStr, mainSize, itogStr, itogSize);
-  outputMatrix(std::cout, itogStr, itogSize);
+  solveSHR_SYM(mainStr, mainSize, itogStr);
+  outputMatrix(std::cout, itogStr, strlen(itogStr));
   delete[] itogStr;
   return 0;
 }
 
-void zubarev::solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf, size_t bufSize)
+void zubarev::solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf)
 {
   const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
   const size_t alpSize = strlen(alphabet);
-
-  size_t tempSize = 0;
 
   for (const char* i = alphabet; i < alphabet + alpSize; ++i) {
     if (!(inStr(mainStr, mainSize, *i))) {
