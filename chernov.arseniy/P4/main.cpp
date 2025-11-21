@@ -46,7 +46,9 @@ char * chernov::getline(std::istream & input, size_t & size, const size_t step_s
     str[i] = ch;
     ++i;
   }
-  str[i] = 0;
+  if (str != nullptr) {
+    str[i] = 0;
+  }
   size = i;
   if (is_skipws) {
     input >> std::skipws;
