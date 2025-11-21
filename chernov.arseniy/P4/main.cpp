@@ -94,6 +94,7 @@ int main()
   }
   if (!input) {
     free(str);
+    free(second_str);
     std::cerr << "badError\n";
     return 2;
   }
