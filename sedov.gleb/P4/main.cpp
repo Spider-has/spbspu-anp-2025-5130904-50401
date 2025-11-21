@@ -76,7 +76,7 @@ char * sedov::getline(std::istream & in, size_t & s)
   char t = 0;
   while (in >> t && t != '\n')
   {
-    str = extend(str, s, s + 1);
+    str = extend(str, s, s + 2);
     if (str == nullptr)
     {
       if (isSkipWs)
