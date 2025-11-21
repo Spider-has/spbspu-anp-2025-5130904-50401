@@ -23,8 +23,20 @@ int main()
     std::cerr << "Bad alloc\n";
     return 1;
   }
-  std::cout << str1 << "\n";
+  size_t res1 = sedov::getDifLat(str1, size);
+  size_t countOfVowels = sedov::getCountOfVowels(str1, size);
+  char * str2 = reinterpret_cast< char * >(malloc(sizeof(char) * (size - countOfVowels + 1)));
+  if (str2 == nullptr)
+  {
+    std::cerr << "Bad alloc\n";
+    free(str1);
+    return 1;
+  }
+  sedov::getRmvVow(str1, size, str2);
+  std::cout << res1 << "\n";
+  std::cout << str2 << "\n";
   free(str1);
+  free(str2);
   return 0;
 }
 
