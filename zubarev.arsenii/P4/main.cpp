@@ -12,7 +12,10 @@ namespace zubarev
   size_t strlen(const char* s);
   int inputUNI_TWO(const char* const mainStr, s_t mainSize);
   bool inStr(const char* const str, const s_t size, const char let);
+  int inputUNI_TWO(const char* const mainStr, s_t mainSize);
+  void solveUNI_TWO( char*  mainStr, s_t mainSize, char* finalStr);
   int inputSHR_SYM(const char* const mainStr, s_t mainSize);
+  void solveSHR_SYM(const char* const mainStr, s_t mainSize,char* buf, s_t bufSize);
 }
 
 int main()
@@ -100,31 +103,37 @@ int zubarev::inputUNI_TWO(const char* const mainStr, s_t mainSize)
   const char* secondStr = "def_";
   size_t secondSize = strlen(secondStr);
 
-  size_t itogSize = secondSize + mainSize;
-  char* itogStr = nullptr;
+  size_t finalSize = secondSize + mainSize + 1;
+  char* finalStr = nullptr;
 
   try {
-    itogStr = new char[itogSize + 1];
+    finalStr = new char[finalSize + 1];
   } catch (const std::bad_alloc&) {
     std::cerr << "Memory allocation failed for square matrix\n";
     return 1;
   }
+  solveSHR_SYM(mainStr,mainSize,finalStr);
+  outputMatrix(std::cout, finalStr, finalSize - 1);
+  delete[] finalStr;
+  return 0;
+}
 
-  s_t countMain = 0, countSecond = 0, count = 0;
+void zubarev::solveUNI_TWO(char*  mainStr, s_t mainSize, char* finalStr)
+{
+  const char* secondStr = "def_";
+  size_t secondSize = strlen(secondStr);
+
+  s_t countMain = 0, countSecond = 0;
 
   while (countMain < mainSize || countSecond < secondSize) {
     if (countMain < mainSize)
-      itogStr[count++] = mainStr[countMain++];
-
+      *(finalStr++)=*(mainStr++);
+      countMain++;
     if (countSecond < secondSize)
-      itogStr[count++] = secondStr[countSecond++];
+      *(finalStr++)=*(secondStr++);
+      countSecond++;
   }
-
-  itogStr[count] = '\0';
-
-  outputMatrix(std::cout, itogStr, itogSize - 1);
-  delete[] itogStr;
-  return 0;
+  *finalStr = '\0';
 }
 
 bool zubarev::inStr(const char* const str, const s_t size, const char let)
@@ -136,24 +145,45 @@ bool zubarev::inStr(const char* const str, const s_t size, const char let)
   }
   return false;
 }
-
 int zubarev::inputSHR_SYM(const char* const mainStr, s_t mainSize)
 {
-  const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
-  const s_t alpSize = strlen(alphabet);
-
   s_t itogSize = 0;
   char* itogStr = nullptr;
-
-  for (s_t i = 0; i < alpSize; ++i) {
-    if (!(inStr(mainStr, mainSize, alphabet[i]))) {
-      push_back(&itogStr, itogSize, alphabet[i]);
-    }
+  try {
+    itogStr = new char[itogSize + 1];
+    itogSize = 28;
+  } catch (const std::bad_alloc&) {
+    std::cerr << "Memory allocation failed for square matrix\n";
+    return 1;
   }
 
-  push_back(&itogStr, itogSize, '\0');
+  solveSHR_SYM(mainStr,mainSize,itogStr,itogSize);
+  itogSize=strlen(itogStr);
 
   outputMatrix(std::cout, itogStr, itogSize);
   delete[] itogStr;
   return 0;
+}
+
+void zubarev::solveSHR_SYM(const char* const mainStr, s_t mainSize,char* buf, s_t bufSize)
+{
+  const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
+  const s_t alpSize = strlen(alphabet);
+
+  s_t tempSize=0;
+
+  for (s_t i = 0; i < alpSize; ++i) {
+    if (!(inStr(mainStr, mainSize, alphabet[i]))) {
+      buf[tempSize]=alphabet[i];
+      tempSize++;
+    }
+  }
+
+  for (const char* i = alphabet; i < alphabet+alpSize; ++i) {
+    if (!(inStr(mainStr, mainSize, *alphabet))) {
+      *(buf++)=*alphabet;
+    }
+  }
+  *buf='\0';
+  // return tempSize;
 }
