@@ -89,6 +89,7 @@ int main()
     str = chernov::getline(input, size, step_size);
     second_str = chernov::getline(input, second_size, step_size);
   } catch (const std::bad_alloc & e) {
+    free(str);
     std::cerr << "badAllocError\n";
     return 1;
   }
