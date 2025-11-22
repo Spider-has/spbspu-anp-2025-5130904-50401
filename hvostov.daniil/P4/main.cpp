@@ -5,6 +5,7 @@ namespace hvostov {
   char * getLine(std::istream & in, size_t & size, size_t extansion);
   char * extendStr(char * str, size_t & size, size_t new_size);
   void strConcatCharByChar(char * buffer, char * str1, char * str2);
+  void concatRemainders(char * str1, char * str2, size_t & i);
 }
 
 char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
@@ -47,6 +48,14 @@ char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
   return str;
 }
 
+void hvostov::concatRemainders(char * str1, char * str2, size_t & i)
+{
+  size_t diff = i - i / 2;
+  for (; str2[i - diff] != '\0'; i++) {
+    str1[i] = str2[i - diff];
+  }
+}
+
 void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
 {
   size_t i = 0;
@@ -57,18 +66,9 @@ void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
       buffer[i] = str2[i / 2];
     }
   }
-  if (str1[i / 2] == '\0') {
-    size_t diff = i - i / 2;
-    for (; str2[i - diff] != '\0'; i++) {
-      buffer[i] = str2[i - diff];
-    }
-  } else {
-    size_t diff = i - i / 2;
-    for (; str1[i - diff] != '\0'; i++) {
-      buffer[i] = str1[i - diff];
-    }
-  }
-  buffer[i+1] = '\0';
+  char * remainder_str = str1[i / 2] == '\0' ? str2 : str1;
+  hvostov::concatRemainders(buffer, remainder_str, i);
+  buffer[i] = '\0';
 }
 
 int main()
