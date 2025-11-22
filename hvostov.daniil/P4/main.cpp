@@ -4,7 +4,7 @@
 
 namespace hvostov {
   char * getLine(std::istream & in, size_t & size, size_t extansion);
-  char * extendStr(char * str, size_t & size, size_t new_size);
+  void extendStr(char ** str, size_t & size, size_t new_size);
   void strConcatCharByChar(char * buffer, char * str1, char * str2);
   void concatRemainders(char * str1, char * str2, size_t & i);
   size_t countAlphaCharacters(char * str);
@@ -16,6 +16,11 @@ int main()
   size_t size = 10, extansion = 5;
   try {
     str = hvostov::getLine(std::cin, size, extansion);
+    if (!std::cin) {
+      std::cerr << "Problems with input!\n";
+      delete[] str;
+      return 1;
+    }
   } catch (const std::bad_alloc & e) {
     std::cerr << e.what() << "\n";
     delete[] str;
@@ -49,7 +54,7 @@ char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
   while (in >> a && a != '\n') {
     if (i == size) {
       try {
-        str = hvostov::extendStr(str, size, size + extansion + 1);
+        hvostov::extendStr(& str, size, size + extansion + 1);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
@@ -66,15 +71,15 @@ char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
   return str;
 }
 
-char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
+void hvostov::extendStr(char ** str, size_t & size, size_t new_size)
 {
   char * new_str = new char[new_size];
   for (size_t i = 0; i < size; i++) {
-    new_str[i] = str[i];
+    new_str[i] = (* str)[i];
   }
-  delete[] str;
+  delete[] * str;
   size = new_size;
-  return new_str;
+  * str = new_str;
 }
 
 void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
