@@ -1,8 +1,10 @@
 #include <iostream>
 #include <iomanip>
+
 namespace hvostov {
   char * getLine(std::istream & in, size_t & size, size_t extansion);
   char * extendStr(char * str, size_t & size, size_t new_size);
+  void strConcatCharByChar(char * buffer, char * str1, char * str2);
 }
 
 char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
@@ -45,6 +47,30 @@ char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
   return str;
 }
 
+void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
+{
+  size_t i = 0;
+  for (; str1[i / 2] != '\0' && str2[i / 2] != '\0'; i++) {
+    if (i % 2 == 0) {
+      buffer[i] = str1[i / 2];
+    } else {
+      buffer[i] = str2[i / 2];
+    }
+  }
+  if (str1[i / 2] == '\0') {
+    size_t diff = i - i / 2;
+    for (; str2[i - diff] != '\0'; i++) {
+      buffer[i] = str2[i - diff];
+    }
+  } else {
+    size_t diff = i - i / 2;
+    for (; str1[i - diff] != '\0'; i++) {
+      buffer[i] = str1[i - diff];
+    }
+  }
+  buffer[i+1] = '\0';
+}
+
 int main()
 {
   char * str = nullptr;
@@ -56,5 +82,9 @@ int main()
     delete[] str;
     return 1;
   }
-  std::cout << str;
+  char str2[] = "qwerty12345";
+  size_t size2 = 11;
+  char * result = new char[size+size2+1];
+  hvostov::strConcatCharByChar(result, str, str2);
+  std::cout << result;
 }
