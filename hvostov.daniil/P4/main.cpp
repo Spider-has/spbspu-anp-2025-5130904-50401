@@ -1,11 +1,13 @@
 #include <iostream>
 #include <iomanip>
+#include <cctype>
 
 namespace hvostov {
   char * getLine(std::istream & in, size_t & size, size_t extansion);
   char * extendStr(char * str, size_t & size, size_t new_size);
   void strConcatCharByChar(char * buffer, char * str1, char * str2);
   void concatRemainders(char * str1, char * str2, size_t & i);
+  size_t countAlphaCharacters(char * str);
 }
 
 char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
@@ -71,6 +73,17 @@ void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
   buffer[i] = '\0';
 }
 
+size_t hvostov::countAlphaCharacters(char * str)
+{
+  size_t counter = 0;
+  for (size_t i = 0; str[i] != '\0'; i++) {
+    if (isalpha(str[i])) {
+      counter++;
+    }
+  }
+  return counter;
+}
+
 int main()
 {
   char * str = nullptr;
@@ -84,7 +97,16 @@ int main()
   }
   char str2[] = "qwerty12345";
   size_t size2 = 11;
-  char * result = new char[size+size2+1];
+  char * result = nullptr;
+  try {
+    result = new char[size+size2+1];
+  } catch (const std::bad_alloc & e) {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
   hvostov::strConcatCharByChar(result, str, str2);
-  std::cout << result;
+  size_t counter = hvostov::countAlphaCharacters(result);
+  std::cout << result << "\n";
+  std::cout << counter << "\n";
+  return 0;
 }
