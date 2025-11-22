@@ -9,12 +9,12 @@ namespace zubarev
   char* getline(std::istream& in, size_t& s);
   std::ostream& outputMatrix(std::ostream& out, const char* const str, const size_t size);
   size_t strlen(const char* s);
-  int inputUNI_TWO(const char* const mainStr, size_t mainSize);
+  int inputSpliceStr(const char* const mainStr, size_t mainSize);
   bool inStr(const char* const str, const size_t size, const char let);
-  int inputUNI_TWO(const char* mainStr, size_t mainSize);
-  void solveUNI_TWO(const char* mainStr, size_t mainSize, char* finalStr);
-  int inputSHR_SYM(const char* const mainStr, size_t mainSize);
-  void solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf);
+  int inputSpliceStr(const char* mainStr, size_t mainSize);
+  void solveSpliceStr(const char* mainStr, size_t mainSize, char* finalStr);
+  int inputUniInAlp(const char* const mainStr, size_t mainSize);
+  void solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf);
 }
 
 int main()
@@ -26,8 +26,8 @@ int main()
     std::cerr << "Input wrong\n";
     return 1;
   }
-  zub::inputUNI_TWO(mainStr, mainSize);
-  zub::inputSHR_SYM(mainStr, mainSize);
+  zub::inputSpliceStr(mainStr, mainSize);
+  zub::inputUniInAlp(mainStr, mainSize);
   delete[] mainStr;
 }
 
@@ -97,7 +97,7 @@ size_t zubarev::strlen(const char* s)
   return len;
 }
 
-int zubarev::inputUNI_TWO(const char* mainStr, size_t mainSize)
+int zubarev::inputSpliceStr(const char* mainStr, size_t mainSize)
 {
   const char* secondStr = "def_";
   size_t secondSize = strlen(secondStr);
@@ -111,13 +111,13 @@ int zubarev::inputUNI_TWO(const char* mainStr, size_t mainSize)
     std::cerr << "Memory allocation failed for square matrix\n";
     return 1;
   }
-  solveUNI_TWO(mainStr, mainSize, finalStr);
+  solveSpliceStr(mainStr, mainSize, finalStr);
   outputMatrix(std::cout, finalStr, finalSize - 1);
   delete[] finalStr;
   return 0;
 }
 
-void zubarev::solveUNI_TWO(const char* mainStr, size_t mainSize, char* finalStr)
+void zubarev::solveSpliceStr(const char* mainStr, size_t mainSize, char* finalStr)
 {
   const char* secondStr = "def_";
   size_t secondSize = strlen(secondStr);
@@ -144,7 +144,7 @@ bool zubarev::inStr(const char* const str, const size_t size, const char let)
   }
   return false;
 }
-int zubarev::inputSHR_SYM(const char* const mainStr, size_t mainSize)
+int zubarev::inputUniInAlp(const char* const mainStr, size_t mainSize)
 {
   size_t itogSize = 0;
   char* itogStr = nullptr;
@@ -157,13 +157,13 @@ int zubarev::inputSHR_SYM(const char* const mainStr, size_t mainSize)
     return 1;
   }
 
-  solveSHR_SYM(mainStr, mainSize, itogStr);
+  solveUniInAlp(mainStr, mainSize, itogStr);
   outputMatrix(std::cout, itogStr, strlen(itogStr));
   delete[] itogStr;
   return 0;
 }
 
-void zubarev::solveSHR_SYM(const char* const mainStr, size_t mainSize, char* buf)
+void zubarev::solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf)
 {
   const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
   const size_t alpSize = strlen(alphabet);
