@@ -10,15 +10,31 @@ namespace hvostov {
   size_t countAlphaCharacters(char * str);
 }
 
-char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
+int main()
 {
-  char * new_str = new char[new_size];
-  for (size_t i = 0; i < size; i++) {
-    new_str[i] = str[i];
+  char * str = nullptr;
+  size_t size = 10, extansion = 5;
+  try {
+    str = hvostov::getLine(std::cin, size, extansion);
+  } catch (const std::bad_alloc & e) {
+    std::cerr << e.what() << "\n";
+    delete[] str;
+    return 1;
   }
-  delete[] str;
-  size = new_size;
-  return new_str;
+  char str2[] = "qwerty12345";
+  size_t size2 = 11;
+  char * result = nullptr;
+  try {
+    result = new char[size+size2+1];
+  } catch (const std::bad_alloc & e) {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
+  hvostov::strConcatCharByChar(result, str, str2);
+  size_t counter = hvostov::countAlphaCharacters(result);
+  std::cout << result << "\n";
+  std::cout << counter << "\n";
+  return 0;
 }
 
 char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
@@ -50,12 +66,15 @@ char * hvostov::getLine(std::istream & in, size_t & size, size_t extansion)
   return str;
 }
 
-void hvostov::concatRemainders(char * str1, char * str2, size_t & i)
+char * hvostov::extendStr(char * str, size_t & size, size_t new_size)
 {
-  size_t diff = i - i / 2;
-  for (; str2[i - diff] != '\0'; i++) {
-    str1[i] = str2[i - diff];
+  char * new_str = new char[new_size];
+  for (size_t i = 0; i < size; i++) {
+    new_str[i] = str[i];
   }
+  delete[] str;
+  size = new_size;
+  return new_str;
 }
 
 void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
@@ -73,6 +92,14 @@ void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
   buffer[i] = '\0';
 }
 
+void hvostov::concatRemainders(char * str1, char * str2, size_t & i)
+{
+  size_t diff = i - i / 2;
+  for (; str2[i - diff] != '\0'; i++) {
+    str1[i] = str2[i - diff];
+  }
+}
+
 size_t hvostov::countAlphaCharacters(char * str)
 {
   size_t counter = 0;
@@ -82,31 +109,4 @@ size_t hvostov::countAlphaCharacters(char * str)
     }
   }
   return counter;
-}
-
-int main()
-{
-  char * str = nullptr;
-  size_t size = 10, extansion = 5;
-  try {
-    str = hvostov::getLine(std::cin, size, extansion);
-  } catch (const std::bad_alloc & e) {
-    std::cerr << e.what() << "\n";
-    delete[] str;
-    return 1;
-  }
-  char str2[] = "qwerty12345";
-  size_t size2 = 11;
-  char * result = nullptr;
-  try {
-    result = new char[size+size2+1];
-  } catch (const std::bad_alloc & e) {
-    std::cerr << e.what() << "\n";
-    return 1;
-  }
-  hvostov::strConcatCharByChar(result, str, str2);
-  size_t counter = hvostov::countAlphaCharacters(result);
-  std::cout << result << "\n";
-  std::cout << counter << "\n";
-  return 0;
 }
