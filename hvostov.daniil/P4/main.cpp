@@ -39,6 +39,7 @@ int main()
   size_t counter = hvostov::countAlphaCharacters(result);
   std::cout << result << "\n";
   std::cout << counter << "\n";
+  delete[] str;
   return 0;
 }
 
