@@ -58,8 +58,8 @@ void goltsov::increase_size(char** str, size_t& size)
   {
     new_str[i] = str[0][i];
   }
-  delete[] *str;
-  *str = new_str;
+  delete[] * str;
+  * str = new_str;
 }
 
 void goltsov::reduce_size(char** str, size_t& size)
@@ -70,8 +70,8 @@ void goltsov::reduce_size(char** str, size_t& size)
   {
     new_str[i] = str[0][i];
   }
-  delete[] *str;
-  *str = new_str;
+  delete[] * str;
+  * str = new_str;
 }
 
 void goltsov::getline(std::istream& in, char** str, size_t& size)
