@@ -40,6 +40,7 @@ int main()
   std::cout << result << "\n";
   std::cout << counter << "\n";
   delete[] str;
+  delete[] result;
   return 0;
 }
 
