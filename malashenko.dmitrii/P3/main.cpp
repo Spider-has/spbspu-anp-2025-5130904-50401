@@ -5,7 +5,7 @@
 
 namespace malasenko {
 
-  std::ostream & outMtx(std::ostream & out, const int* matrix, size_t rows, size_t cols) {
+  std::ostream & outMtx(std::ostream & out, const int * matrix, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
         out << matrix[i * cols + j] << " ";
@@ -16,12 +16,7 @@ namespace malasenko {
 
   int * createMtx(size_t rows, size_t cols) {
     int * nums = nullptr;
-    try {
-      nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
-    } catch (const std::bad_alloc &) {
-      std::cerr << "malloc error\n";
-      return nullptr;
-    }
+    nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
     return nums;
   }
 
@@ -52,7 +47,7 @@ namespace malasenko {
               }
             }
           }
-          res+=isLocMax;
+          res += isLocMax;
         }
       }
     }
