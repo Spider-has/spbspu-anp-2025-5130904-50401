@@ -5,10 +5,10 @@
 
 namespace zharov
 {
-  std::istream & createMatrix(std::istream & input, int * mtx, size_t rows, size_t cols);
+  std::istream & inputMatrix(std::istream & input, int * mtx, size_t rows, size_t cols);
   bool isUppTriMtx(const int * mtx, size_t rows, size_t cols);
   size_t getCntColNsm(const int * mtx, size_t rows, size_t cols);
-  int processMatrix(std::ifstream & input, int * matrix, size_t rows, size_t cols, const char * output_file);
+  void processMatrix(std::ifstream & input, int * matrix, size_t rows, size_t cols, const char * output_file);
 }
 
 int main(int argc, char ** argv)
@@ -37,40 +37,37 @@ int main(int argc, char ** argv)
     std::cerr << "Bad read (rows and cols)\n";
     return 2;
   }
+  constexpr size_t MAX_MATRIX_SIZE = 10000;
+  int matrix_static[MAX_MATRIX_SIZE] = {};
   int * matrix = nullptr;
+  int * matrix_dynamic = nullptr;
   if (argv[1][0] == '1') {
-    constexpr size_t MAX_MATRIX_SIZE = 10000;
-    int matrix[MAX_MATRIX_SIZE] = {};
-    return zharov::processMatrix(input, matrix, rows, cols, argv[3]);
+    matrix = matrix_static;
   } else {
-    matrix = reinterpret_cast< int * >(malloc(sizeof(int) * rows * cols));
-    if (matrix == nullptr) {
+    matrix_dynamic = reinterpret_cast< int * >(malloc(sizeof(int) * rows * cols));
+    if (matrix_dynamic == nullptr) {
       std::cerr << "Bad alloc\n";
       return 2;
     }
-    return zharov::processMatrix(input, matrix, rows, cols, argv[3]);
+    matrix = matrix_dynamic;
   }
+  zharov::processMatrix(input, matrix, rows, cols, argv[3]);
 
-  if (!input) {
+  free(matrix_dynamic);
+
   if (input.eof()) {
     std::cerr << "Not enough numbers\n";
-  } else {
+    return 2;
+  } else if (input.bad()) {
     std::cerr << "Bad read (wrong value)\n";
-  }
-  if (argv[1][0] == '2') {
-    free(matrix);
-  }
-  return 2;
+    return 2;
   }
 
-  if (argv[1][0] == '2') {
-    free(matrix);
-  }
 }
 
-std::istream & zharov::createMatrix(std::istream & input, int * mtx, size_t rows, size_t cols)
+std::istream & zharov::inputMatrix(std::istream & input, int * mtx, size_t rows, size_t cols)
 {
-  for (size_t i = 0; i < rows * cols; ++i) {
+  for (size_t i = 0; input && i < rows * cols; ++i) {
     input >> mtx[i];
   }
   return input;
@@ -115,12 +112,13 @@ size_t zharov::getCntColNsm(const int * mtx, size_t rows, size_t cols)
   return res;
 }
 
-int zharov::processMatrix(std::ifstream & input, int * matrix, size_t rows, size_t cols, const char * output_file)
+void zharov::processMatrix(std::ifstream & input, int * matrix, size_t rows, size_t cols, const char * output_file)
 {
-  zharov::createMatrix(input, matrix, rows, cols);
-  input.close();
+  zharov::inputMatrix(input, matrix, rows, cols);
+  if (input.fail()) {
+    return;
+  }
   std::ofstream output(output_file);
   output << zharov::isUppTriMtx(matrix, rows, cols) << "\n";
   output << zharov::getCntColNsm(matrix, rows, cols) << "\n";
-  return 0;
 }
