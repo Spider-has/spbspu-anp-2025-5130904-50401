@@ -5,8 +5,6 @@
 
 namespace sedov
 {
-  bool checkFirstArg(const char * a);
-  int * createMatrix(size_t rows, size_t cols);
   std::istream & inputMatrix(std::istream & input, int * mtx, size_t rows, size_t cols);
   void convertIncMatrix(int * mtx, size_t rows, size_t cols);
   size_t getNumCol(const int * mtx, size_t rows, size_t cols);
@@ -23,11 +21,6 @@ int main(int argc, char ** argv)
   else if (argc > 4)
   {
     std::cerr << "Too many arguments\n";
-    return 1;
-  }
-  else if (!sedov::checkFirstArg(argv[1]))
-  {
-    std::cerr << "First parameter is not a number\n";
     return 1;
   }
   else if ((argv[1][0] != '1' && argv[1][0] != '2') || argv[1][1] != '\0')
@@ -54,7 +47,7 @@ int main(int argc, char ** argv)
 
   try
   {
-    int * matrix = sedov::createMatrix(r, c);
+    int * matrix = new int[r * c];
     size_t st = sedov::completeMatrix(input, matrix, r, c, argv[3]);
     delete[] matrix;
     return st;
@@ -64,25 +57,6 @@ int main(int argc, char ** argv)
     std::cerr << e.what() << "\n";
     return 3;
   }
-}
-
-bool sedov::checkFirstArg(const char * a)
-{
-  for (size_t i = 0; a[i] != '\0'; ++i)
-  {
-    if (a[i] < '0' || a[i] > '9')
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-int * sedov::createMatrix(size_t rows, size_t cols)
-{
-  int * mtx = nullptr;
-  mtx = new int[rows * cols];
-  return mtx;
 }
 
 std::istream & sedov::inputMatrix(std::istream & input, int * mtx, size_t rows, size_t cols)
@@ -96,7 +70,7 @@ std::istream & sedov::inputMatrix(std::istream & input, int * mtx, size_t rows, 
 
 void sedov::convertIncMatrix(int * mtx, size_t rows, size_t cols)
 {
-  size_t minrc = (rows < cols) ? rows : cols;
+  size_t minrc = std::min(rows, cols);
   size_t layer = minrc / 2 + minrc % 2;
   const int MAX = std::numeric_limits< int >::max();
   for (size_t k = 0; k < layer; ++k)
