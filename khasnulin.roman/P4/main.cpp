@@ -151,6 +151,7 @@ char *khasnulin::getLine(std::istream &in, size_t &size)
     size = 0;
     return nullptr;
   }
+  free(str);
   str = newStr;
   size = i;
   str[i] = '\0';
