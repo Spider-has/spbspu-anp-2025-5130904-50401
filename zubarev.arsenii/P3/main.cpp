@@ -5,37 +5,31 @@
 
 namespace zubarev
 {
-  using s_t = size_t;
-  int max_int();
-  int min_int();
-  std::ostream& outputMatrix(std::ostream& out, const int* matrix, s_t rows, s_t cols);
-  int* convertToSquare(int* matrix, s_t& rows, s_t& cols, bool dynamic);
-  int* readMatrix(std::istream& in, s_t& rows, s_t& cols, int* matrix, bool dynamic);
-  int solveTask9(const int* matrix, s_t rows, s_t cols);
-  int solveTask14(const int* matrix, s_t rows, s_t cols);
+  int getMaxInt();
+  int getMinInt();
+  std::ostream& outputMatrix(std::ostream& out, const int* matrix, size_t rows, size_t cols);
+  int* convertToSquare(int* matrix, size_t& rows, size_t& cols);
+  int* readMatrix(std::istream& in, size_t& rows, size_t& cols, int* matrix);
+  int getCouOfColNoIden(const int* matrix, size_t rows, size_t cols);
+  int getMaxSumInDia(const int* matrix, size_t rows, size_t cols);
 }
 
 int main(int argc, char const** argv)
 {
   namespace zub = zubarev;
-  zub::s_t rows = 0, cols = 0;
-  bool dynamic = false;
+  size_t rows = 0, cols = 0;
 
-  try {
-    if (argc > 4) {
-      std::cerr << "Too many arguments" << "\n";
-      return 1;
-    } else if (argc < 4) {
-      std::cerr << "Not enough arguments" << "\n";
-      return 1;
-    } else if (std::stoi(argv[1]) > 2) {
-      std::cerr << "First is out of range" << "\n";
-      return 1;
-    }
-  } catch (const std::invalid_argument& e) {
-    std::cerr << "First parameter is not a number\n";
+  if (argc > 4) {
+    std::cerr << "Too many arguments" << "\n";
+    return 1;
+  } else if (argc < 4) {
+    std::cerr << "Not enough arguments" << "\n";
+    return 1;
+  } else if (std::stoi(argv[1]) > 2) {
+    std::cerr << "First is out of range" << "\n";
     return 1;
   }
+
 
   std::ifstream input(argv[2]);
   if (!input) {
@@ -55,105 +49,109 @@ int main(int argc, char const** argv)
       return 1;
     }
     mtx = statMatrix;
-    mtx = zub::readMatrix(input, rows, cols, mtx, dynamic);
+    mtx = zub::readMatrix(input, rows, cols, mtx);
+    if (input.fail()) {
+      std::cerr << "Can't read the file\n";
+      return 1;
+    }
+
   } else if (std::stoi(argv[1]) == 2) {
     mtx = reinterpret_cast<int*>(std::malloc(rows * cols * sizeof(int)));
     if (!mtx) {
       std::cerr << "Memory allocation failed\n";
       return 1;
     }
-    dynamic = true;
-    mtx = zub::readMatrix(input, rows, cols, mtx, dynamic);
+
+    mtx = zub::readMatrix(input, rows, cols, mtx);
+     if (input.fail()) {
+      std::cerr << "Can't read the file\n";
+      free(mtx);
+      return 1;
+    }
   }
 
   if (!mtx) {
     return 2;
   }
-  mtx = zub::convertToSquare(mtx, rows, cols, dynamic);
+  int* square = zubarev::convertToSquare(mtx, rows, cols);
 
   std::ofstream output(argv[3]);
-  output << zub::solveTask9(mtx, rows, cols) << "\n";
-  output << zub::solveTask14(mtx, rows, cols) << "\n";
-  if (dynamic) {
+  output << zub::getCouOfColNoIden(square, rows, cols) << "\n";
+  output << zub::getMaxSumInDia(square, rows, cols) << "\n";
+  if (std::stoi(argv[1]) == 2) {
     free(mtx);
   }
+  free(square);
 }
 
-int zubarev::max_int()
+int zubarev::getMaxInt()
 {
   using namespace std;
-  using int_limit = numeric_limits<int>;
+  using int_limit = numeric_limits< int >;
   return int_limit::max();
 }
 
-int zubarev::min_int()
+int zubarev::getMinInt()
 {
   using namespace std;
-  using int_limit = numeric_limits<int>;
+  using int_limit = numeric_limits< int >;
   return int_limit::min();
 }
 
-std::ostream&
-zubarev::outputMatrix(std::ostream& out, const int* const matrix, const s_t rows, const s_t cols)
+std::ostream&zubarev::outputMatrix(std::ostream& out, const int* const matrix, size_t rows, size_t cols)
 {
-  for (s_t i = 0; i < rows; ++i) {
-    for (s_t j = 0; j < cols; ++j) {
-      out << matrix[i * cols + j] << " ";
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      if (j != 0) {
+        out << ' ';
+      }
+      out << matrix[i * cols + j];
     }
-    out << "\n";
+    out << '\n';
   }
   return out;
 }
 
-int* zubarev::convertToSquare(int* matrix, s_t& rows, s_t& cols, bool dynamic)
+int* zubarev::convertToSquare(int* matrix, size_t& rows, size_t& cols)
 {
-  if (rows == cols) {
-    return matrix;
-  }
-
-  s_t sizeOfMatrix = std::min(rows, cols);
-  int* square = reinterpret_cast<int*>(malloc(sizeOfMatrix * sizeOfMatrix * sizeof(int)));
+  size_t sizeOfMatrix = std::min(rows, cols);
+  int* square = reinterpret_cast< int* >(malloc(sizeOfMatrix * sizeOfMatrix * sizeof(int)));
   if (!square) {
-    std::cerr << "Memory allocation failed for square matrix\n";
-    free(square);
-    return matrix;
+    return nullptr;
   }
-
-  for (s_t i = 0; i < sizeOfMatrix; ++i) {
-    for (s_t j = 0; j < sizeOfMatrix; ++j) {
-      square[i * sizeOfMatrix + j] = matrix[i * cols + j];
+  if (rows == cols) {
+    for (size_t i = 0; i < rows*cols; ++i) {
+      square[i] = matrix[i];
     }
-  }
-  if (dynamic) {
-    free(matrix);
+  } else {
+    for (size_t i = 0; i < sizeOfMatrix; ++i) {
+      for (size_t j = 0; j < sizeOfMatrix; ++j) {
+        square[i * sizeOfMatrix + j] = matrix[i * cols + j];
+      }
+    }
+    rows = cols = sizeOfMatrix;
   }
 
-  rows = cols = sizeOfMatrix;
   return square;
 }
 
-int* zubarev::readMatrix(std::istream& in, s_t& rows, s_t& cols, int* matrix, bool dynamic)
+int* zubarev::readMatrix(std::istream& in, size_t& rows, size_t& cols, int* matrix)
 {
-  for (s_t i = 0; i < rows * cols; ++i) {
-    in >> matrix[i];
-    if (!in) {
-      std::cerr << "Can't read the file\n";
-      if (dynamic) {
-        free(matrix);
-      }
-      return nullptr;
+  for (size_t i = 0; i < rows * cols; ++i) {
+    if (!(in >> matrix[i])) {
+      break;
     }
   }
   return matrix;
 }
 
-int zubarev::solveTask9(const int* matrix, s_t rows, s_t cols)
+int zubarev::getCouOfColNoIden(const int* matrix, size_t rows, size_t cols)
 {
-  s_t count = 0;
+  size_t count = 0;
   bool equalFlag = false;
 
-  for (s_t j = 0; j < cols; ++j) {
-    for (s_t i = 0; i < rows - 1; ++i) {
+  for (size_t j = 0; j < cols; ++j) {
+    for (size_t i = 0; i < rows - 1; ++i) {
       if (matrix[cols * i + j] == matrix[cols * (i + 1) + j]) {
         equalFlag = true;
         break;
@@ -169,12 +167,12 @@ int zubarev::solveTask9(const int* matrix, s_t rows, s_t cols)
   return count;
 }
 
-int zubarev::solveTask14(const int* matrix, s_t rows, s_t cols)
+int zubarev::getMaxSumInDia(const int* matrix, size_t rows, size_t cols)
 {
-  int maxSum = min_int();
+  int maxSum = getMinInt();
   int tempSum = 0;
-  for (s_t s = 1; s <= (cols / 2); ++s) {
-    for (s_t i = 0; i < rows - s; i++) {
+  for (size_t s = 1; s <= (cols / 2); ++s) {
+    for (size_t i = 0; i < rows - s; i++) {
       tempSum += matrix[i * cols + (i + s)];
     }
     if (tempSum > maxSum) {
@@ -183,8 +181,8 @@ int zubarev::solveTask14(const int* matrix, s_t rows, s_t cols)
     tempSum = 0;
   }
 
-  for (s_t s = 1; s <= (cols / 2); ++s) {
-    for (s_t i = s; i < rows; i++) {
+  for (size_t s = 1; s <= (cols / 2); ++s) {
+    for (size_t i = s; i < rows; i++) {
       tempSum += matrix[i * cols + (i - s)];
     }
     if (tempSum > maxSum) {
@@ -195,3 +193,4 @@ int zubarev::solveTask14(const int* matrix, s_t rows, s_t cols)
 
   return maxSum;
 }
+
