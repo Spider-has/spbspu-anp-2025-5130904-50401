@@ -1,20 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <cctype>
 namespace madieva
 {
-  const size_t max_static_size = 10000;
-  int * createArray(char number, size_t rows, size_t cols) {
-    if (number == '1') {
-      if (rows * cols > max_static_size) {
-        throw std::bad_alloc();
-      }
-      static int array[max_static_size] = {};
-      return array;
-    }
-    else {
-      return new int[rows * cols];
-    }
-  }
   void freeArray(int * array, char number) {
     if (number == '2') {
       delete[] array;
@@ -103,7 +91,7 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  if (argv[1][0] < '0' || argv[1][0] > '9') {
+  if (!isdigit(argv[1][0])) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
@@ -135,8 +123,15 @@ int main(int argc, char ** argv)
     return 0;
   }
   int * matrix = nullptr;
+  const int max_size = 10000;
   try {
-    matrix = madieva::createArray(arg[0], rows, cols);
+    if (arg[0] == '1' && rows * cols < max_size) {
+      int array[max_size] = {};
+      matrix = array;
+    } else {
+      int * array = new int[rows * cols];
+      matrix = array;
+    }
   } catch (const std::bad_alloc & e) {
     std::cerr << "Out of memory\n";
     return 2;
