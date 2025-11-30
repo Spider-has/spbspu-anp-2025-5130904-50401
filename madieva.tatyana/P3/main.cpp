@@ -8,15 +8,15 @@ namespace madieva
       delete[] array;
     }
   }
-  bool readMatrix(std::ifstream & input, size_t rows, size_t cols, int * array)
+  std::ifstream & readMatrix(std::ifstream & input, size_t rows, size_t cols, int * array)
   {
     for (size_t i = 0; i < rows * cols; i++) {
       input >> array[i];
-      if (input.fail()) {
-        return false;
+      if (!input) {
+        return input;
       }
     }
-    return true;
+    return input;
   }
   void changeInSpiral(int * matrix, size_t rows, size_t cols) {
     size_t top = 0;
