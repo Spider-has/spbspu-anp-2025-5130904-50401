@@ -23,9 +23,9 @@ std::ostream & outMtx(std::ostream & out,
     return nums;
   }
 
-  std::istream & readMtx(std::istream & in, 
-                         int * nums, 
-                         size_t & rows, 
+  std::istream & readMtx(std::istream & in,
+                         int * nums,
+                         size_t & rows,
                          size_t & cols) {
     for (size_t i = 0; i < rows * cols; ++i) {
       in >> nums[i];
