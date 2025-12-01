@@ -5,27 +5,30 @@
 
 namespace malasenko {
 
-  std::ostream & outMtx(std::ostream & out, const int * matrix, size_t rows, size_t cols) {
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        out << matrix[i * cols + j] << " ";
+std::ostream & outMtx(std::ostream & out,
+                      const int * matrix,
+                      size_t rows,
+                      size_t cols) {
+    for (size_t i = 0; i < rows * cols; ++i) {
+        out << matrix[i];
+        if (i != rows * cols - 1) {
+            out << " ";
+        }
       }
-    }
     return out;
   }
 
   int * createMtx(size_t rows, size_t cols) {
-    int * nums = nullptr;
-    nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
+    int * nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
     return nums;
   }
 
-  std::istream & readMtx(std::istream & in, int * nums, size_t & rows, size_t & cols) {
+  std::istream & readMtx(std::istream & in, 
+                         int * nums, 
+                         size_t & rows, 
+                         size_t & cols) {
     for (size_t i = 0; i < rows * cols; ++i) {
-      if (!(in >> nums[i])) {
-        std::cerr << "not enough data in file\n";
-        return in;
-      }
+      in >> nums[i];
     }
     return in;
   }
@@ -123,7 +126,7 @@ int main(int argc, char ** argv) {
   }
 
   int * nums = nullptr;
-  int statNums[10000] = {};
+  int fixedLengthNums[10000];
   size_t rows = 0;
   size_t cols = 0;
 
@@ -132,13 +135,13 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-  nums = (mode == 1) ? statNums : mal::createMtx(rows, cols);
+  nums = (mode == 1) ? fixedLengthNums : mal::createMtx(rows, cols);
 
   if (!nums) {
     std::cerr << "Problem with matrix\n";
     if (mode == 2) {
       free(nums);
-    };
+    }
     return 2;
   }
 
@@ -146,7 +149,7 @@ int main(int argc, char ** argv) {
     std::cerr << "Problem with file reading\n";
     if (mode == 2) {
       free(nums);
-    };
+    }
     return 1;
   }
 
@@ -155,7 +158,7 @@ int main(int argc, char ** argv) {
     std::cerr << "Problem with output file opening\n";
     if (mode == 2) {
       free(nums);
-    };
+    }
     return 1;
   }
 
@@ -165,6 +168,6 @@ int main(int argc, char ** argv) {
 
   if (mode == 2) {
     free(nums);
-  };
+  }
   return 0;
 }
