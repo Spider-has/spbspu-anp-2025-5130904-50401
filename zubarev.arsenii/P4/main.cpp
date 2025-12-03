@@ -91,13 +91,13 @@ char* zubarev::getline(std::istream& in, size_t& s)
     in >> std::noskipws;
   }
 
-  in >> let;
+
   while (let != '\n') {
-    if (!in) {
+    in >> let;
+    if (!in && s==0) {
       return nullptr;
     }
     pushOneEl(&data, s, let);
-    in >> let;
   }
 
   pushOneEl(&data, s, '\0');
