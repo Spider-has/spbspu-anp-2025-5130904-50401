@@ -21,6 +21,7 @@ int main()
     delete[] str;
     return 1;
   }
+
   char* buffer = nullptr;
   try {
      buffer = new char[size]{};
