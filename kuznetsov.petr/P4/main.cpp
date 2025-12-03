@@ -61,6 +61,7 @@ char* kuznetsov::getLine(std::istream& in, size_t& size)
     }
     ++i;
   }
+  size = i;
   buff[i] = '\0';
   if (is_skinws) {
     in >> std::skipws;
