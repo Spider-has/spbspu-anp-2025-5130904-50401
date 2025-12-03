@@ -62,22 +62,20 @@ void zubarev::pushOneEl(char** arr, size_t& size, char value)
 {
   char* newArr = nullptr;
   try {
-    newArr = new char[(value == '\0' ? size : size + 1)];
+    newArr = new char[size + 1];
   } catch (const std::bad_alloc&) {
     std::cerr << "Memory allocation failed for square matrix\n";
   }
   for (size_t i = 0; i < size; i++) {
     newArr[i] = (*arr)[i];
   }
-  if (value != '\0') {
-    newArr[size] = value;
-  }
-
+  newArr[size] = value;
   delete[] *arr;
   *arr = newArr;
-  if (value != '\0') {
-    size++;
+  if (value=='\n') {
+    size = size + 1;
   }
+
 
 }
 
