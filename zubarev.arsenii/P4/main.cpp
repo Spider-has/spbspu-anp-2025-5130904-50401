@@ -9,11 +9,8 @@ namespace zubarev
   char* getline(std::istream& in, size_t& s);
   std::ostream& outputMatrix(std::ostream& out, const char* const str, const size_t size);
   size_t strlen(const char* s);
-  int inputSpliceStr(const char* const mainStr, size_t mainSize);
   bool inStr(const char* const str, const size_t size, const char let);
-  int inputSpliceStr(const char* mainStr, size_t mainSize);
-  int solveSpliceStr(const char* mainStr, size_t mainSize, char* finalStr);
-  // int inputUniInAlp(const char* const mainStr, size_t mainSize);
+  int solveSpliceStr(const char* mainStr, const char* secondStr, char* finalStr);
   int solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf);
 }
 
@@ -28,7 +25,7 @@ int main()
   }
 
   const char* secondStr = "def_";
-  size_t secondSize = strlen(secondStr);
+  size_t secondSize = zub::strlen(secondStr);
 
   size_t finalSize = secondSize + mainSize;
   char* finalStr = nullptr;
@@ -39,25 +36,23 @@ int main()
     std::cerr << "Memory allocation failed for square matrix\n";
     return 1;
   }
-  zub::solveSpliceStr(mainStr, mainSize, finalStr);
+  zub::solveSpliceStr(mainStr, secondStr, finalStr);
   zub::outputMatrix(std::cout, finalStr, finalSize);
   delete[] finalStr;
-  // zub::inputSpliceStr(mainStr, mainSize);
-  // zub::inputUniInAlp(mainStr, mainSize);
+
 
   size_t itogSize = 0;
   char* itogStr = nullptr;
   try {
     itogSize = 26;
     itogStr = new char[itogSize + 1];
-
   } catch (const std::bad_alloc&) {
     std::cerr << "Memory allocation failed for square matrix\n";
     return 1;
   }
 
   zub::solveUniInAlp(mainStr, mainSize, itogStr);
-  zub::outputMatrix(std::cout, itogStr, strlen(itogStr));
+  zub::outputMatrix(std::cout, itogStr, zub::strlen(itogStr));
   delete[] itogStr;
 
   delete[] mainStr;
@@ -132,30 +127,11 @@ size_t zubarev::strlen(const char* s)
   return len;
 }
 
-// int zubarev::inputSpliceStr(const char* mainStr, size_t mainSize)
-// {
-//   const char* secondStr = "def_";
-//   size_t secondSize = strlen(secondStr);
 
-//   size_t finalSize = secondSize + mainSize;
-//   char* finalStr = nullptr;
-
-//   try {
-//     finalStr = new char[finalSize + 1];
-//   } catch (const std::bad_alloc&) {
-//     std::cerr << "Memory allocation failed for square matrix\n";
-//     return 1;
-//   }
-//   solveSpliceStr(mainStr, mainSize, finalStr);
-//   outputMatrix(std::cout, finalStr, finalSize);
-//   delete[] finalStr;
-//   return 0;
-// }
-
-int zubarev::solveSpliceStr(const char* mainStr, size_t mainSize, char* finalStr)
+int zubarev::solveSpliceStr(const char* mainStr, const char* secondStr, char* finalStr)
 {
-  const char* secondStr = "def_";
-  size_t secondSize = strlen(secondStr);
+  size_t secondSize = zubarev::strlen(secondStr);
+  size_t mainSize = zubarev::strlen(mainStr);
 
   size_t countMain = 0, countSecond = 0;
 
@@ -183,29 +159,12 @@ bool zubarev::inStr(const char* const str, const size_t size, const char let)
   }
   return false;
 }
-// int zubarev::inputUniInAlp(const char* const mainStr, size_t mainSize)
-// {
-//   size_t itogSize = 0;
-//   char* itogStr = nullptr;
-//   try {
-//     itogSize = 26;
-//     itogStr = new char[itogSize + 1];
 
-//   } catch (const std::bad_alloc&) {
-//     std::cerr << "Memory allocation failed for square matrix\n";
-//     return 1;
-//   }
-
-//   solveUniInAlp(mainStr, mainSize, itogStr);
-//   outputMatrix(std::cout, itogStr, strlen(itogStr));
-//   delete[] itogStr;
-//   return 0;
-// }
 
 int zubarev::solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf)
 {
   const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
-  const size_t alpSize = strlen(alphabet);
+  const size_t alpSize = zubarev::strlen(alphabet);
 
   for (const char* i = alphabet; i < alphabet + alpSize; ++i) {
     if (!(inStr(mainStr, mainSize, *i))) {
