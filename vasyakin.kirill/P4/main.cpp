@@ -10,8 +10,8 @@ namespace vasyakin
   size_t stringLength(const char* str);
   void cutLetters(const char* str, char* str1);
   void excludeCharsFromSecond(const char* str1, const char* str2, char* result);
-  size_t extend(char*& a, size_t k, size_t k1);
-  size_t getline(std::istream& input, size_t& k, char*& str);
+  char* extend(char* a, size_t k, size_t k1);
+  char* getline(std::istream& input);
   const size_t MAX = std::numeric_limits< size_t >::max();
 }
 size_t vasyakin::stringLength(const char* str)
@@ -21,32 +21,32 @@ size_t vasyakin::stringLength(const char* str)
   {
     count++;
   }
-  return count + 1;
+  return count;
 }
-size_t vasyakin::extend(char*& a, size_t k, size_t k1)
+char* vasyakin::extend(char* a, size_t k, size_t k1)
 {
   char* new_arr = reinterpret_cast< char* >(malloc(sizeof(char) * k1));
   if (new_arr == nullptr)
   {
-    return 1;
+    free(a);
+    return nullptr;
   }
   for (size_t i = 0; i < k; ++i)
   {
     new_arr[i] = a[i];
   }
   free(a);
-  a = new_arr;
-  return 0;
+  return new_arr;
 }
-size_t vasyakin::getline(std::istream& input, size_t& k, char*& str)
+char* vasyakin::getline(std::istream& input)
 {
-  str = reinterpret_cast< char* >(malloc(sizeof(char)));
+  char* str = reinterpret_cast< char* >(malloc(sizeof(char)));
   if (str == nullptr)
   {
-    return 1;
+    return nullptr;
   }
   str[0] = '\0';
-  k = 0;
+  size_t len = 0;
   bool is_skipws = input.flags() & std::ios_base::skipws;
   if (is_skipws)
   {
@@ -55,31 +55,34 @@ size_t vasyakin::getline(std::istream& input, size_t& k, char*& str)
   char i = 0;
   while (input >> i && i != '\n')
   {
-    if (k + 1 > vasyakin::MAX - 1)
+    if (len + 1 > vasyakin::MAX - 1)
     {
-      return 2;
+      free(str);
+      return nullptr;
     }
-    size_t check = extend(str, k, k + 2);
-    if (check == 1)
+    char* new_str = vasyakin::extend(str, len, len + 2);
+    if (new_str == nullptr)
     {
-      return 1;
+      free(str);
+      return nullptr;
     }
-    str[k] = i;
-    str[k + 1] = '\0';
-    ++k;
+    str = new_str;
+    str[len] = i;
+    str[len + 1] = '\0';
+    ++len;
   }
   if (is_skipws)
   {
     input >> std::skipws;
   }
-  return 0;
+  return str;
 }
 void vasyakin::cutLetters(const char* str, char* str1)
-{
+{ 
   size_t j = 0;
   for (size_t i = 0; str[i] != '\0'; ++i)
   {
-    if (!std::isalpha(static_cast< unsigned char >(str[i])))
+    if (!std::isalpha(str[i]))
     {
       str1[j] = str[i];
       j++;
@@ -111,19 +114,11 @@ void vasyakin::excludeCharsFromSecond(const char* str1, const char* str2, char* 
 }
 int main()
 {
-  size_t k = 0;
-  char * str = nullptr;
-  size_t check = vasyakin::getline(std::cin, k, str);
-  if (check == 1)
+  char* str = vasyakin::getline(std::cin);
+  if (str == nullptr)
   {
-    std::cerr << "Memory allocation failed" << '\n';
+    std::cerr << "Memory allocation failed or overflow error" << '\n';
     return 1;
-  }
-  else if (check == 2)
-  {
-    std::cerr << "Overflow error" << '\n';
-    free(str);
-    return 2;
   }
   if (std::cin.fail() && !std::cin.eof())
   {
@@ -138,8 +133,8 @@ int main()
     return 1;
   }
   size_t str_len = vasyakin::stringLength(str);
-  char* result1 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
-  char* result2 = reinterpret_cast< char* >(malloc(sizeof(char) * str_len));
+  char* result1 = reinterpret_cast< char* >(malloc(sizeof(char) * (str_len + 1)));
+  char* result2 = reinterpret_cast< char* >(malloc(sizeof(char) * (str_len + 1)));
   if (!result1 || !result2)
   {
     std::cerr << "Memory allocation failed" << '\n';
