@@ -80,7 +80,7 @@ void chernov::latRmv(char * new_str, const char * old_str, size_t old_size)
 
 int main()
 {
-  std::istream& input = std::cin;
+  std::istream & input = std::cin;
   size_t size = 0, step_size = 10;
   char * str = nullptr;
   try {
