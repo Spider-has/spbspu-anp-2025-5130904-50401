@@ -92,7 +92,7 @@ char* zubarev::getline(std::istream& in, size_t& s)
   }
 
   in >> let;
-  while (let == '\n') {
+  while (let != '\n') {
     if (!in) {
       return nullptr;
     }
@@ -138,13 +138,14 @@ int zubarev::solveSpliceStr(const char* mainStr, const char* secondStr, char* fi
   while (countMain < mainSize || countSecond < secondSize) {
     if (countMain < mainSize) {
       *(finalStr++) = *(mainStr++);
+      countMain++;
     }
-    countMain++;
 
     if (countSecond < secondSize) {
       *(finalStr++) = *(secondStr++);
+      countSecond++;
     }
-    countSecond++;
+
   }
   *finalStr = '\0';
   return 0;
