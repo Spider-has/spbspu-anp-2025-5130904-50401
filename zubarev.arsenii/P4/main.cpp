@@ -81,31 +81,56 @@ void zubarev::pushOneEl(char** arr, size_t& size, char value)
 
 }
 
+// char* zubarev::getline(std::istream& in, size_t& s)
+// {
+//   char let=' ';
+//   char* data = nullptr;
+
+//   bool is_skipws = in.flags() & std::ios_base::skipws;
+//   if (is_skipws) {
+//     in >> std::noskipws;
+//   }
+
+
+//   while (let != '\n') {
+//     in >> let;
+//     if (!in && s==0) {
+//       return nullptr;
+//     }
+//     pushOneEl(&data, s, let);
+//   }
+
+//   pushOneEl(&data, s, '\0');
+
+//   if (is_skipws) {
+//     in >> std::skipws;
+//   }
+
+//   return data;
+// }
 char* zubarev::getline(std::istream& in, size_t& s)
 {
-  char let=' ';
+  char let;
   char* data = nullptr;
-
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
     in >> std::noskipws;
   }
-
-
-  while (let != '\n') {
+  while (true) {
     in >> let;
-    if (!in && s==0) {
+    if (!in) {
       return nullptr;
+    }
+    if (let == '\n') {
+      break;
     }
     pushOneEl(&data, s, let);
   }
-
-  pushOneEl(&data, s, '\0');
-
+  let = '\0';
+  pushOneEl(&data, s, let);
   if (is_skipws) {
     in >> std::skipws;
   }
-
   return data;
 }
 
