@@ -4,7 +4,7 @@
 
 
 namespace kuznetsov {
-  char* getLine(std::istream& in, size_t& size);
+  char* getLine(std::istream& in, size_t& i);
   void extend(char** str, size_t oldSize, size_t newSize);
   void removeVow(char* buff, const char* str);
   int checkSeqSym(const char* str);
@@ -43,26 +43,26 @@ int main()
 char* kuznetsov::getLine(std::istream& in, size_t& size)
 {
   char* buff = new char[8];
-  size = 8;
+  size_t i = 8;
+  size_t s = 0;
   bool is_skinws = in.flags() & std::ios::skipws;
   if (is_skinws) {
     in >> std::noskipws;
   }
-  size_t i = 0;
-  while (in >> buff[i] && buff[i] != '\n') {
-    if (i + 4 >= size) {
+  while (in >> buff[s] && buff[s] != '\n') {
+    if (s + 4 >= i) {
       try {
-        extend(&buff, size, size + 8);
+        extend(&buff, i, i + 8);
       } catch (const std::bad_alloc&) {
         delete[] buff;
         throw;
       }
-      size += 8;
+      i += 8;
     }
-    ++i;
+    ++s;
   }
-  size = i;
-  buff[i] = '\0';
+  size = s;
+  buff[s] = '\0';
   if (is_skinws) {
     in >> std::skipws;
   }
