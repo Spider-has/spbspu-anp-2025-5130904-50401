@@ -15,14 +15,10 @@ int main()
   namespace kuz = kuznetsov;
   size_t size = 0;
   char* str = nullptr;
-  try {
-    str = kuz::getLine(std::cin, size);
-    if (!std::cin) {
-      delete[] str;
-      return 1;
-    }
-  } catch (const std::bad_alloc& e){
-    std::cerr << "Bad alloc " << e.what() << '\n';
+
+  str = kuz::getLine(std::cin, size);
+  if (!std::cin) {
+    delete[] str;
     return 1;
   }
   char* buffer = nullptr;
