@@ -78,7 +78,7 @@ char* vasyakin::getline(std::istream& input)
   return str;
 }
 void vasyakin::cutLetters(const char* str, char* str1)
-{ 
+{
   size_t j = 0;
   for (size_t i = 0; str[i] != '\0'; ++i)
   {
