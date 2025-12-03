@@ -55,6 +55,7 @@ int main()
   zub::outputMatrix(std::cout, itogStr, zub::strlen(itogStr));
   delete[] itogStr;
 
+
   delete[] mainStr;
 }
 
@@ -69,14 +70,13 @@ void zubarev::pushOneEl(char** arr, size_t& size, char value)
   for (size_t i = 0; i < size; i++) {
     newArr[i] = (*arr)[i];
   }
+
   newArr[size] = value;
   delete[] *arr;
   *arr = newArr;
   if (value=='\n') {
     size = size + 1;
   }
-
-
 }
 
 char* zubarev::getline(std::istream& in, size_t& s)
@@ -97,7 +97,6 @@ char* zubarev::getline(std::istream& in, size_t& s)
     pushOneEl(&data, s, let);
     in >> let;
   }
-
   pushOneEl(&data, s, '\0');
 
   if (is_skipws) {
@@ -144,7 +143,6 @@ int zubarev::solveSpliceStr(const char* mainStr, const char* secondStr, char* fi
       *(finalStr++) = *(secondStr++);
       countSecond++;
     }
-
   }
   *finalStr = '\0';
   return 0;
