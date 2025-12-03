@@ -4,9 +4,9 @@
 
 namespace zharov
 {
-  char ** splitLine(char * str, const char sep, size_t size, size_t step, size_t & len);
+  char ** splitLine(char * str, size_t & len);
   void extendArr(char *** str, size_t old_size, size_t new_size);
-  char * getLine(std::istream & in, size_t size, size_t step, size_t & len, const char end);
+  char * getLine(std::istream & in, size_t & len);
   void extendStr(char ** str, size_t old_size, size_t new_size);
   char * getLatRmv(const char * str, char * res);
   char * getShtSym(const char * str, char * res);
@@ -15,13 +15,10 @@ namespace zharov
 
 int main()
 {
-  size_t size = 10;
-  size_t step = 5;
   size_t len = 0;
-  const char end = '\n';
   char * str = nullptr;
   try {
-    str = zharov::getLine(std::cin, size, step, len, end);
+    str = zharov::getLine(std::cin, len);
     if (std::cin.fail()) {
       std::cerr << "Bad enter\n";
       delete[] str;
@@ -34,9 +31,8 @@ int main()
 
   char ** arr_str = nullptr;
   size_t len_arr = 0;
-  const char sep = ' ';
   try {
-    arr_str = zharov::splitLine(str, sep, size, step, len_arr);
+    arr_str = zharov::splitLine(str, len_arr);
   } catch (const std::bad_alloc &) {
     delete[] str;
     std::cerr << "Bad alloc\n";
@@ -110,8 +106,11 @@ void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
   *arr_str = new_arr;
 }
 
-char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
+char ** zharov::splitLine(char * str, size_t & len)
 {
+  char sep = ' ';
+  size_t size = 10;
+  size_t step = 5;
   char ** arr_str = new char * [size];
   bool is_last_sep = true;
   size_t i = 0;
@@ -167,8 +166,11 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
   return arr_str;
 }
 
-char * zharov::getLine(std::istream & in, size_t size, size_t step, size_t & len, char end)
+char * zharov::getLine(std::istream & in, size_t & len)
 {
+  size_t size = 10;
+  size_t step = 5;
+  char end = '\n';
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
     in >> std::noskipws;
