@@ -91,7 +91,7 @@ char* zubarev::getline(std::istream& in, size_t& s)
     in >> std::noskipws;
   }
 
-
+  in >> let;
   while (let == '\n') {
     if (!in) {
       return nullptr;
