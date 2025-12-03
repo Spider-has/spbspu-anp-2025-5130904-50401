@@ -52,11 +52,11 @@ char* kuznetsov::getLine(std::istream& in, size_t& size)
     in >> std::noskipws;
   }
   size_t i = 0;
-  while ( in >> buff[i] && buff[i] != '\n') {
+  while (in >> buff[i] && buff[i] != '\n') {
     if (i + 4 >= size) {
       try {
-        extend(&buff, size, size+8);
-      } catch (const std::bad_alloc& e) {
+        extend(&buff, size, size + 8);
+      } catch (const std::bad_alloc&) {
         delete[] buff;
         throw;
       }
