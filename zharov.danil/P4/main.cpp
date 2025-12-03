@@ -52,7 +52,7 @@ int main()
     char * res_1 = nullptr;
     try {
       res_1 = new char[c + 1];
-    } catch(const std::bad_alloc &) {
+    } catch (const std::bad_alloc &) {
       delete[] str;
       zharov::destroyArr(arr_str, len_arr);
       std::cerr << "Bad alloc\n";
@@ -94,20 +94,20 @@ void zharov::extendStr(char ** str, size_t old_size, size_t new_size)
 {
   char * new_str = new char[new_size];
   for (size_t i = 0; i < old_size; ++i) {
-    new_str[i] = (* str)[i];
+    new_str[i] = (*str)[i];
   }
-  delete[] * str;
-  * str = new_str;
+  delete[] *str;
+  *str = new_str;
 }
 
 void zharov::extendArr(char *** arr_str, size_t old_size, size_t new_size)
 {
   char ** new_arr = new char * [new_size];
   for (size_t i = 0; i < old_size; ++i) {
-    new_arr[i] = (* arr_str)[i];
+    new_arr[i] = (*arr_str)[i];
   }
-  delete[] * arr_str;
-  * arr_str = new_arr;
+  delete[] *arr_str;
+  *arr_str = new_arr;
 }
 
 char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, size_t & len)
@@ -119,7 +119,7 @@ char ** zharov::splitLine(char * str, const char sep, size_t size, size_t step, 
   for (; str[i] != '\0'; ++i) {
     if (len == size) {
       try {
-        zharov::extendArr(& arr_str, size, size + step);
+        zharov::extendArr(&arr_str, size, size + step);
       } catch (const std::bad_alloc &) {
         zharov::destroyArr(arr_str, len);
         throw;
