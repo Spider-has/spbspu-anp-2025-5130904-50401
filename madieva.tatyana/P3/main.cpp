@@ -3,11 +3,6 @@
 #include <cctype>
 namespace madieva
 {
-  void freeArray(int * array, char number) {
-    if (number == '2') {
-      delete[] array;
-    }
-  }
   std::ifstream & readMatrix(std::ifstream & input, size_t rows, size_t cols, int * array)
   {
     for (size_t i = 0; i < rows * cols; i++) {
@@ -18,7 +13,8 @@ namespace madieva
     }
     return input;
   }
-  void changeInSpiral(int * matrix, size_t rows, size_t cols) {
+  void changeInSpiral(int * matrix, size_t rows, size_t cols)
+  {
     size_t top = 0;
     size_t left = 0;
     size_t bottom = rows - 1;
@@ -57,14 +53,16 @@ namespace madieva
       bottom--;
     }
   }
-  void writeMatrix(std::ofstream & output, size_t rows, size_t cols, const int * array) {
+  void writeMatrix(std::ofstream & output, size_t rows, size_t cols, const int * array)
+  {
     output << rows << " " << cols;
     for (size_t i = 0; i < rows * cols; ++i) {
       output << " " << array[i];
     }
     output << "\n";
   }
-  int differentElementInCols(const int * array, size_t rows, size_t cols) {
+  int differentElementInCols(const int * array, size_t rows, size_t cols)
+  {
     size_t counter = 0;
     size_t repeat = 0;
     for(size_t i = 0; i < cols; i++) {
@@ -95,7 +93,7 @@ int main(int argc, char ** argv)
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  if (argv[1][0] != '1' && argv[1][0] != '2') {
+  if (argv[1][1] = '\0' || (argv[1][0] != '1' && argv[1][0] != '2')) {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
@@ -130,7 +128,9 @@ int main(int argc, char ** argv)
       matrix = array;
       if (!madieva::readMatrix(input, rows, cols, matrix)) {
         std::cerr << "Error reading matrix\n";
-        madieva::freeArray(matrix, arg[0]);
+        if (arg[0] == '0') {
+          delete[] matrix;
+        }
         return 2;
       }
       input.close();
@@ -139,12 +139,16 @@ int main(int argc, char ** argv)
       std::ofstream output(outputFile);
       if (!output.is_open()) {
         std::cerr << "Error opening output file\n";
-        madieva::freeArray(matrix, arg[0]);
+        if (arg[0] == '0') {
+          delete[] matrix;
+        }
         return 2;
       }
       madieva::writeMatrix(output, rows, cols, matrix);
       output << quantity << "\n";
-      madieva::freeArray(matrix, arg[0]);
+      if (arg[0] == '0') {
+        delete[] matrix;
+      }
       return 0;
     } else {
       int * array = new int[rows * cols];
@@ -156,7 +160,9 @@ int main(int argc, char ** argv)
   }
   if (!madieva::readMatrix(input, rows, cols, matrix)) {
     std::cerr << "Error reading matrix\n";
-    madieva::freeArray(matrix, arg[0]);
+    if (arg[0] == '0') {
+      delete[] matrix;
+    }
     return 2;
   }
   input.close();
@@ -165,11 +171,15 @@ int main(int argc, char ** argv)
   std::ofstream output(outputFile);
   if (!output.is_open()) {
     std::cerr << "Error opening output file\n";
-    madieva::freeArray(matrix, arg[0]);
+    if (arg[0] == '0') {
+      delete[] matrix;
+    }
     return 2;
   }
   madieva::writeMatrix(output, rows, cols, matrix);
   output << quantity << "\n";
-  madieva::freeArray(matrix, arg[0]);
+  if (arg[0] == '0') {
+    delete[] matrix;
+  }
   return 0;
 }
