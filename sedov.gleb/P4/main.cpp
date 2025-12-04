@@ -7,7 +7,7 @@
 namespace sedov
 {
   char * extend(char * a, size_t k, size_t d);
-  char * getline(std::istream & in, size_t & s);
+  char * getline(std::istream & in, size_t & s, size_t & st);
   size_t getDifLat(const char * a, size_t s);
   size_t getCountOfVowels(const char * a, size_t s);
   void getRmvVow(const char * a, size_t s, char * str);
@@ -15,18 +15,17 @@ namespace sedov
 
 int main()
 {
-  size_t size = 0;
-  char * str1 = sedov::getline(std::cin, size);
+  size_t size = 0, st = 0;
+  char * str1 = sedov::getline(std::cin, size, st);
   if (str1 == nullptr)
   {
+    if (st)
+    {
+      std::cerr << "Error, end of file\n";
+      return 2;
+    }
     std::cerr << "Bad alloc\n";
     return 1;
-  }
-  if (std::cin.eof())
-  {
-    std::cerr << "Error, end of file\n";
-    free(str1);
-    return 2;
   }
   size_t res1 = sedov::getDifLat(str1, size);
   size_t countOfVowels = sedov::getCountOfVowels(str1, size);
@@ -54,12 +53,11 @@ char * sedov::extend(char * a, size_t k, size_t d)
     {
       newArray[i] = a[i];
     }
-    free(a);
   }
   return newArray;
 }
 
-char * sedov::getline(std::istream & in, size_t & s)
+char * sedov::getline(std::istream & in, size_t & s, size_t & st)
 {
   char * str = reinterpret_cast< char * >(malloc(sizeof(char)));
   if (str == nullptr)
@@ -76,18 +74,26 @@ char * sedov::getline(std::istream & in, size_t & s)
   char t = 0;
   while (in >> t && t != '\n')
   {
-    str = extend(str, s, s + 2);
-    if (str == nullptr)
+    char * str1 = extend(str, s, s + 2);
+    if (str1 == nullptr)
     {
       if (isSkipWs)
       {
         in >> std::skipws;
       }
-      return str;
+      return str1;
     }
+    free(str);
+    str = str1;
     str[s] = t;
     str[s + 1] = '\0';
     ++s;
+  }
+  if (in.eof())
+  {
+    st = 1;
+    free(str);
+    return nullptr;
   }
   if (isSkipWs)
   {
