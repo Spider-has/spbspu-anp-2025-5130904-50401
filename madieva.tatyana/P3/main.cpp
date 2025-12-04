@@ -3,6 +3,11 @@
 #include <cctype>
 namespace madieva
 {
+  int * createArray(char number, size_t rows, size_t cols) {
+    if (number == '2') {
+      return new int[rows * cols];
+    }
+  }
   std::ifstream & readMatrix(std::ifstream & input, size_t rows, size_t cols, int * array)
   {
     for (size_t i = 0; i < rows * cols; i++) {
@@ -127,8 +132,7 @@ int main(int argc, char ** argv)
     if (arg[0] == '1' && rows * cols < max_size) {
       matrix = array;
     } else {
-      int * array = new int[rows * cols];
-      matrix = array;
+      matrix = madieva::createArray(arg[0], rows, cols);
     }
   } catch (const std::bad_alloc & e) {
     std::cerr << "Out of memory\n";
@@ -136,7 +140,7 @@ int main(int argc, char ** argv)
   }
   if (!madieva::readMatrix(input, rows, cols, matrix)) {
     std::cerr << "Error reading matrix\n";
-    if (arg[0] == '0') {
+    if (arg[0] == '2') {
       delete[] matrix;
     }
     return 2;
@@ -147,14 +151,14 @@ int main(int argc, char ** argv)
   std::ofstream output(outputFile);
   if (!output.is_open()) {
     std::cerr << "Error opening output file\n";
-    if (arg[0] == '0') {
+    if (arg[0] == '2') {
       delete[] matrix;
     }
     return 2;
   }
   madieva::writeMatrix(output, rows, cols, matrix);
   output << quantity << "\n";
-  if (arg[0] == '0') {
+  if (arg[0] == '2') {
     delete[] matrix;
   }
   return 0;
