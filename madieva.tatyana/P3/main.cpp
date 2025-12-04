@@ -122,34 +122,10 @@ int main(int argc, char ** argv)
   }
   int * matrix = nullptr;
   const int max_size = 10000;
+  int array[max_size] = {};
   try {
     if (arg[0] == '1' && rows * cols < max_size) {
-      int array[max_size] = {};
       matrix = array;
-      if (!madieva::readMatrix(input, rows, cols, matrix)) {
-        std::cerr << "Error reading matrix\n";
-        if (arg[0] == '0') {
-          delete[] matrix;
-        }
-        return 2;
-      }
-      input.close();
-      size_t quantity = madieva::differentElementInCols(matrix, rows, cols);
-      madieva::changeInSpiral(matrix, rows, cols);
-      std::ofstream output(outputFile);
-      if (!output.is_open()) {
-        std::cerr << "Error opening output file\n";
-        if (arg[0] == '0') {
-          delete[] matrix;
-        }
-        return 2;
-      }
-      madieva::writeMatrix(output, rows, cols, matrix);
-      output << quantity << "\n";
-      if (arg[0] == '0') {
-        delete[] matrix;
-      }
-      return 0;
     } else {
       int * array = new int[rows * cols];
       matrix = array;
