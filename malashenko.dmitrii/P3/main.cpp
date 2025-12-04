@@ -5,35 +5,33 @@
 
 namespace malasenko {
 
-std::ostream & outMtx(std::ostream & out,
-                      const int * matrix,
-                      size_t rows,
-                      size_t cols) {
+  std::ostream & outMtx(std::ostream & out, const int * matrix, size_t rows, size_t cols)
+  {
     for (size_t i = 0; i < rows * cols; ++i) {
         out << matrix[i];
         if (i != rows * cols - 1) {
             out << " ";
         }
-      }
+    }
     return out;
   }
 
-  int * createMtx(size_t rows, size_t cols) {
+  int * createMtx(size_t rows, size_t cols)
+  {
     int * nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
     return nums;
   }
 
-  std::istream & readMtx(std::istream & in,
-                         int * nums,
-                         size_t & rows,
-                         size_t & cols) {
+  std::istream & readMtx(std::istream & in, int * nums, size_t & rows, size_t & cols)
+  {
     for (size_t i = 0; i < rows * cols; ++i) {
       in >> nums[i];
     }
     return in;
   }
 
-  int cntLocMax(int * mtx, size_t rows, size_t cols) {
+  int cntLocMax(int * mtx, size_t rows, size_t cols)
+  {
     if (rows <= 2 || cols <= 2) {
       return 0;
     }
@@ -57,7 +55,8 @@ std::ostream & outMtx(std::ostream & out,
     return res;
   }
 
-  void lftBotClk(int * mtx, size_t rows, size_t cols) {
+  void lftBotClk(int * mtx, size_t rows, size_t cols)
+  {
     if (cols <= 0 || rows <= 0) {
       return;
     }
@@ -95,7 +94,8 @@ std::ostream & outMtx(std::ostream & out,
 }
 
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
   if (argc < 4) {
     std::cerr << "Not enough arguments\n";
     return 1;
