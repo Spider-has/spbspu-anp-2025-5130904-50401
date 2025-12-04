@@ -7,6 +7,7 @@ namespace madieva
     if (number == '2') {
       return new int[rows * cols];
     }
+    return nullptr;
   }
   std::ifstream & readMatrix(std::ifstream & input, size_t rows, size_t cols, int * array)
   {
