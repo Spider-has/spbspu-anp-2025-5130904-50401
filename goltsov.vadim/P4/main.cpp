@@ -149,7 +149,7 @@ void goltsov::spcRmv(char* str, size_t size, char* new_str, size_t& new_size)
   ++i;
   ++j;
 
-  for (; i + 1 < size; ++i)
+  for (; i < size; ++i)
   {
     if (!(str[i] == ' ' && new_str[j - 1] == ' '))
     {
@@ -163,7 +163,7 @@ void goltsov::spcRmv(char* str, size_t size, char* new_str, size_t& new_size)
   }
   new_str[j] = '\0';
 
-  new_size = j - 1;
+  new_size = j;
 }
 
 int goltsov::hasSam(char* el1, char* el2, size_t size)
