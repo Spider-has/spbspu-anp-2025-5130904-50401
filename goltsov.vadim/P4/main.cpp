@@ -60,7 +60,7 @@ int main()
     return 1;
   }
 
-  goltsov::makeNormal(new_str, new_size, new0_str);
+  goltsov::makeNormal(new_str, new_size + 1, new0_str);
 
   char my_str[4] = "abs";
   size_t my_size = 3;
@@ -71,6 +71,7 @@ int main()
   std::cout << "Expects output (return 0): " << new_str << '\n';
 
   delete[] str;
+  delete[] new0_str;
   delete[] new_str;
 
   return 0;
@@ -187,5 +188,4 @@ void goltsov::makeNormal(char* normal, size_t normal_size, char* abnormal)
   {
     normal[i] = abnormal[i];
   }
-  delete[] abnormal;
 }
