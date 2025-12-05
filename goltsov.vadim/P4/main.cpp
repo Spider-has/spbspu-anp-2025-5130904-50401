@@ -3,12 +3,13 @@
 
 namespace goltsov
 {
-  void increase_size(char** str, size_t& size);
-  void reduce_size(char** str, size_t& size);
-  void getline(std::istream& in, char** str, size_t& size);
-  char* SPC_RMV(char* str, size_t size, size_t& new_size);
-  void getstr(std::istream& in, char** str, size_t& size);
-  int HAS_SAM(char* el1, char* el2, size_t size);
+  void increaseSize(char** str, size_t& size);
+  void reduceSize(char** str, size_t& size);
+  void getLine(std::istream& in, char** str, size_t& size);
+  void spcRmv(char* str, size_t size, char* new_str, size_t& new_size);
+  void getStr(std::istream& in, char** str, size_t& size);
+  int hasSam(char* el1, char* el2, size_t size);
+  void makeNormal(char* normal, size_t normal_size, char* abnormal, size_t abnormal_size);
 }
 
 int main()
@@ -17,15 +18,13 @@ int main()
   size_t size = 0;
   try
   {
-    goltsov::increase_size(& str, size);
+    goltsov::getLine(std::cin, & str, size);
   }
-  catch(const std::bad_alloc &e)
+  catch (const std::bad_alloc& e)
   {
     delete[] str;
     return 1;
   }
-
-  goltsov::getline(std::cin, & str, size);
 
   if (std::cin.eof())
   {
@@ -34,12 +33,39 @@ int main()
   }
 
   size_t new_size = 0;
-  char* new_str = goltsov::SPC_RMV(str, size, new_size);
+  char* new0_str = nullptr;
+  try
+  {
+    new0_str = new char[size];
+  }
+  catch (const std::bad_alloc& e)
+  {
+    delete[] str;
+    delete[] new0_str;
+    return 1;
+  }
+
+  goltsov::spcRmv(str, size, new0_str, new_size);
+
+  char* new_str = nullptr;
+  try
+  {
+    new_str = new char[new_size + 1];
+  }
+  catch (const std::bad_alloc& e)
+  {
+    delete[] str;
+    delete[] new0_str;
+    delete[] new_str;
+    return 1;
+  }
+
+  goltsov::makeNormal(new_str, new_size, new0_str, size);
 
   char my_str[4] = "abs";
-  size_t my_size = 4;
+  size_t my_size = 3;
 
-  int has_sam = goltsov::HAS_SAM(str, my_str, (size < my_size ? size : my_size));
+  int has_sam = goltsov::hasSam(str, my_str, (size < my_size ? size : my_size));
 
   std::cout << "Expects output (return 0) with second string " << "\"" << my_str << "\"" << ": " << has_sam << '\n';
   std::cout << "Expects output (return 0): " << new_str << '\n';
@@ -50,7 +76,7 @@ int main()
   return 0;
 }
 
-void goltsov::increase_size(char** str, size_t& size)
+void goltsov::increaseSize(char** str, size_t& size)
 {
   ++size;
   char* new_str = new char[size];
@@ -62,7 +88,7 @@ void goltsov::increase_size(char** str, size_t& size)
   * str = new_str;
 }
 
-void goltsov::reduce_size(char** str, size_t& size)
+void goltsov::reduceSize(char** str, size_t& size)
 {
   --size;
   char* new_str = new char[size];
@@ -74,7 +100,7 @@ void goltsov::reduce_size(char** str, size_t& size)
   * str = new_str;
 }
 
-void goltsov::getline(std::istream& in, char** str, size_t& size)
+void goltsov::getLine(std::istream& in, char** str, size_t& size)
 {
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws)
@@ -82,11 +108,13 @@ void goltsov::getline(std::istream& in, char** str, size_t& size)
     in >> std::noskipws;
   }
 
+  goltsov::increaseSize(str, size);
+
   char a = '\0';
   while (std::cin >> a && a != '\n')
   {
-    str[0][size-1] = a;
-    goltsov::increase_size(str, size);
+    str[0][size - 1] = a;
+    goltsov::increaseSize(str, size);
   }
 
   if (in.eof())
@@ -94,7 +122,9 @@ void goltsov::getline(std::istream& in, char** str, size_t& size)
     return;
   }
 
-  str[0][size-1] = '\0';
+  str[0][size - 1] = '\0';
+
+  --size;
 
   if (is_skipws)
   {
@@ -102,47 +132,45 @@ void goltsov::getline(std::istream& in, char** str, size_t& size)
   }
 }
 
-char* goltsov::SPC_RMV(char* str, size_t size, size_t& new_size)
+void goltsov::spcRmv(char* str, size_t size, char* new_str, size_t& new_size)
 {
-  char* new_str = nullptr;
-  increase_size(& new_str, new_size);
-
   size_t i = 0;
+  size_t j = 0;
   while (str[i] == ' ')
   {
     ++i;
   }
   if (str[i] == '\0')
   {
-    new_str[new_size - 1] = '\0';
-    return new_str;
+    new_str[j] = '\0';
+    return;
   }
-  new_str[new_size - 1] = str[i];
-  increase_size(& new_str, new_size);
+  new_str[j] = str[i];
   ++i;
+  ++j;
 
   for (; i + 1 < size; ++i)
   {
-    if (!(str[i] == ' ' && new_str[new_size - 2] == ' '))
+    if (!(str[i] == ' ' && new_str[j - 1] == ' '))
     {
-      new_str[new_size - 1] = str[i];
-      increase_size(& new_str, new_size);
+      new_str[j] = str[i];
+      ++j;
     }
   }
-  if (new_str[new_size - 2] == ' ')
+  if (new_str[j - 1] == ' ')
   {
-    reduce_size(& new_str, new_size);
+    --j;
   }
-  new_str[new_size - 1] = '\0';
+  new_str[j] = '\0';
 
-  return new_str;
+  new_size = j - 1;
 }
 
-int goltsov::HAS_SAM(char* el1, char* el2, size_t size)
+int goltsov::hasSam(char* el1, char* el2, size_t size)
 {
-  for (size_t i = 0; i + 1 < size; ++i)
+  for (size_t i = 0; i < size; ++i)
   {
-    for (size_t j = 0; j+1 < size; ++j)
+    for (size_t j = 0; j < size; ++j)
     {
       if (el1[i] == el2[j])
       {
@@ -151,4 +179,13 @@ int goltsov::HAS_SAM(char* el1, char* el2, size_t size)
     }
   }
   return 0;
+}
+
+void goltsov::makeNormal(char* normal, size_t normal_size, char* abnormal, size_t abnormal_size)
+{
+  for (size_t i = 0; i < normal_size; ++i)
+  {
+    normal[i] = abnormal[i];
+  }
+  delete[] abnormal;
 }
