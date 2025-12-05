@@ -9,8 +9,7 @@ namespace khasnulin
   const size_t eng_alpabet_size = 26;
 
   bool getSkipWsState(std::istream &in);
-  void setNoWsSkipStreamState(std::istream &in, bool skip_ws);
-  void returnSkipWsPreviousState(std::istream &in, bool skip_ws);
+  void setSkipWsStreamState(std::istream &in, bool skip_ws);
 
   const size_t len_increment = 50;
   char *makeStr(size_t size);
@@ -74,22 +73,6 @@ int main()
 bool khasnulin::getSkipWsState(std::istream &in)
 {
   return in.flags() & std::ios_base::skipws;
-}
-
-void khasnulin::setNoWsSkipStreamState(std::istream &in, bool skip_ws)
-{
-  if (skip_ws)
-  {
-    in >> std::noskipws;
-  }
-}
-
-void khasnulin::returnSkipWsPreviousState(std::istream &in, bool skip_ws)
-{
-  if (skip_ws)
-  {
-    in >> std::skipws;
-  }
 }
 
 char *khasnulin::makeStr(size_t size)
@@ -160,11 +143,17 @@ char *khasnulin::getLine(std::istream &in, size_t &size)
 char *khasnulin::getLineWithWs(std::istream &in, size_t &size)
 {
   bool skip_ws = getSkipWsState(in);
-  setNoWsSkipStreamState(in, skip_ws);
+  if (skip_ws)
+  {
+    in >> std::noskipws;
+  }
 
   char *str = getLine(in, size);
 
-  returnSkipWsPreviousState(in, skip_ws);
+  if (skip_ws)
+  {
+    in >> std::skipws;
+  }
   return str;
 }
 
