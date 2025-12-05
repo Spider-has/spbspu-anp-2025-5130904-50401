@@ -36,7 +36,7 @@ int main()
   char* new0_str = nullptr;
   try
   {
-    new0_str = new char[size];
+    new0_str = new char[size + 1];
   }
   catch (const std::bad_alloc& e)
   {
@@ -137,6 +137,11 @@ void goltsov::spcRmv(char* str, size_t size, char* new_str, size_t& new_size)
 {
   size_t i = 0;
   size_t j = 0;
+  if (str[i] == '\0')
+  {
+    new_str[j] = '\0';
+    return;
+  }
   while (str[i] == ' ')
   {
     ++i;
