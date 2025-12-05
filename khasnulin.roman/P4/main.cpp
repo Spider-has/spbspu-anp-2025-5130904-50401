@@ -106,7 +106,6 @@ char *khasnulin::getResizedStr(const char *str, size_t oldSize, size_t newSize)
   }
   size_t minS = std::min(oldSize, newSize);
   for (size_t i = 0; i < minS; i++)
-
   {
     newStr[i] = str[i];
   }
