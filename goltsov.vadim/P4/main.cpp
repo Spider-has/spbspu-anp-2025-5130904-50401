@@ -9,7 +9,7 @@ namespace goltsov
   void spcRmv(char* str, size_t size, char* new_str, size_t& new_size);
   void getStr(std::istream& in, char** str, size_t& size);
   int hasSam(char* el1, char* el2, size_t size);
-  void makeNormal(char* normal, size_t normal_size, char* abnormal, size_t abnormal_size);
+  void makeNormal(char* normal, size_t normal_size, char* abnormal);
 }
 
 int main()
@@ -60,7 +60,7 @@ int main()
     return 1;
   }
 
-  goltsov::makeNormal(new_str, new_size, new0_str, size);
+  goltsov::makeNormal(new_str, new_size, new0_str);
 
   char my_str[4] = "abs";
   size_t my_size = 3;
@@ -181,7 +181,7 @@ int goltsov::hasSam(char* el1, char* el2, size_t size)
   return 0;
 }
 
-void goltsov::makeNormal(char* normal, size_t normal_size, char* abnormal, size_t abnormal_size)
+void goltsov::makeNormal(char* normal, size_t normal_size, char* abnormal)
 {
   for (size_t i = 0; i < normal_size; ++i)
   {
