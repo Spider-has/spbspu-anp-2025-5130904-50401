@@ -9,7 +9,6 @@ namespace khasnulin
   const size_t eng_alpabet_size = 26;
 
   bool getSkipWsState(std::istream &in);
-  void setSkipWsStreamState(std::istream &in, bool skip_ws);
 
   const size_t len_increment = 50;
   char *makeStr(size_t size);
