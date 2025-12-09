@@ -8,8 +8,8 @@ namespace hvostov {
   void resizeStr(char ** str, size_t & size, size_t new_size);
   void extendStr(char ** str, size_t & size);
   size_t getNewSize(size_t size);
-  void strConcatCharByChar(char * buffer, const char * str1, const char * str2);
-  void concatRemainders(char * str1, const char * str2, size_t & i);
+  void strConcatCharByChar(char * buffer, char * str1, char * str2);
+  void concatRemainders(char * str1, char * str2, size_t & i);
   size_t countAlphaCharacters(const char * str);
 }
 
@@ -114,7 +114,7 @@ void hvostov::extendStr(char ** str, size_t & size)
   *str = new_str;
 }
 
-void hvostov::strConcatCharByChar(char * buffer, const char * str1, const char * str2)
+void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
 {
   size_t i = 0;
   for (; str1[i / 2] != '\0' && str2[i / 2] != '\0'; i++) {
@@ -124,12 +124,12 @@ void hvostov::strConcatCharByChar(char * buffer, const char * str1, const char *
       buffer[i] = str2[i / 2];
     }
   }
-  const char * remainder_str = str1[i / 2] == '\0' ? str2 : str1;
+  char * remainder_str = str1[i / 2] == '\0' ? str2 : str1;
   hvostov::concatRemainders(buffer, remainder_str, i);
   buffer[i] = '\0';
 }
 
-void hvostov::concatRemainders(char * str1, const char * str2, size_t & i)
+void hvostov::concatRemainders(char * str1, char * str2, size_t & i)
 {
   size_t diff = i - i / 2;
   for (; str2[i - diff] != '\0'; i++) {
