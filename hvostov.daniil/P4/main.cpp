@@ -15,8 +15,9 @@ namespace hvostov {
 
 int main()
 {
+  char * str = nullptr;
   size_t size = 10;
-  char * str = hvostov::getLine(std::cin, size);
+  str = hvostov::getLine(std::cin, size);
   if (str == nullptr) {
     std::cerr << "Cant get string\n";
     return 1;
@@ -25,9 +26,10 @@ int main()
   size_t size2 = 11;
   char * result = nullptr;
   try {
-    result = new char[size + size2 + 1];
+    result = new char[size + size2 + 1]();
   } catch (const std::bad_alloc & e) {
     std::cerr << e.what() << "\n";
+    delete[] str;
     return 1;
   }
   hvostov::strConcatCharByChar(result, str, str2);
