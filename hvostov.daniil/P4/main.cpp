@@ -15,15 +15,10 @@ namespace hvostov {
 
 int main()
 {
-  char * str = nullptr;
   size_t size = 10;
-  str = hvostov::getLine(std::cin, size);
+  char * str = hvostov::getLine(std::cin, size);
   if (str == nullptr) {
-    std::cerr << "Bad alloc!\n";
-    return 1;
-  } else if (!std::cin) {
-    std::cerr << "Problems with input!\n";
-    delete[] str;
+    std::cerr << "Cant get string\n";
     return 1;
   }
   char str2[] = "qwerty12345";
@@ -46,7 +41,12 @@ int main()
 
 char * hvostov::getLine(std::istream & in, size_t & size)
 {
-  char * str = new char[size + 1];
+  char * str = nullptr;
+  try {
+    str = new char[size + 1];
+  } catch (const std::bad_alloc &) {
+    return nullptr;
+  }
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
     in >> std::noskipws;
@@ -75,6 +75,10 @@ char * hvostov::getLine(std::istream & in, size_t & size)
   }
   if (is_skipws) {
     in >> std::skipws;
+  }
+  if (!in) {
+    delete[] str;
+    return nullptr;
   }
   return str;
 }
