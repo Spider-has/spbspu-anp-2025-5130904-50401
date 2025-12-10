@@ -14,16 +14,10 @@ namespace hvostov {
 
 int main()
 {
-  char * str = nullptr;
   size_t size = 10;
-  try {
-    str = hvostov::getLine(std::cin, size);
-    if (str == nullptr) {
-      std::cerr << "Cant get string\n";
-      return 1;
-    }
-  } catch (const std::bad_alloc &) {
-    std::cerr << "Bad alloc\n";
+  char * str = hvostov::getLine(std::cin, size);
+  if (str == nullptr) {
+    std::cerr << "Cant get string\n";
     return 1;
   }
   char str2[] = "qwerty12345";
@@ -51,7 +45,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
   try {
     str = new char[size + 1]();
   } catch (const std::bad_alloc &) {
-    throw;
+    return nullptr;
   }
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
@@ -65,7 +59,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
         hvostov::extendStr(&str, size);
       } catch (const std::bad_alloc &) {
         delete[] str;
-        throw;
+        return nullptr;
       }
     }
     str[i] = a;
@@ -77,7 +71,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
     hvostov::resizeStr(&str, size, size + 1);
   } catch (const std::bad_alloc &) {
     delete[] str;
-    throw;
+    return nullptr;
   }
   if (is_skipws) {
     in >> std::skipws;
@@ -91,7 +85,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
 
 void hvostov::resizeStr(char ** str, size_t & size, size_t new_size)
 {
-  char * new_str = new char[new_size];
+  char * new_str = new char[new_size]();
   for (size_t i = 0; i < std::min(size, new_size); i++) {
     new_str[i] = (*str)[i];
   }
