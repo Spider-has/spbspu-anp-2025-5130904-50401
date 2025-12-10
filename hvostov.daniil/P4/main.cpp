@@ -16,9 +16,14 @@ int main()
 {
   char * str = nullptr;
   size_t size = 10;
-  str = hvostov::getLine(std::cin, size);
-  if (str == nullptr) {
-    std::cerr << "Cant get string\n";
+  try {
+    str = hvostov::getLine(std::cin, size);
+    if (str == nullptr) {
+      std::cerr << "Cant get string\n";
+      return 1;
+    }
+  } catch (const std::bad_alloc &) {
+    std::cerr << "Bad alloc\n";
     return 1;
   }
   char str2[] = "qwerty12345";
@@ -44,9 +49,9 @@ char * hvostov::getLine(std::istream & in, size_t & size)
 {
   char * str = nullptr;
   try {
-    str = new char[size + 1];
+    str = new char[size + 1]();
   } catch (const std::bad_alloc &) {
-    return nullptr;
+    throw;
   }
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
@@ -60,7 +65,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
         hvostov::extendStr(&str, size);
       } catch (const std::bad_alloc &) {
         delete[] str;
-        return nullptr;
+        throw;
       }
     }
     str[i] = a;
@@ -72,7 +77,7 @@ char * hvostov::getLine(std::istream & in, size_t & size)
     hvostov::resizeStr(&str, size, size + 1);
   } catch (const std::bad_alloc &) {
     delete[] str;
-    return nullptr;
+    throw;
   }
   if (is_skipws) {
     in >> std::skipws;
