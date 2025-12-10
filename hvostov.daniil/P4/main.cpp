@@ -128,7 +128,6 @@ void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
     }
     i++;
   }
-  
   if (str1[pos1] != '\0') {
     for (; str1[pos1] != '\0'; pos1++, i++) {
       buffer[i] = str1[pos1];
