@@ -110,7 +110,7 @@ char ** zharov::splitLine(char * str, size_t & len)
 {
   char sep = ' ';
   size_t size = 10;
-  size_t step = 5;
+  size_t step = 1.5;
   char ** arr_str = new char * [size];
   bool is_last_sep = true;
   size_t i = 0;
@@ -118,12 +118,12 @@ char ** zharov::splitLine(char * str, size_t & len)
   for (; str[i] != '\0'; ++i) {
     if (len == size) {
       try {
-        zharov::extendArr(&arr_str, size, size + step);
+        zharov::extendArr(&arr_str, size, size * step);
       } catch (const std::bad_alloc &) {
         zharov::destroyArr(arr_str, len);
         throw;
       }
-      size += step;
+      size *= step;
     }
 
     if (str[i] == sep) {
@@ -169,7 +169,7 @@ char ** zharov::splitLine(char * str, size_t & len)
 char * zharov::getLine(std::istream & in, size_t & len)
 {
   size_t size = 10;
-  size_t step = 5;
+  size_t step = 1.5;
   char end = '\n';
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
@@ -181,12 +181,12 @@ char * zharov::getLine(std::istream & in, size_t & len)
   while (in >> sym && sym != end) {
     if (size == len) {
       try {
-        zharov::extendStr(& str, size, size + step + 1);
+        zharov::extendStr(& str, size, size * step);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
       }
-      size += step;
+      size *= step;
     }
     str[len] = sym;
     ++len;
