@@ -110,7 +110,7 @@ char ** zharov::splitLine(char * str, size_t & len)
 {
   char sep = ' ';
   size_t size = 10;
-  size_t step = 1.5;
+  size_t step = 2;
   char ** arr_str = new char * [size];
   bool is_last_sep = true;
   size_t i = 0;
@@ -125,7 +125,6 @@ char ** zharov::splitLine(char * str, size_t & len)
       }
       size *= step;
     }
-
     if (str[i] == sep) {
       if (!is_last_sep) {
         char * new_str = nullptr;
@@ -169,7 +168,7 @@ char ** zharov::splitLine(char * str, size_t & len)
 char * zharov::getLine(std::istream & in, size_t & len)
 {
   size_t size = 10;
-  size_t step = 1.5;
+  size_t step = 2;
   char end = '\n';
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
