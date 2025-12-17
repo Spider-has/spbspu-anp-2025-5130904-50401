@@ -44,6 +44,14 @@ namespace khasnulin
   rectangle_t getCommonRectangleFrame(rectangle_t r1, rectangle_t r2);
   void calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size);
   rectangle_t calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size);
+
+  void isotropicScaling(IShape &shape, point_t scale_pt, double scale);
+
+  point_t getRightTop(rectangle_t frame);
+
+  point_t operator-(point_t p_t1, point_t p_t2);
+  point_t operator+(point_t p_t1, point_t p_t2);
+  point_t operator*(point_t p_t1, double k);
 }
 
 int main()
@@ -181,4 +189,41 @@ khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape *
     general_frame = getCommonRectangleFrame(general_frame, shapes[i]->getFrameRect());
   }
   return general_frame;
+}
+
+khasnulin::point_t khasnulin::operator-(point_t p_t1, point_t p_t2)
+{
+  return {p_t1.x - p_t2.x, p_t1.y - p_t2.y};
+}
+
+khasnulin::point_t khasnulin::operator+(point_t p_t1, point_t p_t2)
+{
+  return {p_t1.x + p_t2.x, p_t1.y + p_t2.y};
+}
+
+khasnulin::point_t khasnulin::operator*(point_t p_t1, double k)
+{
+  return {p_t1.x * k, p_t1.y * k};
+}
+
+void khasnulin::isotropicScaling(IShape &shape, point_t scale_pt, double scale)
+{
+  rectangle_t base_frame = shape.getFrameRect();
+  point_t old_right_top = getRightTop(base_frame);
+
+  shape.move(scale_pt);
+
+  rectangle_t new_frame = shape.getFrameRect();
+  point_t new_right_top = getRightTop(new_frame);
+
+  shape.scale(scale);
+
+  point_t delta = (old_right_top - new_right_top) * scale;
+
+  shape.move(delta.x, delta.y);
+}
+
+khasnulin::point_t khasnulin::getRightTop(rectangle_t frame)
+{
+  return frame.pos + point_t{frame.width / 2, frame.height / 2};
 }
