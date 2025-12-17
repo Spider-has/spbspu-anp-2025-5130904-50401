@@ -27,8 +27,7 @@ namespace khasnulin
 
   class Rectangle : public IShape
   {
-    double w_, h_;
-    point_t pos_;
+    rectangle_t rect;
 
   public:
     Rectangle(point_t pos, double w, double h);
@@ -64,7 +63,7 @@ int main()
   {
 
     shapes[size++] = new Rectangle({1, 1}, 5, 3);
-    shapes[size++] = new Rectangle({-5, -5}, 2, 2);
+    shapes[size++] = new Rectangle({0, 0}, 2, 2);
 
     double scale;
     point_t scale_pt;
@@ -81,6 +80,13 @@ int main()
     }
 
     std::cout << "before figures scaling: \n";
+    calculateAndPrintFiguresInfo(std::cout, shapes, size);
+
+    for (size_t i = 0; i < size; i++)
+    {
+      isotropicScaling(*shapes[i], scale_pt, scale);
+    }
+    std::cout << "\nafter figures scaling: \n";
     calculateAndPrintFiguresInfo(std::cout, shapes, size);
   }
   catch (const std::exception &e)
@@ -102,9 +108,7 @@ int main()
 }
 
 khasnulin::Rectangle::Rectangle(point_t pos, double w, double h):
-    w_(w),
-    h_(h),
-    pos_(pos)
+    rect({w, h, pos})
 {
   if (w <= 0.0 || h <= 0.0)
   {
@@ -114,23 +118,23 @@ khasnulin::Rectangle::Rectangle(point_t pos, double w, double h):
 
 double khasnulin::Rectangle::getArea() const
 {
-  return w_ * h_;
+  return rect.width * rect.height;
 }
 
 khasnulin::rectangle_t khasnulin::Rectangle::getFrameRect() const
 {
-  return rectangle_t{w_, h_, pos_};
+  return rect;
 }
 
 void khasnulin::Rectangle::move(double dx, double dy)
 {
-  pos_.x += dx;
-  pos_.y += dy;
+  rect.pos.x += dx;
+  rect.pos.y += dy;
 }
 
 void khasnulin::Rectangle::move(point_t to)
 {
-  pos_ = to;
+  rect.pos = to;
 }
 
 void khasnulin::Rectangle::scale(double k)
@@ -139,8 +143,8 @@ void khasnulin::Rectangle::scale(double k)
   {
     throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be positive");
   }
-  w_ *= k;
-  h_ *= k;
+  rect.width *= k;
+  rect.height *= k;
 }
 
 void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
