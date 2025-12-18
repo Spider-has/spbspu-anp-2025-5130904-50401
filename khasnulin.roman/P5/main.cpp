@@ -16,19 +16,17 @@ namespace khasnulin
   class IShape
   {
   public:
+    virtual ~IShape() = default;
+
     virtual double getArea() const = 0;
     virtual rectangle_t getFrameRect() const = 0;
     virtual void move(point_t to) = 0;
     virtual void move(double dx, double dy) = 0;
     virtual void scale(double k) = 0;
-
-    virtual ~IShape() = default;
   };
 
   class Rectangle : public IShape
   {
-    rectangle_t rect;
-
   public:
     Rectangle(point_t pos, double w, double h);
 
@@ -37,6 +35,47 @@ namespace khasnulin
     void move(point_t to) override;
     void move(double dx, double dy) override;
     void scale(double k) override;
+
+  private:
+    rectangle_t rect;
+  };
+
+  class Polygon : public IShape
+  {
+  public:
+    Polygon(const point_t *points, size_t k);
+
+    ~Polygon();
+
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(point_t to) override;
+    void move(double dx, double dy) override;
+    void scale(double k) override;
+
+  private:
+    point_t *vertex;
+    size_t size;
+    point_t center;
+
+    point_t calculateCenter();
+  };
+
+  class Xquare : public IShape
+  {
+  public:
+    Xquare();
+
+    ~Xquare();
+
+    double getArea();
+    rectangle_t getFrameRect();
+    void move(point_t to);
+    void move(double dx, double dy);
+    void scale(double k);
+
+  private:
+    point_t center;
   };
 
   void printRectInfo(std::ostream &out, rectangle_t rect);
@@ -51,6 +90,12 @@ namespace khasnulin
   point_t operator-(point_t p_t1, point_t p_t2);
   point_t operator+(point_t p_t1, point_t p_t2);
   point_t operator*(point_t p_t1, double k);
+  point_t operator/(point_t p_t1, double k);
+
+  double triagleSignedArea(point_t v1, point_t v2);
+  point_t getTriangleCenter(point_t v1, point_t v2);
+
+  point_t *copy(const point_t *from, point_t *to, size_t k);
 }
 
 int main()
@@ -210,6 +255,11 @@ khasnulin::point_t khasnulin::operator*(point_t p_t1, double k)
   return {p_t1.x * k, p_t1.y * k};
 }
 
+khasnulin::point_t khasnulin::operator/(point_t p_t1, double k)
+{
+  return {p_t1.x / k, p_t1.y / k};
+}
+
 void khasnulin::isotropicScaling(IShape &shape, point_t scale_pt, double scale)
 {
   rectangle_t base_frame = shape.getFrameRect();
@@ -230,4 +280,108 @@ void khasnulin::isotropicScaling(IShape &shape, point_t scale_pt, double scale)
 khasnulin::point_t khasnulin::getRightTop(rectangle_t frame)
 {
   return frame.pos + point_t{frame.width / 2, frame.height / 2};
+}
+
+khasnulin::Polygon::Polygon(const point_t *points, size_t k):
+    vertex(k > 2 ? new point_t[k] : nullptr),
+    size(k)
+{
+  if (!points || k <= 2)
+  {
+    throw std::invalid_argument(
+        "polygon creation error: points array must be not empty, count of vertexes must be more than 2");
+  }
+  copy(points, vertex, k);
+  center = calculateCenter();
+}
+
+khasnulin::point_t *khasnulin::copy(const point_t *from, point_t *to, size_t k)
+{
+  for (size_t i = 0; i < k; i++)
+  {
+    to[i] = from[i];
+  }
+  return to + k;
+}
+
+khasnulin::Polygon::~Polygon()
+{
+  delete[] vertex;
+}
+
+// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было тяжело понять!
+
+// Площадь треугольника через модуль векторного произведения двух точек и точки(0,0)
+// по альтернативной формуле через координаты вектора
+double khasnulin::triagleSignedArea(point_t v1, point_t v2)
+{
+  return (v1.x * v2.y - v2.x * v1.y) / 2;
+}
+
+// считаем площадь невыпуклой фигуры по сумме знаковых площадей треугольников,
+// построенных из двух точек, взятых при последовательном обходе вершин, и точки (0,0).
+double khasnulin::Polygon::getArea() const
+{
+  double figure_area = 0;
+  for (size_t i = 0; i < size - 1; i++)
+  {
+    figure_area += triagleSignedArea(vertex[i], vertex[i + 1]);
+  }
+  figure_area += triagleSignedArea(vertex[size - 1], vertex[0]);
+}
+
+// Берем центроид треугольника из двух точек полигона и точки (0,0), как среднее
+// арифмитическое координат трех точек
+khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
+{
+  return (v1 + v2) / 3;
+}
+
+// Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно посчитать
+// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на площадь его треугольника.
+// в конце делим сумму всех центроидов умноженных на их площади на общую площадь и получаем реальный центр масс
+khasnulin::point_t khasnulin::Polygon::calculateCenter()
+{
+  double figure_area = triagleSignedArea(vertex[0], vertex[1]);
+  point_t figure_center = getTriangleCenter(vertex[0], vertex[1]) * figure_area;
+  for (size_t i = 1; i < size - 1; i++)
+  {
+    double current_area = triagleSignedArea(vertex[i], vertex[i + 1]);
+    point_t current_center = getTriangleCenter(vertex[i], vertex[i + 1]);
+    figure_center = figure_center + current_center * current_area;
+    figure_area += current_area;
+  }
+  double last_area = triagleSignedArea(vertex[size - 1], vertex[0]);
+  figure_center = figure_center + getTriangleCenter(vertex[size - 1], vertex[0]) * last_area;
+  figure_area += last_area;
+  return figure_area ? figure_center / figure_area : point_t{0, 0};
+}
+
+void khasnulin::Polygon::move(point_t to)
+{
+  point_t delta = to - center;
+  for (size_t i = 0; i < size; i++)
+  {
+    vertex[i] = vertex[i] + delta;
+  }
+  center = to;
+}
+
+void khasnulin::Polygon::move(double dx, double dy)
+{
+  point_t newCenter = center + point_t{dx, dy};
+  move(newCenter);
+}
+
+void khasnulin::Polygon::scale(double k)
+{
+  if (k <= 0.0)
+  {
+    throw std::invalid_argument("incorrect polygon scaling: scale coefficient must be positive");
+  }
+  for (size_t i = 0; i < size; i++)
+  {
+    point_t delta = vertex[i] - center;
+    vertex[i] = vertex[i] + delta * k;
+  }
 }
