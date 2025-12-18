@@ -45,6 +45,11 @@ namespace khasnulin
   public:
     Polygon(const point_t *points, size_t k);
 
+    Polygon(const Polygon &pol);
+    Polygon(Polygon &&pol);
+    Polygon &operator=(const Polygon &pol);
+    Polygon &operator=(Polygon &&pol);
+
     ~Polygon();
 
     double getArea() const override;
@@ -57,24 +62,21 @@ namespace khasnulin
     point_t *vertex;
     size_t size;
     point_t center;
-
-    point_t calculateCenter();
   };
 
   class Xquare : public IShape
   {
   public:
-    Xquare();
+    Xquare(point_t cent, double d);
 
-    ~Xquare();
-
-    double getArea();
-    rectangle_t getFrameRect();
-    void move(point_t to);
-    void move(double dx, double dy);
-    void scale(double k);
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(point_t to) override;
+    void move(double dx, double dy) override;
+    void scale(double k) override;
 
   private:
+    double diag;
     point_t center;
   };
 
@@ -96,6 +98,9 @@ namespace khasnulin
   point_t getTriangleCenter(point_t v1, point_t v2);
 
   point_t *copy(const point_t *from, point_t *to, size_t k);
+
+  point_t calculateCenter(const point_t *points, size_t k);
+
 }
 
 int main()
@@ -106,9 +111,10 @@ int main()
   size_t code = 0;
   try
   {
-
     shapes[size++] = new Rectangle({1, 1}, 5, 3);
-    shapes[size++] = new Rectangle({0, 0}, 2, 2);
+    const point_t poly_points[] = {{1, 1}, {3, 2}, {4, 2}, {4, 5}, {1, 5}};
+    shapes[size++] = new Polygon(poly_points, 5);
+    shapes[size++] = new Xquare({-5, -5}, 10);
 
     double scale;
     point_t scale_pt;
@@ -292,7 +298,7 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
         "polygon creation error: points array must be not empty, count of vertexes must be more than 2");
   }
   copy(points, vertex, k);
-  center = calculateCenter();
+  center = calculateCenter(vertex, size);
 }
 
 khasnulin::point_t *khasnulin::copy(const point_t *from, point_t *to, size_t k)
@@ -310,6 +316,7 @@ khasnulin::Polygon::~Polygon()
 }
 
 // Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было тяжело понять!
+// Я просто объяснял себе математику, чтобы не ошибиться
 
 // Площадь треугольника через модуль векторного произведения двух точек и точки(0,0)
 // по альтернативной формуле через координаты вектора
@@ -328,6 +335,7 @@ double khasnulin::Polygon::getArea() const
     figure_area += triagleSignedArea(vertex[i], vertex[i + 1]);
   }
   figure_area += triagleSignedArea(vertex[size - 1], vertex[0]);
+  return std::abs(figure_area);
 }
 
 // Берем центроид треугольника из двух точек полигона и точки (0,0), как среднее
@@ -340,21 +348,21 @@ khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
 // Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно посчитать
 // вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на площадь его треугольника.
 // в конце делим сумму всех центроидов умноженных на их площади на общую площадь и получаем реальный центр масс
-khasnulin::point_t khasnulin::Polygon::calculateCenter()
+khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
 {
-  double figure_area = triagleSignedArea(vertex[0], vertex[1]);
-  point_t figure_center = getTriangleCenter(vertex[0], vertex[1]) * figure_area;
-  for (size_t i = 1; i < size - 1; i++)
+  double figure_area = triagleSignedArea(points[0], points[1]);
+  point_t figure_center = getTriangleCenter(points[0], points[1]) * figure_area;
+  for (size_t i = 1; i < k - 1; i++)
   {
-    double current_area = triagleSignedArea(vertex[i], vertex[i + 1]);
-    point_t current_center = getTriangleCenter(vertex[i], vertex[i + 1]);
+    double current_area = triagleSignedArea(points[i], points[i + 1]);
+    point_t current_center = getTriangleCenter(points[i], points[i + 1]);
     figure_center = figure_center + current_center * current_area;
     figure_area += current_area;
   }
-  double last_area = triagleSignedArea(vertex[size - 1], vertex[0]);
-  figure_center = figure_center + getTriangleCenter(vertex[size - 1], vertex[0]) * last_area;
+  double last_area = triagleSignedArea(points[k - 1], points[0]);
+  figure_center = figure_center + getTriangleCenter(points[k - 1], points[0]) * last_area;
   figure_area += last_area;
-  return figure_area ? figure_center / figure_area : point_t{0, 0};
+  return figure_area ? (figure_center / figure_area) : point_t{0, 0};
 }
 
 void khasnulin::Polygon::move(point_t to)
@@ -382,6 +390,98 @@ void khasnulin::Polygon::scale(double k)
   for (size_t i = 0; i < size; i++)
   {
     point_t delta = vertex[i] - center;
-    vertex[i] = vertex[i] + delta * k;
+    vertex[i] = center + delta * k;
   }
+}
+
+khasnulin::rectangle_t khasnulin::Polygon::getFrameRect() const
+{
+  double left = vertex[0].x, right = vertex[0].x;
+  double top = vertex[0].y, bottom = vertex[0].y;
+  for (size_t i = 1; i < size; i++)
+  {
+    left = std::min(left, vertex[i].x);
+    top = std::max(top, vertex[i].y);
+    right = std::max(right, vertex[i].x);
+    bottom = std::min(bottom, vertex[i].y);
+  }
+  return rectangle_t{right - left, top - bottom, point_t{(right + left) / 2, (top + bottom) / 2}};
+}
+
+khasnulin::Polygon::Polygon(const Polygon &pol):
+    vertex(new point_t[pol.size]),
+    size(pol.size),
+    center(pol.center)
+{
+  copy(pol.vertex, vertex, size);
+}
+khasnulin::Polygon::Polygon(Polygon &&pol):
+    vertex(pol.vertex),
+    size(pol.size),
+    center(pol.center)
+{
+  pol.vertex = nullptr;
+}
+khasnulin::Polygon &khasnulin::Polygon::operator=(const Polygon &pol)
+{
+  if (this == &pol)
+  {
+    return *this;
+  }
+  point_t *newV = new point_t[pol.size];
+  copy(pol.vertex, newV, pol.size);
+  delete[] vertex;
+  vertex = newV;
+  size = pol.size;
+  center = pol.center;
+  return *this;
+}
+
+khasnulin::Polygon &khasnulin::Polygon::operator=(Polygon &&pol)
+{
+  if (this == &pol)
+  {
+    return *this;
+  }
+  std::swap(vertex, pol.vertex);
+  std::swap(size, pol.size);
+  center = pol.center;
+  return *this;
+}
+
+khasnulin::Xquare::Xquare(point_t cent, double d):
+    diag(d),
+    center(cent)
+{
+  if (d <= 0)
+  {
+    throw std::invalid_argument("fail Xquare creation: diagonal must be positive number");
+  }
+}
+
+double khasnulin::Xquare::getArea() const
+{
+  return diag * diag / 2;
+}
+khasnulin::rectangle_t khasnulin::Xquare::getFrameRect() const
+{
+  return {diag, diag, center};
+}
+void khasnulin::Xquare::move(point_t to)
+{
+  center = to;
+}
+void khasnulin::Xquare::move(double dx, double dy)
+{
+  center.x += dx;
+  center.y += dy;
+}
+
+void khasnulin::Xquare::scale(double k)
+{
+  if (k <= 0)
+  {
+    throw std::invalid_argument("incorrect Xquare scaling: scale coefficient must be positive");
+  }
+  diag *= k;
 }
