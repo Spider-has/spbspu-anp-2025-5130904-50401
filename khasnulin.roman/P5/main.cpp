@@ -232,7 +232,8 @@ void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
   printRectInfo(out, general_frame);
 }
 
-khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)
+khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes,
+                                                                        size_t size)
 {
   if (!size)
   {
@@ -294,8 +295,8 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
 {
   if (!points || k <= 2)
   {
-    throw std::invalid_argument(
-        "polygon creation error: points array must be not empty, count of vertexes must be more than 2");
+    throw std::invalid_argument("polygon creation error: points array must be not empty, count of "
+                                "vertexes must be more than 2");
   }
   copy(points, vertex, k);
   center = calculateCenter(vertex, size);
@@ -315,8 +316,8 @@ khasnulin::Polygon::~Polygon()
   delete[] vertex;
 }
 
-// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было тяжело понять!
-// Я просто объяснял себе математику, чтобы не ошибиться
+// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было тяжело
+// понять! Я просто объяснял себе математику, чтобы не ошибиться
 
 // Площадь треугольника через модуль векторного произведения двух точек и точки(0,0)
 // по альтернативной формуле через координаты вектора
@@ -346,8 +347,9 @@ khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
 }
 
 // Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно посчитать
-// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на площадь его треугольника.
-// в конце делим сумму всех центроидов умноженных на их площади на общую площадь и получаем реальный центр масс
+// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на площадь
+// его треугольника. в конце делим сумму всех центроидов умноженных на их площади на общую площадь
+// и получаем реальный центр масс
 khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
 {
   double figure_area = triagleSignedArea(points[0], points[1]);
