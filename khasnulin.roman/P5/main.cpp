@@ -123,11 +123,13 @@ int main()
     std::cin >> scale;
     if (std::cin.fail())
     {
-      throw std::runtime_error("incorrect input: fail to read arguments, must be 3 double");
+      throw std::runtime_error(
+          "incorrect input: fail to read arguments, must be 3 double");
     }
     if (scale <= 0)
     {
-      throw std::runtime_error("incorrect input: scale coefficient must be more than zero");
+      throw std::runtime_error(
+          "incorrect input: scale coefficient must be more than zero");
     }
 
     std::cout << "before figures scaling: \n";
@@ -202,8 +204,8 @@ void khasnulin::Rectangle::scale(double k)
 
 void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
 {
-  out << "rectangle center x:" << rect.pos.x << ", y: " << rect.pos.y << ", width: " << rect.width
-      << ", height: " << rect.height << "\n";
+  out << "rectangle center x:" << rect.pos.x << ", y: " << rect.pos.y
+      << ", width: " << rect.width << ", height: " << rect.height << "\n";
 }
 
 khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1, rectangle_t r2)
@@ -212,10 +214,12 @@ khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1, rectan
   double right = std::max(r1.pos.x + r1.width / 2, r2.pos.x + r2.width / 2);
   double bottom = std::min(r1.pos.y - r1.height / 2, r2.pos.y - r2.height / 2);
   double top = std::max(r1.pos.y + r1.height / 2, r2.pos.y + r2.height / 2);
-  return rectangle_t{right - left, top - bottom, {(right + left) / 2, (top + bottom) / 2}};
+  return rectangle_t{
+      right - left, top - bottom, {(right + left) / 2, (top + bottom) / 2}};
 }
 
-void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size)
+void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
+                                             size_t size)
 {
   double sum_area = 0;
   rectangle_t general_frame = calculateFiguresGeneralRectangleFrame(shapes, size);
@@ -297,8 +301,9 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
 {
   if (!points || k <= 2)
   {
-    throw std::invalid_argument("polygon creation error: points array must be not empty, count of"
-                                " vertexes must be more than 2");
+    throw std::invalid_argument(
+        "polygon creation error: points array must be not empty, count of"
+        " vertexes must be more than 2");
   }
   copy(points, vertex, k);
   center = calculateCenter(vertex, size);
@@ -318,8 +323,8 @@ khasnulin::Polygon::~Polygon()
   delete[] vertex;
 }
 
-// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было тяжело
-// понять! Я просто объяснял себе математику, чтобы не ошибиться
+// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было
+// тяжело понять! Я просто объяснял себе математику, чтобы не ошибиться
 
 // Площадь треугольника через модуль векторного произведения двух точек и точки(0,0)
 // по альтернативной формуле через координаты вектора
@@ -348,10 +353,10 @@ khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
   return (v1 + v2) / 3;
 }
 
-// Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно посчитать
-// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на
-// площадь его треугольника. в конце делим сумму всех центроидов умноженных на их площади на общую
-// площадь и получаем реальный центр масс
+// Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно
+// посчитать вклад каждого треугольника в общую массу фигуры, как произведение координат
+// центроида на площадь его треугольника. в конце делим сумму всех центроидов умноженных
+// на их площади на общую площадь и получаем реальный центр масс
 khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
 {
   double figure_area = triagleSignedArea(points[0], points[1]);
@@ -389,7 +394,8 @@ void khasnulin::Polygon::scale(double k)
 {
   if (k <= 0.0)
   {
-    throw std::invalid_argument("incorrect polygon scaling: scale coefficient must be positive");
+    throw std::invalid_argument(
+        "incorrect polygon scaling: scale coefficient must be positive");
   }
   for (size_t i = 0; i < size; i++)
   {
@@ -409,7 +415,8 @@ khasnulin::rectangle_t khasnulin::Polygon::getFrameRect() const
     right = std::max(right, vertex[i].x);
     bottom = std::min(bottom, vertex[i].y);
   }
-  return rectangle_t{right - left, top - bottom, point_t{(right + left) / 2, (top + bottom) / 2}};
+  return rectangle_t{right - left, top - bottom,
+                     point_t{(right + left) / 2, (top + bottom) / 2}};
 }
 
 khasnulin::Polygon::Polygon(const Polygon &pol):
@@ -485,7 +492,8 @@ void khasnulin::Xquare::scale(double k)
 {
   if (k <= 0)
   {
-    throw std::invalid_argument("incorrect Xquare scaling: scale coefficient must be positive");
+    throw std::invalid_argument(
+        "incorrect Xquare scaling: scale coefficient must be positive");
   }
   diag *= k;
 }
