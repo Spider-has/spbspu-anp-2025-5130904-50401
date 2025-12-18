@@ -163,7 +163,8 @@ khasnulin::Rectangle::Rectangle(point_t pos, double w, double h):
 {
   if (w <= 0.0 || h <= 0.0)
   {
-    throw std::invalid_argument("incorrect rectangle creation: width and height must be positive");
+    throw std::invalid_argument("incorrect rectangle creation: "
+                                "width and height must be positive");
   }
 }
 
@@ -192,7 +193,8 @@ void khasnulin::Rectangle::scale(double k)
 {
   if (k <= 0.0)
   {
-    throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be positive");
+    throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be "
+                                "positive");
   }
   rect.width *= k;
   rect.height *= k;
@@ -295,8 +297,8 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
 {
   if (!points || k <= 2)
   {
-    throw std::invalid_argument("polygon creation error: points array must be not empty, count of "
-                                "vertexes must be more than 2");
+    throw std::invalid_argument("polygon creation error: points array must be not empty, count of"
+                                " vertexes must be more than 2");
   }
   copy(points, vertex, k);
   center = calculateCenter(vertex, size);
@@ -347,9 +349,9 @@ khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
 }
 
 // Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно посчитать
-// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на площадь
-// его треугольника. в конце делим сумму всех центроидов умноженных на их площади на общую площадь
-// и получаем реальный центр масс
+// вклад каждого треугольника в общую массу фигуры, как произведение координат центроида на
+// площадь его треугольника. в конце делим сумму всех центроидов умноженных на их площади на общую
+// площадь и получаем реальный центр масс
 khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
 {
   double figure_area = triagleSignedArea(points[0], points[1]);
