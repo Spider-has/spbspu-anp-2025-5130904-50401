@@ -82,8 +82,10 @@ namespace khasnulin
 
   void printRectInfo(std::ostream &out, rectangle_t rect);
   rectangle_t getCommonRectangleFrame(rectangle_t r1, rectangle_t r2);
-  void calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size);
-  rectangle_t calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size);
+  void calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
+                                    size_t size);
+  rectangle_t calculateFiguresGeneralRectangleFrame(IShape **shapes,
+                                                    size_t size);
 
   void isotropicScaling(IShape &shape, point_t scale_pt, double scale);
 
@@ -195,8 +197,9 @@ void khasnulin::Rectangle::scale(double k)
 {
   if (k <= 0.0)
   {
-    throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be "
-                                "positive");
+    throw std::invalid_argument(
+        "incorrect rectangle scaling: scale coefficient must be"
+        " positive");
   }
   rect.width *= k;
   rect.height *= k;
@@ -208,7 +211,8 @@ void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
       << ", width: " << rect.width << ", height: " << rect.height << "\n";
 }
 
-khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1, rectangle_t r2)
+khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1,
+                                                          rectangle_t r2)
 {
   double left = std::min(r1.pos.x - r1.width / 2, r2.pos.x - r2.width / 2);
   double right = std::max(r1.pos.x + r1.width / 2, r2.pos.x + r2.width / 2);
@@ -222,7 +226,8 @@ void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
                                              size_t size)
 {
   double sum_area = 0;
-  rectangle_t general_frame = calculateFiguresGeneralRectangleFrame(shapes, size);
+  rectangle_t general_frame =
+      calculateFiguresGeneralRectangleFrame(shapes, size);
   for (size_t i = 0; i < size; i++)
   {
     double area = shapes[i]->getArea();
@@ -238,8 +243,8 @@ void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
   printRectInfo(out, general_frame);
 }
 
-khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes,
-                                                                        size_t size)
+khasnulin::rectangle_t
+khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)
 {
   if (!size)
   {
@@ -248,7 +253,8 @@ khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape *
   rectangle_t general_frame = shapes[0]->getFrameRect();
   for (size_t i = 1; i < size; i++)
   {
-    general_frame = getCommonRectangleFrame(general_frame, shapes[i]->getFrameRect());
+    general_frame =
+        getCommonRectangleFrame(general_frame, shapes[i]->getFrameRect());
   }
   return general_frame;
 }
@@ -323,18 +329,20 @@ khasnulin::Polygon::~Polygon()
   delete[] vertex;
 }
 
-// Дальнейшие комментарии написаны только из-за того, что центр и площадь полигона было
-// тяжело понять! Я просто объяснял себе математику, чтобы не ошибиться
+// Дальнейшие комментарии написаны только из-за того, что центр и площадь
+// полигона было тяжело понять! Я просто объяснял себе математику, чтобы не
+// ошибиться
 
-// Площадь треугольника через модуль векторного произведения двух точек и точки(0,0)
-// по альтернативной формуле через координаты вектора
+// Площадь треугольника через модуль векторного произведения двух точек и
+// точки(0,0) по альтернативной формуле через координаты вектора
 double khasnulin::triagleSignedArea(point_t v1, point_t v2)
 {
   return (v1.x * v2.y - v2.x * v1.y) / 2;
 }
 
 // считаем площадь невыпуклой фигуры по сумме знаковых площадей треугольников,
-// построенных из двух точек, взятых при последовательном обходе вершин, и точки (0,0).
+// построенных из двух точек, взятых при последовательном обходе вершин, и точки
+// (0,0).
 double khasnulin::Polygon::getArea() const
 {
   double figure_area = 0;
@@ -353,10 +361,11 @@ khasnulin::point_t khasnulin::getTriangleCenter(point_t v1, point_t v2)
   return (v1 + v2) / 3;
 }
 
-// Получаем центроид фигуры: находя площадь каждого треугольника и его центр, можно
-// посчитать вклад каждого треугольника в общую массу фигуры, как произведение координат
-// центроида на площадь его треугольника. в конце делим сумму всех центроидов умноженных
-// на их площади на общую площадь и получаем реальный центр масс
+// Получаем центроид фигуры: находя площадь каждого треугольника и его центр,
+// можно посчитать вклад каждого треугольника в общую массу фигуры, как
+// произведение координат центроида на площадь его треугольника. в конце делим
+// сумму всех центроидов умноженных на их площади на общую площадь и получаем
+// реальный центр масс
 khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
 {
   double figure_area = triagleSignedArea(points[0], points[1]);
@@ -369,7 +378,8 @@ khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
     figure_area += current_area;
   }
   double last_area = triagleSignedArea(points[k - 1], points[0]);
-  figure_center = figure_center + getTriangleCenter(points[k - 1], points[0]) * last_area;
+  figure_center =
+      figure_center + getTriangleCenter(points[k - 1], points[0]) * last_area;
   figure_area += last_area;
   return figure_area ? (figure_center / figure_area) : point_t{0, 0};
 }
@@ -466,7 +476,8 @@ khasnulin::Xquare::Xquare(point_t cent, double d):
 {
   if (d <= 0)
   {
-    throw std::invalid_argument("fail Xquare creation: diagonal must be positive number");
+    throw std::invalid_argument(
+        "fail Xquare creation: diagonal must be positive number");
   }
 }
 
