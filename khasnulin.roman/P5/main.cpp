@@ -118,6 +118,9 @@ int main()
     shapes[size++] = new Polygon(poly_points, 5);
     shapes[size++] = new Xquare({-5, -5}, 10);
 
+    std::cout << "before figures scaling: \n";
+    calculateAndPrintFiguresInfo(std::cout, shapes, size);
+
     double scale;
     point_t scale_pt;
 
@@ -133,9 +136,6 @@ int main()
       throw std::runtime_error(
           "incorrect input: scale coefficient must be more than zero");
     }
-
-    std::cout << "before figures scaling: \n";
-    calculateAndPrintFiguresInfo(std::cout, shapes, size);
 
     for (size_t i = 0; i < size; i++)
     {
