@@ -26,7 +26,8 @@ int main()
   str = kuz::getWords(std::cin, size, &sizes, kuz::isSpace);
 
   if (!std::cin) {
-    delete[] str;
+    kuz::deleting(str, size);
+    delete[] sizes;
     return 1;
   }
   for (size_t i = 0; i < size; ++i) {
