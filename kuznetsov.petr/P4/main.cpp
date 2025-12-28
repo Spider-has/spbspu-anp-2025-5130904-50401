@@ -4,7 +4,7 @@
 
 
 namespace kuznetsov {
-  char* getLine(std::istream& in, size_t& i);
+  char* getLine(std::istream& in, size_t& size);
   void extend(char** str, size_t oldSize, size_t newSize);
   void removeVow(char* buff, const char* str);
   int checkSeqSym(const char* str);
@@ -24,8 +24,8 @@ int main()
 
   char* buffer = nullptr;
   try {
-     buffer = new char[size]{};
-  } catch (const std::bad_alloc& e) {
+     buffer = new char[size + 1]{};
+  } catch (const std::bad_alloc&) {
     delete[] str;
     std::cerr << "Bad alloc buffer\n";
     return 2;
@@ -42,28 +42,28 @@ int main()
 
 char* kuznetsov::getLine(std::istream& in, size_t& size)
 {
-  char* buff = new char[8];
-  size_t i = 8;
-  size_t s = 0;
-  bool is_skinws = in.flags() & std::ios::skipws;
-  if (is_skinws) {
-    in >> std::noskipws;
-  }
-  while (in >> buff[s] && buff[s] != '\n') {
-    if (s + 4 >= i) {
+  char* buff = new char[8] {};
+  size_t blockSize = 8;
+  size_t strLen = 0;
+  bool isSkinws = in.flags() & std::ios::skipws;
+  in >> std::noskipws;
+  while (in >> buff[strLen] && buff[strLen] != '\n') {
+    if (strLen + 1 == blockSize) {
       try {
-        extend(&buff, i, i + 8);
+        size_t newSize = blockSize + blockSize / 2 + 1;
+        extend(&buff, strLen, newSize);
+        blockSize = newSize;
       } catch (const std::bad_alloc&) {
         delete[] buff;
         throw;
       }
-      i += 8;
     }
-    ++s;
+    ++strLen;
   }
-  size = s;
-  buff[s] = '\0';
-  if (is_skinws) {
+
+  size = strLen;
+  buff[strLen] = '\0';
+  if (isSkinws) {
     in >> std::skipws;
   }
   return buff;
@@ -98,15 +98,15 @@ void kuznetsov::removeVow(char* buff, const char* str)
       nextPast++;
     }
   }
+  buff[nextPast] = '\0';
 }
 
 int kuznetsov::checkSeqSym(const char* str)
 {
-  for (size_t i = 1; str[i] != '\n'; ++i) {
-    if (str[i-1] == str[i]) {
+  for (size_t i = 1; str[i] != '\0'; ++i) {
+    if (str[i - 1] == str[i]) {
       return 1;
     }
   }
   return 0;
 }
-
