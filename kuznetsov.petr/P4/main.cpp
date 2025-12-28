@@ -127,8 +127,8 @@ void kuznetsov::deleting(char** arr, size_t k)
 char** kuznetsov::getWords(std::istream& in, size_t& words, size_t** sizes, bool(*spliter)(char))
 {
   size_t strCount = 0;
-  char** strArray = new char*[0];
-  size_t* strLens = new size_t[0];
+  char** strArray = nullptr;
+  size_t* strLens = nullptr;
   bool isSkipws = in.flags() & std::ios::skipws;
   in >> std::noskipws;
 
