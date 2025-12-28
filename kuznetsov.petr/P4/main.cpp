@@ -5,68 +5,171 @@
 
 namespace kuznetsov {
   char* getLine(std::istream& in, size_t& size);
+  char** getWords(std::istream& in, size_t& words, size_t** sizes, bool(*c)(char));
   void extend(char** str, size_t oldSize, size_t newSize);
+  void extend(char*** arr, size_t old);
+  void extend(size_t** arr, size_t old);
   void removeVow(char* buff, const char* str);
   int checkSeqSym(const char* str);
+  bool isSpace(char t);
+  void cut(char** str, size_t k);
+  void deleting(char** arr, size_t k);
 }
 
 int main()
 {
   namespace kuz = kuznetsov;
   size_t size = 0;
-  char* str = nullptr;
+  char** str = nullptr;
+  size_t* sizes = nullptr;
 
-  str = kuz::getLine(std::cin, size);
+  str = kuz::getWords(std::cin, size, &sizes, kuz::isSpace);
+
   if (!std::cin) {
     delete[] str;
     return 1;
   }
+  for (size_t i = 0; i < size; ++i) {
+    char* buffer = nullptr;
+    try {
+      buffer = new char[sizes[i] + 1] {};
+    } catch (const std::bad_alloc&) {
+      delete[] sizes;
+      kuz::deleting(str, size);
+      std::cerr << "Bad alloc buffer\n";
+      return 2;
+    }
 
-  char* buffer = nullptr;
-  try {
-     buffer = new char[size + 1]{};
-  } catch (const std::bad_alloc&) {
-    delete[] str;
-    std::cerr << "Bad alloc buffer\n";
-    return 2;
+    kuz::removeVow(buffer, str[i]);
+    std::cout << buffer << '\n';
+    std::cout << kuz::checkSeqSym(str[i]) << '\n';
+
+    delete[] buffer;
   }
 
-  kuz::removeVow(buffer, str);
+  delete[] sizes;
+  kuz::deleting(str, size);
+}
 
-  std::cout << buffer << '\n';
-  std::cout << kuz::checkSeqSym(str) << '\n';
-
-  delete[] buffer;
-  delete[] str;
+void kuznetsov::cut(char** str, size_t k)
+{
+  char* arr = new char[k];
+  for (size_t i = 0; i < k; ++i) {
+    arr[i] = (*str)[i];
+  }
+  delete[] *str;
+  *str = arr;
 }
 
 char* kuznetsov::getLine(std::istream& in, size_t& size)
 {
-  char* buff = new char[8] {};
-  size_t blockSize = 8;
+  char* buff = new char[2] {};
+  size_t blockSize = 1;
   size_t strLen = 0;
-  bool isSkinws = in.flags() & std::ios::skipws;
+  bool isSkipws = in.flags() & std::ios::skipws;
   in >> std::noskipws;
-  while (in >> buff[strLen] && buff[strLen] != '\n') {
-    if (strLen + 1 == blockSize) {
+  while (in >> buff[strLen++] && buff[strLen - 1] != '\n') {
+    if (strLen == blockSize) {
       try {
-        size_t newSize = blockSize + blockSize / 2 + 1;
-        extend(&buff, strLen, newSize);
+        size_t newSize = blockSize +  blockSize / 2 + 1;
+        extend(&buff, strLen, newSize + 1);
         blockSize = newSize;
       } catch (const std::bad_alloc&) {
         delete[] buff;
         throw;
       }
     }
-    ++strLen;
   }
-
+  strLen--;
+  cut(&buff, strLen);
   size = strLen;
   buff[strLen] = '\0';
-  if (isSkinws) {
+  if (isSkipws) {
     in >> std::skipws;
   }
   return buff;
+}
+
+bool kuznetsov::isSpace(char t)
+{
+  return std::isspace(t);
+}
+
+void kuznetsov::extend(char*** arr, size_t old)
+{
+  char** newArray = new char*[old + 1];
+  for (size_t i = 0; i < old; ++i) {
+    newArray[i] = (*arr)[i];
+  }
+  newArray[old] = nullptr;
+  delete[] *arr;
+  *arr = newArray;
+}
+
+void kuznetsov::extend(size_t** arr, size_t old)
+{
+  size_t* newArray = new size_t[old + 1];
+  for (size_t i = 0; i < old; ++i) {
+    newArray[i] = (*arr)[i];
+  }
+  delete[] *arr;
+  *arr = newArray;
+}
+
+void kuznetsov::deleting(char** arr, size_t k)
+{
+  for (size_t i = 0; i < k; ++i) {
+    delete[] arr[i];
+  }
+  delete[] arr;
+}
+
+char** kuznetsov::getWords(std::istream& in, size_t& words, size_t** sizes, bool(*spliter)(char))
+{
+  size_t strCount = 0;
+  char** strArray = new char*[0];
+  size_t* strLens = new size_t[0];
+  bool isSkipws = in.flags() & std::ios::skipws;
+  in >> std::noskipws;
+
+  char* buff = nullptr;
+  char t = '\0';
+  try {
+    while (t != '\n' && in ) {
+      t = '\0';
+      extend(&strArray, strCount);
+      extend(&strLens, strCount);
+      buff = new char[2];
+      size_t strLen = 0;
+      size_t blockSize = 1;
+      while (!spliter(t) && in) {
+        in >> t;
+        buff[strLen++] = t;
+        if (strLen == blockSize) {
+          size_t newSize = blockSize +  blockSize / 2 + 1;
+          extend(&buff, strLen, newSize + 1);
+          blockSize = newSize;
+        }
+      }
+      buff[strLen - 1] = '\0';
+      cut(&buff, strLen);
+      strArray[strCount] = buff;
+      strLens[strCount] = strLen - 1;
+      strCount++;
+    }
+  } catch (const std::bad_alloc&) {
+    delete[] buff;
+    delete[] strLens;
+    deleting(strArray, strCount);
+    throw;
+  }
+
+  if (isSkipws) {
+    in >> std::skipws;
+  }
+  words = strCount;
+  *sizes = strLens;
+  return strArray;
 }
 
 void kuznetsov::extend(char** str, size_t oldSize, size_t newSize)
@@ -86,7 +189,7 @@ void kuznetsov::removeVow(char* buff, const char* str)
 {
   char vow[] = "aeiou";
   size_t nextPast = 0;
-  for (size_t i = 0; *(str + i) != '\0'; ++i ) {
+  for (size_t i = 0; str[i] != '\0'; ++i ) {
     size_t j = 0;
     for (; j < 5; ++j) {
       if (tolower(str[i]) == vow[j]) {
@@ -103,6 +206,9 @@ void kuznetsov::removeVow(char* buff, const char* str)
 
 int kuznetsov::checkSeqSym(const char* str)
 {
+  if (str[0] == '\0') {
+    return 0;
+  }
   for (size_t i = 1; str[i] != '\0'; ++i) {
     if (str[i - 1] == str[i]) {
       return 1;
