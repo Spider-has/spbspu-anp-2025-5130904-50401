@@ -123,6 +123,7 @@ char ** chernov::getlines(std::istream & input, size_t & size, size_t ** sizes, 
       throw;
     }
     if (!tmp_size) {
+      free(str);
       continue;
     }
     chernov::resize(&strs_sizes, strs_size, strs_size + 1);
