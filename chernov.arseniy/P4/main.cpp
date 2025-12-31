@@ -111,7 +111,7 @@ char ** chernov::getlines(std::istream & input, size_t & size, size_t ** sizes, 
   size_t start_size, double k_resize)
 {
   size_t strs_size = 0, i = 0;
-  size_t * strs_sizes = nullptr; 
+  size_t * strs_sizes = nullptr;
   char ** strs = nullptr;
   while (input) {
     char * str = nullptr;
