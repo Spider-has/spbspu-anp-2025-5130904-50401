@@ -36,7 +36,6 @@ void chernov::resize(char ** str, size_t old_size, size_t new_size)
 {
   char * new_str = reinterpret_cast< char * >(malloc(sizeof(char) * new_size));
   if (new_str == nullptr) {
-    free(*str);
     throw std::bad_alloc();
   }
   size_t size = std::min(old_size, new_size);
@@ -49,7 +48,6 @@ void chernov::resize(size_t ** sizes, size_t old_size, size_t new_size)
 {
   size_t * new_sizes = reinterpret_cast< size_t * >(malloc(sizeof(size_t) * new_size));
   if (new_sizes == nullptr) {
-    free(*sizes);
     throw std::bad_alloc();
   }
   size_t size = std::min(old_size, new_size);
@@ -64,7 +62,6 @@ void chernov::resize(char *** strs, size_t old_size, size_t new_size)
 {
   char ** new_strs = reinterpret_cast< char ** >(malloc(sizeof(char *) * new_size));
   if (new_strs == nullptr) {
-    destroy(*strs, old_size);
     throw std::bad_alloc();
   }
   size_t size = std::min(old_size, new_size);
@@ -88,7 +85,12 @@ char * chernov::getline(std::istream & input, size_t & size, bool (*check_sym)(c
   while (input) {
     if (i >= str_size - 1) {
       size_t new_str_size = str_size * k_resize;
-      chernov::resize(&str, str_size, new_str_size);
+      try {
+        chernov::resize(&str, str_size, new_str_size);
+      } catch (...) {
+        free(str);
+        throw;
+      }
       str_size = new_str_size;
     }
     char ch = '\0';
@@ -126,8 +128,15 @@ char ** chernov::getlines(std::istream & input, size_t & size, size_t ** sizes, 
       free(str);
       continue;
     }
-    chernov::resize(&strs_sizes, strs_size, strs_size + 1);
-    chernov::resize(&strs, strs_size, strs_size + 1);
+    try {
+      chernov::resize(&strs_sizes, strs_size, strs_size + 1);
+      chernov::resize(&strs, strs_size, strs_size + 1);
+    } catch (...) {
+      free(str);
+      free(strs_sizes);
+      destroy(strs, i);
+      throw;
+    }
     ++strs_size;
     strs_sizes[i] = tmp_size;
     strs[i] = str;
@@ -182,8 +191,13 @@ int main()
   }
   if (!input && !input.eof()) {
     chernov::destroy(strs, size);
+    free(sizes);
     std::cerr << "badError\n";
     return 2;
+  }
+  if (size == 0) {
+    std::cerr << "inputError\n";
+    return 3;
   }
 
   size_t second_size = 3;
@@ -194,11 +208,12 @@ int main()
   }
 
   for (size_t i = 0; i < size; ++i) {
-    char * result_lat_rmv = reinterpret_cast< char * >(malloc(sizeof(char) * size));
+    char * result_lat_rmv = reinterpret_cast< char * >(malloc(sizeof(char) * sizes[i]));
     chernov::latRmv(result_lat_rmv, strs[i], sizes[i]);
     std::cout << "LAT-RMV: " << result_lat_rmv << "\n";
     free(result_lat_rmv);
   }
 
   chernov::destroy(strs, size);
+  free(sizes);
 }
