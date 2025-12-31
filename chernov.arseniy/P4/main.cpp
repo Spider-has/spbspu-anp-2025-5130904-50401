@@ -5,7 +5,7 @@
 
 namespace chernov {
   void resize(char ** str, size_t old_size, size_t new_size);
-  char * getline(std::istream & input, size_t & size, size_t step_size);
+  char * getline(std::istream & input, size_t & size, size_t start_size, double k_resize);
   int hasSam(const char * str1, const char * str2, size_t size1, size_t size2);
   void latRmv(char * new_str, const char * old_str, size_t old_size);
 }
@@ -25,21 +25,23 @@ void chernov::resize(char ** str, size_t old_size, size_t new_size)
   *str = new_str;
 }
 
-char * chernov::getline(std::istream & input, size_t & size, const size_t step_size)
+char * chernov::getline(std::istream & input, size_t & size, size_t start_size, double k_resize)
 {
   bool is_skipws = input.flags() & std::ios_base::skipws;
   if (is_skipws) {
     input >> std::noskipws;
   }
-  size_t str_size = step_size, i = 0;
+  size_t str_size = start_size, i = 0;
   char * str = nullptr;
   chernov::resize(&str, 0, str_size);
   while (input) {
     if (i >= str_size - 1) {
-      chernov::resize(&str, str_size, str_size + step_size);
-      str_size += step_size;
+      size_t new_str_size = str_size * k_resize;
+      std::cout << str_size << " " << new_str_size << "\n";
+      chernov::resize(&str, str_size, new_str_size);
+      str_size = new_str_size;
     }
-    char ch = 0;
+    char ch = '\0';
     input >> ch;
     if (ch == '\n') {
       break;
@@ -82,10 +84,11 @@ void chernov::latRmv(char * new_str, const char * old_str, size_t old_size)
 int main()
 {
   std::istream & input = std::cin;
-  size_t size = 0, step_size = 10;
+  size_t size = 0, start_size = 10;
+  double k_resize = 1.4;
   char * str = nullptr;
   try {
-    str = chernov::getline(input, size, step_size);
+    str = chernov::getline(input, size, start_size, k_resize);
   } catch (const std::bad_alloc & e) {
     std::cerr << "badAllocError\n";
     return 1;
