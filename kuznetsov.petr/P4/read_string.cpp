@@ -31,3 +31,4 @@ char* kuznetsov::getLine(std::istream& in, size_t& size)
   }
   return buff;
 }
+

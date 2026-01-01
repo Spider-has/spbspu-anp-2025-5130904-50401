@@ -57,3 +57,4 @@ char** kuznetsov::getWords(std::istream& in, size_t& words, size_t** sizes, bool
   *sizes = strLens;
   return strArray;
 }
+

@@ -43,3 +43,4 @@ void kuznetsov::cut(char** str, size_t k)
   delete[] *str;
   *str = arr;
 }
+
