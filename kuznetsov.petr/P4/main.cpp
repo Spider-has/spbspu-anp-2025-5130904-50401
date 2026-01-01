@@ -1,18 +1,12 @@
 #include <iostream>
 #include <cctype>
-#include <iomanip>
-
+#include "read_string.hpp"
+#include "read_words.hpp"
 
 namespace kuznetsov {
-  char* getLine(std::istream& in, size_t& size);
-  char** getWords(std::istream& in, size_t& words, size_t** sizes, bool(*c)(char));
-  void extend(char** str, size_t oldSize, size_t newSize);
-  void extend(char*** arr, size_t old);
-  void extend(size_t** arr, size_t old);
   void removeVow(char* buff, const char* str);
   int checkSeqSym(const char* str);
   bool isSpace(char t);
-  void cut(char** str, size_t k);
   void deleting(char** arr, size_t k);
 }
 
@@ -52,69 +46,9 @@ int main()
   kuz::deleting(str, size);
 }
 
-void kuznetsov::cut(char** str, size_t k)
-{
-  char* arr = new char[k];
-  for (size_t i = 0; i < k; ++i) {
-    arr[i] = (*str)[i];
-  }
-  delete[] *str;
-  *str = arr;
-}
-
-char* kuznetsov::getLine(std::istream& in, size_t& size)
-{
-  char* buff = new char[2] {};
-  size_t blockSize = 1;
-  size_t strLen = 0;
-  bool isSkipws = in.flags() & std::ios::skipws;
-  in >> std::noskipws;
-  while (in >> buff[strLen++] && buff[strLen - 1] != '\n') {
-    if (strLen == blockSize) {
-      try {
-        size_t newSize = blockSize +  blockSize / 2 + 1;
-        extend(&buff, strLen, newSize + 1);
-        blockSize = newSize;
-      } catch (const std::bad_alloc&) {
-        delete[] buff;
-        throw;
-      }
-    }
-  }
-  strLen--;
-  cut(&buff, strLen);
-  size = strLen;
-  buff[strLen] = '\0';
-  if (isSkipws) {
-    in >> std::skipws;
-  }
-  return buff;
-}
-
 bool kuznetsov::isSpace(char t)
 {
   return std::isspace(t);
-}
-
-void kuznetsov::extend(char*** arr, size_t old)
-{
-  char** newArray = new char*[old + 1];
-  for (size_t i = 0; i < old; ++i) {
-    newArray[i] = (*arr)[i];
-  }
-  newArray[old] = nullptr;
-  delete[] *arr;
-  *arr = newArray;
-}
-
-void kuznetsov::extend(size_t** arr, size_t old)
-{
-  size_t* newArray = new size_t[old + 1];
-  for (size_t i = 0; i < old; ++i) {
-    newArray[i] = (*arr)[i];
-  }
-  delete[] *arr;
-  *arr = newArray;
 }
 
 void kuznetsov::deleting(char** arr, size_t k)
@@ -123,67 +57,6 @@ void kuznetsov::deleting(char** arr, size_t k)
     delete[] arr[i];
   }
   delete[] arr;
-}
-
-char** kuznetsov::getWords(std::istream& in, size_t& words, size_t** sizes, bool(*spliter)(char))
-{
-  size_t strCount = 0;
-  char** strArray = nullptr;
-  size_t* strLens = nullptr;
-  bool isSkipws = in.flags() & std::ios::skipws;
-  in >> std::noskipws;
-
-  char* buff = nullptr;
-  char t = '\0';
-  try {
-    while (t != '\n' && in ) {
-      t = '\0';
-      extend(&strArray, strCount);
-      extend(&strLens, strCount);
-      buff = new char[2];
-      size_t strLen = 0;
-      size_t blockSize = 1;
-      while (!spliter(t) && in) {
-        in >> t;
-        buff[strLen++] = t;
-        if (strLen == blockSize) {
-          size_t newSize = blockSize +  blockSize / 2 + 1;
-          extend(&buff, strLen, newSize + 1);
-          blockSize = newSize;
-        }
-      }
-      buff[strLen - 1] = '\0';
-      cut(&buff, strLen);
-      strArray[strCount] = buff;
-      strLens[strCount] = strLen - 1;
-      strCount++;
-    }
-  } catch (const std::bad_alloc&) {
-    delete[] buff;
-    delete[] strLens;
-    deleting(strArray, strCount);
-    throw;
-  }
-
-  if (isSkipws) {
-    in >> std::skipws;
-  }
-  words = strCount;
-  *sizes = strLens;
-  return strArray;
-}
-
-void kuznetsov::extend(char** str, size_t oldSize, size_t newSize)
-{
-  char* extendedStr = new char[newSize];
-  for (size_t i = 0; i < oldSize; ++i) {
-    extendedStr[i] = (*str)[i];
-  }
-  for (size_t i = oldSize; i < newSize; ++i) {
-    extendedStr[i] = 0;
-  }
-  delete[] *str;
-  *str = extendedStr;
 }
 
 void kuznetsov::removeVow(char* buff, const char* str)
