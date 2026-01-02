@@ -4,11 +4,9 @@
 
 namespace zubarev
 {
-  size_t getlineAmort(std::istream& in, char* data, size_t size);
   void pushOneElAmort(char** arr, size_t& size, size_t& capacity, char value);
   void pushOneWordAmort(char*** arr, size_t& size, size_t& capacity, char* word);
 
-  char* getlineAmort(std::istream& in, size_t& s, size_t& capacity);
   bool isSpace(char letter);
   char** getWords(std::istream& in, size_t& size, size_t& capacity, bool (*isSpace)(char ch));
 
@@ -161,27 +159,6 @@ bool zubarev::isSpace(char letter)
   return letter == ' ';
 }
 
-char* zubarev::getlineAmort(std::istream& in, size_t& size, size_t& capacity)
-{
-  char let = ' ';
-  char* data = nullptr;
-
-  bool is_skipws = in.flags() & std::ios_base::skipws;
-  if (is_skipws) {
-    in >> std::noskipws;
-  }
-
-  while (in >> let && let != '\n') {
-    pushOneElAmort(&data, size, capacity, let);
-  }
-
-  pushOneElAmort(&data, size, capacity, '\0');
-  if (is_skipws) {
-    in >> std::skipws;
-  }
-
-  return data;
-}
 
 std::ostream& zubarev::outputMatrix(std::ostream& out, const char* const str, const size_t size)
 {
