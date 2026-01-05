@@ -180,7 +180,7 @@ char * zharov::getLine(std::istream & in, size_t & len)
   while (in >> sym && sym != end) {
     if (size == len) {
       try {
-        zharov::extendStr(& str, size, size * step);
+        zharov::extendStr(&str, size, size * step);
       } catch (const std::bad_alloc &) {
         delete[] str;
         throw;
