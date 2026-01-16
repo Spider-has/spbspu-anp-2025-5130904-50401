@@ -139,14 +139,8 @@ int main()
   {
     std::cerr << "Memory allocation failed" << '\n';
     free(str);
-    if (result1)
-    {
-      free(result1);
-    }
-    if (result2)
-    {
-      free(result2);
-    }
+    free(result1);
+    free(result2);
     return 1;
   }
   const char* str1 = "abc";
