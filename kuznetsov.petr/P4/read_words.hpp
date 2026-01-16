@@ -5,8 +5,6 @@
 
 namespace kuznetsov {
   char** getWords(std::istream& in, size_t& words, size_t** sizes, bool(*c)(char));
-
-
 }
 
 #endif
