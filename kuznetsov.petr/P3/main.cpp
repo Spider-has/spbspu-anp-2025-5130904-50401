@@ -3,6 +3,7 @@
 #include <memory>
 #include <cctype>
 #include "file_array.hpp"
+#include "variants.hpp"
 
 namespace kuznetsov {
   const size_t MAX_SIZE = 10'000;
@@ -51,8 +52,27 @@ int main(int argc, char** argv)
     }
     mtrx = mt;
   }
-  int statusExit = kuz::processMatrix(input, mtrx, rows, cols, argv[3]);
+
+  kuz::initMatr(input, mtrx, rows, cols);
+
+  if (input.eof()) {
+    std::cerr << "Not enough elements for matrix\n";
+    free(mt);
+    return 1;
+  } else if (input.fail()) {
+    std::cerr << "Bad read\n";
+    free(mt);
+    return 2;
+  }
+
+  int res1 = kuz::getCntColNsm(mtx, rows, cols);
+  int res2 = kuz::getCntLocMax(mtx, rows, cols);
+
+  std::ofstream output(argv[3]);
+  output << res1 << '\n';
+  output << res2 << '\n';
+
   free(mt);
-  return statusExit;
+  return 0;
 }
 
