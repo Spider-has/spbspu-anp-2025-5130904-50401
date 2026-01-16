@@ -8,7 +8,7 @@ namespace hvostov {
   void resizeStr(char ** str, size_t & size, size_t new_size);
   void extendStr(char ** str, size_t & size);
   size_t getNewSize(size_t size);
-  void strConcatCharByChar(char * buffer, char * str1, char * str2);
+  void strConcatCharByChar(char * buffer, const char * str1, const char * str2);
   size_t countAlphaCharacters(const char * str);
 }
 
@@ -112,7 +112,7 @@ void hvostov::extendStr(char ** str, size_t & size)
   *str = new_str;
 }
 
-void hvostov::strConcatCharByChar(char * buffer, char * str1, char * str2)
+void hvostov::strConcatCharByChar(char * buffer, const char * str1, const char * str2)
 {
   size_t i = 0;
   size_t pos1 = 0;
