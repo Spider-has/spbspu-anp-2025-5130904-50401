@@ -36,7 +36,8 @@ void chernov::resize(char ** str, size_t old_size, size_t new_size)
 {
   char * new_str = reinterpret_cast< char * >(malloc(sizeof(char) * new_size));
   if (new_str == nullptr) {
-    throw std::bad_alloc();
+    *str = nullptr;
+    return;
   }
   size_t size = std::min(old_size, new_size);
   copy(*str, new_str, size);
@@ -48,7 +49,8 @@ void chernov::resize(size_t ** sizes, size_t old_size, size_t new_size)
 {
   size_t * new_sizes = reinterpret_cast< size_t * >(malloc(sizeof(size_t) * new_size));
   if (new_sizes == nullptr) {
-    throw std::bad_alloc();
+    *sizes = nullptr;
+    return;
   }
   size_t size = std::min(old_size, new_size);
   for (size_t i = 0; i < size; ++i) {
@@ -62,7 +64,8 @@ void chernov::resize(char *** strs, size_t old_size, size_t new_size)
 {
   char ** new_strs = reinterpret_cast< char ** >(malloc(sizeof(char *) * new_size));
   if (new_strs == nullptr) {
-    throw std::bad_alloc();
+    *strs = nullptr;
+    return;
   }
   size_t size = std::min(old_size, new_size);
   for (size_t i = 0; i < size; ++i) {
@@ -85,11 +88,10 @@ char * chernov::getline(std::istream & input, size_t & size, bool (*check_sym)(c
   while (input) {
     if (i >= str_size - 1) {
       size_t new_str_size = str_size * k_resize;
-      try {
-        chernov::resize(&str, str_size, new_str_size);
-      } catch (...) {
+      chernov::resize(&str, str_size, new_str_size);
+      if (str == nullptr) {
         free(str);
-        throw;
+        return nullptr;
       }
       str_size = new_str_size;
     }
@@ -118,24 +120,22 @@ char ** chernov::getlines(std::istream & input, size_t & size, size_t ** sizes, 
   while (input) {
     char * str = nullptr;
     size_t tmp_size = 0;
-    try {
-      str = chernov::getline(input, tmp_size, check_sym, start_size, k_resize);
-    } catch (...) {
+    str = chernov::getline(input, tmp_size, check_sym, start_size, k_resize);
+    if (str == nullptr) {
       destroy(strs, i);
-      throw;
+      return nullptr;
     }
     if (!tmp_size) {
       free(str);
       continue;
     }
-    try {
-      chernov::resize(&strs_sizes, strs_size, strs_size + 1);
-      chernov::resize(&strs, strs_size, strs_size + 1);
-    } catch (...) {
+    chernov::resize(&strs_sizes, strs_size, strs_size + 1);
+    chernov::resize(&strs, strs_size, strs_size + 1);
+    if (strs_sizes == nullptr || strs == nullptr) {
       free(str);
       free(strs_sizes);
       destroy(strs, i);
-      throw;
+      return nullptr;
     }
     ++strs_size;
     strs_sizes[i] = tmp_size;
@@ -183,9 +183,8 @@ int main()
   double k_resize = 1.4;
   size_t * sizes = nullptr;
   char ** strs = nullptr;
-  try {
-    strs = chernov::getlines(input, size, &sizes, chernov::isSpaceSym, start_size, k_resize);
-  } catch (const std::bad_alloc & e) {
+  strs = chernov::getlines(input, size, &sizes, chernov::isSpaceSym, start_size, k_resize);
+  if (strs == nullptr) {
     std::cerr << "badAllocError\n";
     return 1;
   }
