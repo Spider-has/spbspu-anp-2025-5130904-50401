@@ -12,9 +12,9 @@ namespace zubarev
 
   std::ostream& outputMatrix(std::ostream& out, const char* const str, const size_t size);
   size_t strlen(const char* s);
-  bool inStr(const char* const str, const size_t size, const char let);
+  bool inStr(const char* const str, const char let);
   int solveSpliceStr(const char* mainStr, const char* secondStr, char* finalStr);
-  int solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf);
+  int solveUniInAlp(const char* const mainStr, char* buf);
 }
 
 int main()
@@ -22,9 +22,17 @@ int main()
   namespace zub = zubarev;
   size_t mainSize = 0;
   size_t capacity = 0;
+  char** myWords = nullptr;
+
   std::cout << "Enter words: ";
-  char** myWords = zub::getWords(std::cin, mainSize, capacity, &zub::isSpace);
-  if (!myWords) {
+
+  try {
+    myWords = zub::getWords(std::cin, mainSize, capacity, &zub::isSpace);
+  } catch (const std::bad_alloc&) {
+    std::cerr << "Memory allocation failed\n";
+    return 1;
+  }
+  if (mainSize == 0) {
     std::cerr << "Input wrong\n";
     return 1;
   }
@@ -42,11 +50,11 @@ int main()
     try {
       finalStr = new char[finalSize + 1];
     } catch (const std::bad_alloc&) {
-      std::cerr << "Memory allocation failed for square matrix\n";
+      std::cerr << "Memory allocation failed\n";
       return 1;
     }
     zub::solveSpliceStr(myWords[i], secondStr, finalStr);
-    zub::outputMatrix(std::cout, finalStr, finalSize);
+    std::cout << finalStr << '\n';
     delete[] finalStr;
 
     size_t itogSize = 0;
@@ -55,7 +63,7 @@ int main()
       itogSize = 26;
       itogStr = new char[itogSize + 1];
     } catch (const std::bad_alloc&) {
-      std::cerr << "Memory allocation failed for square matrix\n";
+      std::cerr << "Memory allocation failed\n";
       for (size_t i = 0; i < mainSize; ++i) {
         delete[] myWords[i];
       }
@@ -63,9 +71,8 @@ int main()
       return 1;
     }
 
-    zub::solveUniInAlp(myWords[i], currentWordLen, itogStr);
-    zub::outputMatrix(std::cout, itogStr, zub::strlen(itogStr));
-    std::cout << '\n';
+    zub::solveUniInAlp(myWords[i], itogStr);
+    std::cout << itogStr << '\n';
     delete[] itogStr;
 
     delete[] myWords[i];
@@ -79,12 +86,9 @@ void zubarev::pushOneElAmort(char** arr, size_t& size, size_t& capacity, char va
   if (size + 1 >= capacity) {
     capacity = (capacity == 0) ? 2 : capacity * 2;
     char* newArr = nullptr;
-    try {
-      newArr = new char[capacity];
-    } catch (const std::bad_alloc&) {
-      std::cerr << "Memory allocation failed for square matrix\n";
-      throw;
-    }
+
+    newArr = new char[capacity];
+
     for (size_t i = 0; i < size; i++) {
       newArr[i] = (*arr)[i];
     }
@@ -100,12 +104,9 @@ void zubarev::pushOneWordAmort(char*** arr, size_t& size, size_t& capacity, char
   if (size + 1 >= capacity) {
     capacity = (capacity == 0) ? 2 : capacity * 2;
     char** newArr = nullptr;
-    try {
-      newArr = new char*[capacity];
-    } catch (const std::bad_alloc&) {
-      std::cerr << "Memory allocation failed for square matrix\n";
-      throw;
-    }
+
+    newArr = new char*[capacity];
+
     for (size_t i = 0; i < size; i++) {
       newArr[i] = (*arr)[i];
     }
@@ -159,16 +160,6 @@ bool zubarev::isSpace(char letter)
   return letter == ' ';
 }
 
-
-std::ostream& zubarev::outputMatrix(std::ostream& out, const char* const str, const size_t size)
-{
-  for (size_t i = 0; i < size; ++i) {
-    out << str[i];
-  }
-  out << '\n';
-  return out;
-}
-
 size_t zubarev::strlen(const char* s)
 {
   size_t len = 0;
@@ -180,43 +171,35 @@ size_t zubarev::strlen(const char* s)
 
 int zubarev::solveSpliceStr(const char* mainStr, const char* secondStr, char* finalStr)
 {
-  size_t secondSize = zubarev::strlen(secondStr);
-  size_t mainSize = zubarev::strlen(mainStr);
-
-  size_t countMain = 0, countSecond = 0;
-
-  while (countMain < mainSize || countSecond < secondSize) {
-    if (countMain < mainSize) {
+  while (*mainStr != '\0' || *secondStr != '\0') {
+    if (*mainStr != '\0') {
       *(finalStr++) = *(mainStr++);
-      countMain++;
     }
 
-    if (countSecond < secondSize) {
+    if (*secondStr != '\0') {
       *(finalStr++) = *(secondStr++);
-      countSecond++;
     }
   }
   *finalStr = '\0';
   return 0;
 }
 
-bool zubarev::inStr(const char* const str, const size_t size, const char let)
+bool zubarev::inStr(const char* const str, const char let)
 {
-  for (size_t i = 0; i < size; ++i) {
-    if (std::tolower(str[i]) == std::tolower(let)) {
+  for (const char* i = str; *i != '\0'; ++i) {
+    if (std::tolower(*i) == std::tolower(let)) {
       return true;
     }
   }
   return false;
 }
 
-int zubarev::solveUniInAlp(const char* const mainStr, size_t mainSize, char* buf)
+int zubarev::solveUniInAlp(const char* const mainStr, char* buf)
 {
   const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
-  const size_t alpSize = zubarev::strlen(alphabet);
 
-  for (const char* i = alphabet; i < alphabet + alpSize; ++i) {
-    if (!(inStr(mainStr, mainSize, *i))) {
+  for (const char* i = alphabet; *i != '\0'; ++i) {
+    if (!(inStr(mainStr, *i))) {
       *(buf++) = *i;
     }
   }
