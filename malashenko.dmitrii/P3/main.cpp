@@ -7,10 +7,15 @@ namespace malasenko {
 
   std::ostream & outMtx(std::ostream & out, const int * matrix, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < rows * cols - 1; ++i) {
-      out << matrix[i] << " ";
+    size_t n = rows * cols;
+    if (n == 0) {
+      return out;
     }
-    out << matrix[rows * cols - 1];
+
+    for (size_t i = 0; i + 1 < n; ++i) {
+      out << matrix[i] << ' ';
+    }
+    out << matrix[n - 1];
     return out;
   }
 
