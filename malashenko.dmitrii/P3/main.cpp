@@ -7,19 +7,11 @@ namespace malasenko {
 
   std::ostream & outMtx(std::ostream & out, const int * matrix, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < rows * cols; ++i) {
-        out << matrix[i];
-        if (i != rows * cols - 1) {
-            out << " ";
-        }
+    for (size_t i = 0; i < rows * cols - 1; ++i) {
+      out << matrix[i] << " ";
     }
+    out << matrix[rows * cols - 1];
     return out;
-  }
-
-  int * createMtx(size_t rows, size_t cols)
-  {
-    int * nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
-    return nums;
   }
 
   std::istream & readMtx(std::istream & in, int * nums, size_t & rows, size_t & cols)
@@ -125,8 +117,6 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  int * nums = nullptr;
-  int fixedLengthNums[10000];
   size_t rows = 0;
   size_t cols = 0;
 
@@ -135,7 +125,13 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  nums = (mode == 1) ? fixedLengthNums : mal::createMtx(rows, cols);
+  int * nums = nullptr;
+  if (mode == 1) {
+    int fixedLengthNums[10000];
+    nums = fixedLengthNums;
+  } else if (mode == 2) {
+    nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
+  }
 
   if (!nums) {
     std::cerr << "Problem with matrix\n";
