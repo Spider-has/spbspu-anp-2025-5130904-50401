@@ -51,17 +51,21 @@ int main()
       finalStr = new char[finalSize + 1];
     } catch (const std::bad_alloc&) {
       std::cerr << "Memory allocation failed\n";
+      for (size_t i = 0; i < mainSize; ++i) {
+        delete[] myWords[i];
+      }
+      delete[] myWords;
       return 1;
     }
     zub::solveSpliceStr(myWords[i], secondStr, finalStr);
     std::cout << finalStr << '\n';
     delete[] finalStr;
 
-    size_t itogSize = 0;
-    char* itogStr = nullptr;
+    size_t endSize = 0;
+    char* endStr = nullptr;
     try {
-      itogSize = 26;
-      itogStr = new char[itogSize + 1];
+      endSize = 26;
+      endStr = new char[endSize + 1];
     } catch (const std::bad_alloc&) {
       std::cerr << "Memory allocation failed\n";
       for (size_t i = 0; i < mainSize; ++i) {
@@ -71,9 +75,9 @@ int main()
       return 1;
     }
 
-    zub::solveUniInAlp(myWords[i], itogStr);
-    std::cout << itogStr << '\n';
-    delete[] itogStr;
+    zub::solveUniInAlp(myWords[i], endStr);
+    std::cout << endStr << '\n';
+    delete[] endStr;
 
     delete[] myWords[i];
   }
@@ -85,9 +89,7 @@ void zubarev::pushOneElAmort(char** arr, size_t& size, size_t& capacity, char va
 {
   if (size + 1 >= capacity) {
     capacity = (capacity == 0) ? 2 : capacity * 2;
-    char* newArr = nullptr;
-
-    newArr = new char[capacity];
+    char* newArr = new char[capacity];
 
     for (size_t i = 0; i < size; i++) {
       newArr[i] = (*arr)[i];
@@ -103,9 +105,7 @@ void zubarev::pushOneWordAmort(char*** arr, size_t& size, size_t& capacity, char
 {
   if (size + 1 >= capacity) {
     capacity = (capacity == 0) ? 2 : capacity * 2;
-    char** newArr = nullptr;
-
-    newArr = new char*[capacity];
+    char** newArr = newArr = new char*[capacity];
 
     for (size_t i = 0; i < size; i++) {
       newArr[i] = (*arr)[i];
