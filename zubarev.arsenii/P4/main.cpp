@@ -105,7 +105,7 @@ void zubarev::pushOneWordAmort(char*** arr, size_t& size, size_t& capacity, char
 {
   if (size + 1 >= capacity) {
     capacity = (capacity == 0) ? 2 : capacity * 2;
-    char** newArr = newArr = new char*[capacity];
+    char** newArr = new char*[capacity];
 
     for (size_t i = 0; i < size; i++) {
       newArr[i] = (*arr)[i];
