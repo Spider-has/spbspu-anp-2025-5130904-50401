@@ -124,14 +124,8 @@ int main(int argc, char ** argv)
     std::cerr << "failed to read matrix dimensions\n";
     return 1;
   }
-
-  int * nums = nullptr;
-  if (mode == 1) {
-    int fixedLengthNums[10000];
-    nums = fixedLengthNums;
-  } else if (mode == 2) {
-    nums = reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
-  }
+  int fixedLengthNums[10000];
+  int * nums = (mode == 1) ? fixedLengthNums : reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
 
   if (!nums) {
     std::cerr << "Problem with matrix\n";
