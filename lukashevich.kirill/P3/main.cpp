@@ -177,7 +177,7 @@ int main(int argc, char ** argv)
     return 2;
   }
 
-  nums = (mode == 1) ? statNums : reinterpret_cast <int * > (malloc(rows * cols * sizeof(int)));
+  nums = (mode == 1) ? statNums : reinterpret_cast< int* >(malloc(rows * cols * sizeof(int)));
 
   if (!nums)
   {
