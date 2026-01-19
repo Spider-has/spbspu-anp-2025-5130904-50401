@@ -38,9 +38,9 @@ namespace lukashevich
       if (!(in >> nums[i]))
       {
         return in;
-      
-    }
+      }
     return in;
+  }
   }
 
   void fll_inc_wav(int * mtx, size_t rows, size_t cols)
@@ -119,11 +119,9 @@ namespace lukashevich
         max_sum = sum;
       }
     }
-
     return max_sum;
   }
 }
-
 int main(int argc, char ** argv)
 {
   if (argc < 4)
