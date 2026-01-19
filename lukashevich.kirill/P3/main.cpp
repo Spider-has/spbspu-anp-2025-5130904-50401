@@ -39,8 +39,8 @@ namespace lukashevich
       {
         return in;
       }
+    }
     return in;
-  }
   }
 
   void fll_inc_wav(int * mtx, size_t rows, size_t cols)
