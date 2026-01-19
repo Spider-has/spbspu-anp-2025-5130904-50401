@@ -5,7 +5,7 @@
 
 namespace lukashevich
 {
-  std::ostream& outMtx(std::ostream& out, const int* matrix, size_t rows, size_t cols)
+  std::ostream & outMtx(std::ostream& out, const int * matrix, size_t rows, size_t cols)
   {
     out << rows << " " << cols;
     if (rows > 0 && cols > 0)
@@ -38,7 +38,7 @@ namespace lukashevich
       if (!(in >> nums[i]))
       {
         return in;
-      }
+      
     }
     return in;
   }
@@ -169,7 +169,7 @@ int main(int argc, char ** argv)
     return 2;
   }
 
-  int* nums = nullptr;
+  int * nums = nullptr;
   int statNums[10000] = {};
   size_t rows = 0;
   size_t cols = 0;
@@ -186,7 +186,7 @@ int main(int argc, char ** argv)
     return 2;
   }
 
-  nums = (mode == 1) ? statNums : luk::createMtx(rows, cols);
+  nums = (mode == 1) ? statNums : reinterpret_cast<int*>(malloc(rows * cols * sizeof(int)));
 
   if (!nums)
   {
