@@ -24,13 +24,6 @@ namespace lukashevich
     return out;
   }
 
-  int * createMtx(size_t rows, size_t cols)
-  {
-    int * nums = nullptr;
-    nums = reinterpret_cast<int*>(malloc(rows * cols * sizeof(int)));
-    return nums;
-  }
-
   std::istream & readMtx(std::istream & in, int * nums, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
