@@ -6,34 +6,17 @@
 
 namespace khasnulin
 {
-  struct Line
-  {
-    char *str;
-    size_t size;
-    size_t capacity;
-  };
-
   const size_t eng_alpabet_size = 26;
 
   bool getSkipWsState(std::istream &in);
 
-  const size_t start_length = 10;
-  const double capacity_coef = 1.5;
+  const size_t len_increment = 50;
   char *makeStr(size_t size);
-  Line *makeLine();
-  Line **makeLines(size_t size);
-  void clearLines(Line **lines, size_t size);
-  void expandLines(Line ***lines, size_t size, size_t newSize);
 
   char *getResizedStr(const char *str, size_t oldSize, size_t newSize);
 
-  using filter = bool (*)(char);
-  char *getLine(std::istream &in, size_t &size, size_t &capacity, bool &eol, filter check);
-  Line *buildLine(std::istream &in, bool &eol, filter check);
-  bool isSpace(char ch);
-
-  Line **getWordsFromLine(std::istream &in, size_t &size, filter check);
-  void ensureCapacity(char **str, size_t &size, size_t &capacity);
+  char *getLine(std::istream &in, size_t &size);
+  char *getLineWithWs(std::istream &in, size_t &size);
 
   bool isSymbIncluded(const char *str, size_t size, char symb);
 
@@ -45,60 +28,45 @@ namespace khasnulin
 
 int main()
 {
-  using namespace khasnulin;
-
-  size_t size = 0;
-  Line **lines = getWordsFromLine(std::cin, size, isSpace);
-  if (!lines)
+  size_t size;
+  char *str = khasnulin::getLineWithWs(std::cin, size);
+  if (!str)
   {
     std::cerr << "Failed to allocate dynamic memory for the input data.\n";
     return 1;
   }
 
-  if (lines[0]->size)
+  if (size)
   {
     const size_t new_str_size = khasnulin::eng_alpabet_size + 1;
     char new_str[new_str_size] = {};
 
-    for (size_t i = 0; i < size; ++i)
-    {
-      shrSym(new_str, lines[i]->str, lines[i]->size);
-      std::cout << "[ SHR-SYM ] word: " << lines[i]->str << ", result: " << new_str << "\n";
-    }
+    khasnulin::shrSym(new_str, str, size);
+    std::cout << new_str << "\n";
 
     const char str2[] = "def_";
     const size_t size2 = 4;
-    char *uni_str = nullptr;
 
-    for (size_t i = 0; i < size; ++i)
+    char *uni_str = khasnulin::makeStr(size + size2 + 1);
+    if (!uni_str)
     {
-      uni_str = makeStr(lines[i]->size + size2 + 1);
-      if (!uni_str)
-      {
-        clearLines(lines, size);
-        std::cerr << "Failed to allocate dynamic memory for the new string.\n";
-        return 1;
-      }
-
-      uniTwo(uni_str, lines[i]->str, lines[i]->size, str2, size2);
-      std::cout << "[ UNI-TWO ] string 1: " << lines[i]->str << ", string 2: " << str2
-                << ", result: " << uni_str << "\n";
+      free(str);
+      std::cerr << "Failed to allocate dynamic memory for the new string.\n";
+      return 1;
     }
 
-    clearLines(lines, size);
+    khasnulin::uniTwo(uni_str, str, size, str2, size2);
+    std::cout << uni_str << "\n";
+
+    free(str);
     free(uni_str);
   }
   else
   {
     std::cerr << "Empty input error\n";
-    clearLines(lines, size);
+    free(str);
     return 1;
   }
-}
-
-bool khasnulin::isSpace(char ch)
-{
-  return ch == ' ';
 }
 
 bool khasnulin::getSkipWsState(std::istream &in)
@@ -109,40 +77,6 @@ bool khasnulin::getSkipWsState(std::istream &in)
 char *khasnulin::makeStr(size_t size)
 {
   return reinterpret_cast<char *>(malloc(sizeof(char) * size));
-}
-
-khasnulin::Line **khasnulin::makeLines(size_t size)
-{
-  return reinterpret_cast<Line **>(malloc(sizeof(struct Line *) * size));
-}
-
-khasnulin::Line *khasnulin::makeLine()
-{
-  return reinterpret_cast<Line *>(malloc(sizeof(struct Line)));
-}
-
-void khasnulin::clearLines(Line **lines, size_t size)
-{
-  for (size_t i = 0; i < size; i++)
-  {
-    free(lines[i]->str);
-    free(lines[i]);
-  }
-  free(lines);
-}
-
-void khasnulin::expandLines(Line ***lines, size_t size, size_t newSize)
-{
-  Line **newLines = makeLines(newSize);
-  if (newLines)
-  {
-    for (size_t i = 0; i < size; ++i)
-    {
-      newLines[i] = (*lines)[i];
-    }
-    free(*lines);
-  }
-  *lines = newLines;
 }
 
 char *khasnulin::getResizedStr(const char *str, size_t oldSize, size_t newSize)
@@ -160,74 +94,52 @@ char *khasnulin::getResizedStr(const char *str, size_t oldSize, size_t newSize)
   return newStr;
 }
 
-char *khasnulin::getLine(std::istream &in, size_t &size, size_t &capacity, bool &eol, filter check)
+char *khasnulin::getLine(std::istream &in, size_t &size)
 {
-  char *str = makeStr(start_length);
+  char *str = makeStr(len_increment);
   if (!str)
   {
-    capacity = 0;
     size = 0;
     return nullptr;
   }
 
-  capacity = start_length;
-  size = 0;
+  size = len_increment;
+  size_t i = 0;
+
   char ch;
-  while ((in >> ch) && !check(ch) && ch != '\n')
+  while ((in >> ch) && (ch != '\n'))
   {
-    str[size] = ch;
-    size++;
-    ensureCapacity(&str, size, capacity);
-    if (!str)
+    if (i == size)
     {
-      return nullptr;
+      char *newStr = getResizedStr(str, size, size + len_increment);
+      if (!newStr)
+      {
+        size = 0;
+        free(str);
+        return nullptr;
+      }
+      free(str);
+      str = newStr;
+      size += len_increment;
     }
+    str[i] = ch;
+    i++;
   }
-  eol = (ch == '\n');
-  str[size] = '\0';
+  char *newStr = getResizedStr(str, size, i + 1);
+  if (!newStr)
+  {
+    free(str);
+    size = 0;
+    return nullptr;
+  }
+  free(str);
+  str = newStr;
+  size = i;
+  str[i] = '\0';
   return str;
 }
 
-void khasnulin::ensureCapacity(char **str, size_t &size, size_t &capacity)
-{
-  if (size == capacity)
-  {
-    size_t new_capacity = capacity_coef * capacity;
-    char *newStr = getResizedStr(*str, size, new_capacity);
-    free(*str);
-    if (!newStr)
-    {
-      capacity = 0;
-      size = 0;
-      *str = nullptr;
-    }
-    else
-    {
-      *str = newStr;
-      capacity = new_capacity;
-    }
-  }
-}
-
-khasnulin::Line *khasnulin::buildLine(std::istream &in, bool &eol, filter check)
-{
-  size_t size;
-  size_t capacity;
-  char *str = getLine(in, size, capacity, eol, check);
-  Line *line = makeLine();
-  if (!str || !line)
-  {
-    free(line);
-    free(str);
-    return nullptr;
-  }
-  line->str = str;
-  line->size = size;
-  line->capacity = capacity;
-  return line;
-}
-
-khasnulin::Line **khasnulin::getWordsFromLine(std::istream &in, size_t &size, filter check)
+char *khasnulin::getLineWithWs(std::istream &in, size_t &size)
 {
   bool skip_ws = getSkipWsState(in);
   if (skip_ws)
@@ -235,34 +147,13 @@ khasnulin::Line **khasnulin::getWordsFromLine(std::istream &in, size_t &size, fi
     in >> std::noskipws;
   }
 
-  Line **lines = nullptr;
-  size_t lines_count = 0;
-
-  bool eol = false;
-  while (!eol)
-  {
-    Line *line = buildLine(in, eol, check);
-    if (!line)
-    {
-      clearLines(lines, lines_count);
-      return nullptr;
-    }
-    expandLines(&lines, lines_count, lines_count + 1);
-    if (!lines)
-    {
-      free(line);
-      clearLines(lines, lines_count);
-      return nullptr;
-    }
-    lines[lines_count++] = line;
-  }
+  char *str = getLine(in, size);
 
   if (skip_ws)
   {
     in >> std::skipws;
   }
-  size = lines_count;
-  return lines;
+  return str;
 }
 
 void khasnulin::fillEngAlphabet(char *str)
