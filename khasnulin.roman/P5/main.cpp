@@ -82,10 +82,8 @@ namespace khasnulin
 
   void printRectInfo(std::ostream &out, rectangle_t rect);
   rectangle_t getCommonRectangleFrame(rectangle_t r1, rectangle_t r2);
-  void calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
-                                    size_t size);
-  rectangle_t calculateFiguresGeneralRectangleFrame(IShape **shapes,
-                                                    size_t size);
+  void calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size);
+  rectangle_t calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size);
 
   void isotropicScaling(IShape &shape, point_t scale_pt, double scale);
 
@@ -123,18 +121,18 @@ int main()
 
     double scale;
     point_t scale_pt;
+    std::cout << "before figures scaling: \n";
+    calculateAndPrintFiguresInfo(std::cout, shapes, size);
 
     std::cin >> scale_pt.x >> scale_pt.y;
     std::cin >> scale;
     if (std::cin.fail())
     {
-      throw std::runtime_error(
-          "incorrect input: fail to read arguments, must be 3 double");
+      throw std::runtime_error("incorrect input: fail to read arguments, must be 3 double");
     }
     if (scale <= 0)
     {
-      throw std::runtime_error(
-          "incorrect input: scale coefficient must be more than zero");
+      throw std::runtime_error("incorrect input: scale coefficient must be more than zero");
     }
 
     for (size_t i = 0; i < size; i++)
@@ -197,9 +195,8 @@ void khasnulin::Rectangle::scale(double k)
 {
   if (k <= 0.0)
   {
-    throw std::invalid_argument(
-        "incorrect rectangle scaling: scale coefficient must be"
-        " positive");
+    throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be"
+                                " positive");
   }
   rect.width *= k;
   rect.height *= k;
@@ -207,27 +204,23 @@ void khasnulin::Rectangle::scale(double k)
 
 void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
 {
-  out << "rectangle center x:" << rect.pos.x << ", y: " << rect.pos.y
-      << ", width: " << rect.width << ", height: " << rect.height << "\n";
+  out << "rectangle center x:" << rect.pos.x << ", y: " << rect.pos.y << ", width: " << rect.width
+      << ", height: " << rect.height << "\n";
 }
 
-khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1,
-                                                          rectangle_t r2)
+khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1, rectangle_t r2)
 {
   double left = std::min(r1.pos.x - r1.width / 2, r2.pos.x - r2.width / 2);
   double right = std::max(r1.pos.x + r1.width / 2, r2.pos.x + r2.width / 2);
   double bottom = std::min(r1.pos.y - r1.height / 2, r2.pos.y - r2.height / 2);
   double top = std::max(r1.pos.y + r1.height / 2, r2.pos.y + r2.height / 2);
-  return rectangle_t{
-      right - left, top - bottom, {(right + left) / 2, (top + bottom) / 2}};
+  return rectangle_t{right - left, top - bottom, {(right + left) / 2, (top + bottom) / 2}};
 }
 
-void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
-                                             size_t size)
+void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size)
 {
   double sum_area = 0;
-  rectangle_t general_frame =
-      calculateFiguresGeneralRectangleFrame(shapes, size);
+  rectangle_t general_frame = calculateFiguresGeneralRectangleFrame(shapes, size);
   for (size_t i = 0; i < size; i++)
   {
     double area = shapes[i]->getArea();
@@ -243,8 +236,7 @@ void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes,
   printRectInfo(out, general_frame);
 }
 
-khasnulin::rectangle_t
-khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)
+khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)
 {
   if (!size)
   {
@@ -253,8 +245,7 @@ khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)
   rectangle_t general_frame = shapes[0]->getFrameRect();
   for (size_t i = 1; i < size; i++)
   {
-    general_frame =
-        getCommonRectangleFrame(general_frame, shapes[i]->getFrameRect());
+    general_frame = getCommonRectangleFrame(general_frame, shapes[i]->getFrameRect());
   }
   return general_frame;
 }
@@ -307,9 +298,8 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
 {
   if (!points || k <= 2)
   {
-    throw std::invalid_argument(
-        "polygon creation error: points array must be not empty, count of"
-        " vertexes must be more than 2");
+    throw std::invalid_argument("polygon creation error: points array must be not empty, count of"
+                                " vertexes must be more than 2");
   }
   copy(points, vertex, k);
   center = calculateCenter(vertex, size);
@@ -362,8 +352,7 @@ khasnulin::point_t khasnulin::calculateCenter(const point_t *points, size_t k)
     figure_area += current_area;
   }
   double last_area = triagleSignedArea(points[k - 1], points[0]);
-  figure_center =
-      figure_center + getTriangleCenter(points[k - 1], points[0]) * last_area;
+  figure_center = figure_center + getTriangleCenter(points[k - 1], points[0]) * last_area;
   figure_area += last_area;
   return figure_area ? (figure_center / figure_area) : point_t{0, 0};
 }
@@ -388,8 +377,7 @@ void khasnulin::Polygon::scale(double k)
 {
   if (k <= 0.0)
   {
-    throw std::invalid_argument(
-        "incorrect polygon scaling: scale coefficient must be positive");
+    throw std::invalid_argument("incorrect polygon scaling: scale coefficient must be positive");
   }
   for (size_t i = 0; i < size; i++)
   {
@@ -409,8 +397,7 @@ khasnulin::rectangle_t khasnulin::Polygon::getFrameRect() const
     right = std::max(right, vertex[i].x);
     bottom = std::min(bottom, vertex[i].y);
   }
-  return rectangle_t{right - left, top - bottom,
-                     point_t{(right + left) / 2, (top + bottom) / 2}};
+  return rectangle_t{right - left, top - bottom, point_t{(right + left) / 2, (top + bottom) / 2}};
 }
 
 khasnulin::Polygon::Polygon(const Polygon &pol):
@@ -460,8 +447,7 @@ khasnulin::Xquare::Xquare(point_t cent, double d):
 {
   if (d <= 0)
   {
-    throw std::invalid_argument(
-        "fail Xquare creation: diagonal must be positive number");
+    throw std::invalid_argument("fail Xquare creation: diagonal must be positive number");
   }
 }
 
@@ -487,8 +473,7 @@ void khasnulin::Xquare::scale(double k)
 {
   if (k <= 0)
   {
-    throw std::invalid_argument(
-        "incorrect Xquare scaling: scale coefficient must be positive");
+    throw std::invalid_argument("incorrect Xquare scaling: scale coefficient must be positive");
   }
   diag *= k;
 }
