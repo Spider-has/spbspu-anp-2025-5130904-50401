@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 
 namespace khasnulin
@@ -22,10 +23,14 @@ namespace khasnulin
     virtual rectangle_t getFrameRect() const = 0;
     virtual void move(point_t to) = 0;
     virtual void move(double dx, double dy) = 0;
-    virtual void scale(double k) = 0;
+    void scale(double k);
+
+  private:
+    const virtual char *getShapeName() const = 0;
+    virtual void doScale(double k) = 0;
   };
 
-  class Rectangle : public IShape
+  class Rectangle: public IShape
   {
   public:
     Rectangle(point_t pos, double w, double h);
@@ -34,13 +39,14 @@ namespace khasnulin
     rectangle_t getFrameRect() const override;
     void move(point_t to) override;
     void move(double dx, double dy) override;
-    void scale(double k) override;
 
   private:
+    const char *getShapeName() const override;
+    void doScale(double k) override;
     rectangle_t rect;
   };
 
-  class Polygon : public IShape
+  class Polygon: public IShape
   {
   public:
     Polygon(const point_t *points, size_t k);
@@ -56,15 +62,16 @@ namespace khasnulin
     rectangle_t getFrameRect() const override;
     void move(point_t to) override;
     void move(double dx, double dy) override;
-    void scale(double k) override;
 
   private:
+    const char *getShapeName() const override;
+    void doScale(double k) override;
     point_t *vertex;
     size_t size;
     point_t center;
   };
 
-  class Xquare : public IShape
+  class Xquare: public IShape
   {
   public:
     Xquare(point_t cent, double d);
@@ -73,9 +80,10 @@ namespace khasnulin
     rectangle_t getFrameRect() const override;
     void move(point_t to) override;
     void move(double dx, double dy) override;
-    void scale(double k) override;
 
   private:
+    const char *getShapeName() const override;
+    void doScale(double k) override;
     double diag;
     point_t center;
   };
@@ -147,11 +155,6 @@ int main()
     std::cerr << e.what() << "\n";
     code = 1;
   }
-  catch (...)
-  {
-    std::cerr << "unknown error\n";
-    code = 1;
-  }
 
   for (size_t i = 0; i < size; i++)
   {
@@ -160,13 +163,24 @@ int main()
   return code;
 }
 
+void khasnulin::IShape::scale(double k)
+{
+  if (k <= 0.0)
+  {
+    char message[256] = {};
+    strcat(message, getShapeName());
+    throw std::invalid_argument(
+        std::strcat(message, " incorrect scaling: scale coefficient must be positive"));
+  }
+  doScale(k);
+}
+
 khasnulin::Rectangle::Rectangle(point_t pos, double w, double h):
     rect({w, h, pos})
 {
   if (w <= 0.0 || h <= 0.0)
   {
-    throw std::invalid_argument("incorrect rectangle creation: "
-                                "width and height must be positive");
+    throw std::invalid_argument("incorrect rectangle creation: width and height must be positive");
   }
 }
 
@@ -189,17 +203,6 @@ void khasnulin::Rectangle::move(double dx, double dy)
 void khasnulin::Rectangle::move(point_t to)
 {
   rect.pos = to;
-}
-
-void khasnulin::Rectangle::scale(double k)
-{
-  if (k <= 0.0)
-  {
-    throw std::invalid_argument("incorrect rectangle scaling: scale coefficient must be"
-                                " positive");
-  }
-  rect.width *= k;
-  rect.height *= k;
 }
 
 void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
@@ -298,8 +301,8 @@ khasnulin::Polygon::Polygon(const point_t *points, size_t k):
 {
   if (!points || k <= 2)
   {
-    throw std::invalid_argument("polygon creation error: points array must be not empty, count of"
-                                " vertexes must be more than 2");
+    throw std::invalid_argument(
+        "polygon creation error: points array must be not empty, count of vertexes must be more than 2");
   }
   copy(points, vertex, k);
   center = calculateCenter(vertex, size);
@@ -373,19 +376,6 @@ void khasnulin::Polygon::move(double dx, double dy)
   move(newCenter);
 }
 
-void khasnulin::Polygon::scale(double k)
-{
-  if (k <= 0.0)
-  {
-    throw std::invalid_argument("incorrect polygon scaling: scale coefficient must be positive");
-  }
-  for (size_t i = 0; i < size; i++)
-  {
-    point_t delta = vertex[i] - center;
-    vertex[i] = center + delta * k;
-  }
-}
-
 khasnulin::rectangle_t khasnulin::Polygon::getFrameRect() const
 {
   double left = vertex[0].x, right = vertex[0].x;
@@ -416,7 +406,7 @@ khasnulin::Polygon::Polygon(Polygon &&pol):
 }
 khasnulin::Polygon &khasnulin::Polygon::operator=(const Polygon &pol)
 {
-  if (this == &pol)
+  if (this == std::addressof(pol))
   {
     return *this;
   }
@@ -431,7 +421,7 @@ khasnulin::Polygon &khasnulin::Polygon::operator=(const Polygon &pol)
 
 khasnulin::Polygon &khasnulin::Polygon::operator=(Polygon &&pol)
 {
-  if (this == &pol)
+  if (this == std::addressof(pol))
   {
     return *this;
   }
@@ -469,11 +459,37 @@ void khasnulin::Xquare::move(double dx, double dy)
   center.y += dy;
 }
 
-void khasnulin::Xquare::scale(double k)
+const char *khasnulin::Rectangle::getShapeName() const
 {
-  if (k <= 0)
+  return "rectangle";
+}
+
+void khasnulin::Rectangle::doScale(double k)
+{
+  rect.width *= k;
+  rect.height *= k;
+}
+
+const char *khasnulin::Polygon::getShapeName() const
+{
+  return "polygon";
+}
+
+void khasnulin::Polygon::doScale(double k)
+{
+  for (size_t i = 0; i < size; i++)
   {
-    throw std::invalid_argument("incorrect Xquare scaling: scale coefficient must be positive");
+    point_t delta = vertex[i] - center;
+    vertex[i] = center + delta * k;
   }
+}
+
+const char *khasnulin::Xquare::getShapeName() const
+{
+  return "xquare";
+}
+
+void khasnulin::Xquare::doScale(double k)
+{
   diag *= k;
 }
