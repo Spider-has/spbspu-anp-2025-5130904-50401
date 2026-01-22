@@ -1,6 +1,3 @@
-#include <cctype>
-#include <cstddef>
-#include <ios>
 #include <iostream>
 
 #include "arrays_operations.hpp"
