@@ -83,10 +83,10 @@ int main()
       uniTwo(uni_str, lines[i]->str, lines[i]->size, str2, size2);
       std::cout << "[ UNI-TWO ] string 1: " << lines[i]->str << ", string 2: " << str2
                 << ", result: " << uni_str << "\n";
+      free(uni_str);
     }
 
     clearLines(lines, size);
-    free(uni_str);
   }
   else
   {
@@ -183,7 +183,7 @@ char *khasnulin::getLine(std::istream &in, size_t &size, size_t &capacity, bool 
       return nullptr;
     }
   }
-  eol = (ch == '\n');
+  eol = (in.eof() || ch == '\n');
   str[size] = '\0';
   return str;
 }
