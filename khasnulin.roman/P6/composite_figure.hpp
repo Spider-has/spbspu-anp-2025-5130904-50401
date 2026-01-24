@@ -8,14 +8,14 @@ namespace khasnulin
   class CompositeFigure
   {
   public:
-    CompositeFigure();
-    CompositeFigure(const CompositeFigure &cf);
-    CompositeFigure(CompositeFigure &&cf);
+    CompositeFigure() noexcept = default;
+    CompositeFigure(const CompositeFigure &cf) = default;
+    CompositeFigure(CompositeFigure &&cf) noexcept = default;
 
-    ~CompositeFigure();
+    ~CompositeFigure() = default;
 
-    CompositeFigure &operator=(const CompositeFigure &cf);
-    CompositeFigure &operator=(const CompositeFigure &&cf);
+    CompositeFigure &operator=(const CompositeFigure &cf) = default;
+    CompositeFigure &operator=(CompositeFigure &&cf) = default;
 
     void preappend(IShape figure);
     void append(IShape figure);
@@ -47,11 +47,32 @@ namespace khasnulin
     size_t capacity() const;
 
   private:
-    IShape **figures;
-    size_t size;
-    size_t capacity;
+    class ShapeVector
+    {
+    public:
+      ShapeVector() noexcept;
+      ShapeVector(const ShapeVector &sv);
+      ShapeVector(ShapeVector &&sv) noexcept;
 
-    void ensureCapacity();
+      ShapeVector &operator=(const ShapeVector &sv);
+      ShapeVector &operator=(ShapeVector &&sv) noexcept;
+      IShape *operator[](size_t index) const;
+
+      ~ShapeVector();
+
+      void append(IShape *figure);
+      void preappend(IShape *figure);
+      size_t size() const noexcept;
+
+    private:
+      IShape **figures_;
+      size_t size_;
+      size_t capacity_;
+
+      void ensureCapacity(size_t newSize);
+    };
+
+    ShapeVector figures;
   };
 }
 
