@@ -17,9 +17,9 @@ namespace khasnulin
     CompositeFigure &operator=(const CompositeFigure &cf) = default;
     CompositeFigure &operator=(CompositeFigure &&cf) = default;
 
-    void preappend(IShape figure);
-    void append(IShape figure);
-    void add(IShape figure, size_t pos);
+    void preappend(IShape *figure);
+    void append(IShape *figure);
+    void add(IShape *figure, size_t pos);
 
     IShape &last();
     IShape &first();

@@ -112,3 +112,71 @@ void ComFig::ShapeVector::ensureCapacity(size_t newSize)
   capacity_ = newCapacity;
   figures_ = newFigures;
 }
+
+void ComFig::preappend(IShape *figure)
+{
+  figures.insert(figure, 0);
+}
+
+void ComFig::append(IShape *figure)
+{
+  figures.insert(figure, figures.size());
+}
+
+void ComFig::add(IShape *figure, size_t pos)
+{
+  figures.insert(figure, pos);
+}
+
+khasnulin::IShape &ComFig::last()
+{
+  return *figures[figures.size() - 1];
+}
+
+khasnulin::IShape &ComFig::first()
+{
+  return *figures[0];
+}
+
+const khasnulin::IShape &ComFig::last() const
+{
+  return *figures[figures.size() - 1];
+}
+
+const khasnulin::IShape &ComFig::first() const
+{
+  return *figures[0];
+}
+
+khasnulin::IShape &ComFig::at(size_t index)
+{
+  if (index >= figures.size())
+  {
+    throw std::runtime_error("index out of array boundaries");
+  }
+  return *figures[index];
+}
+
+khasnulin::IShape &ComFig::get(size_t index)
+{
+  return *figures[index];
+}
+
+const khasnulin::IShape &ComFig::at(size_t index) const
+{
+  if (index >= figures.size())
+  {
+    throw std::runtime_error("index out of array boundaries");
+  }
+  return *figures[index];
+}
+
+const khasnulin::IShape &ComFig::get(size_t index) const
+{
+  return *figures[index];
+}
+
+size_t ComFig::size() const
+{
+  return figures.size();
+}
