@@ -1,8 +1,8 @@
 #ifndef FIGURES_INFO_HPP
 #define FIGURES_INFO_HPP
 
-#include "ishape.hpp"
 #include <iosfwd>
+#include <ishape.hpp>
 
 namespace khasnulin
 {

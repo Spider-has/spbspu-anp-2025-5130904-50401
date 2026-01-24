@@ -1,7 +1,7 @@
 #ifndef XQUARE_HPP
 #define XQUARE_HPP
 
-#include "ishape.hpp"
+#include <ishape.hpp>
 
 namespace khasnulin
 {

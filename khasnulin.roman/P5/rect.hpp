@@ -1,7 +1,7 @@
 #ifndef RECT_HPP
 #define RECT_HPP
 
-#include "ishape.hpp"
+#include <ishape.hpp>
 
 namespace khasnulin
 {
