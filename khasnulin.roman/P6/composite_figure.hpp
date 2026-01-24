@@ -60,8 +60,7 @@ namespace khasnulin
 
       ~ShapeVector();
 
-      void append(IShape *figure);
-      void preappend(IShape *figure);
+      void insert(IShape *figure, size_t pos);
       size_t size() const noexcept;
 
     private:

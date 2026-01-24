@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <stdexcept>
 
 namespace
 {
@@ -87,21 +88,19 @@ khasnulin::IShape *ComFig::ShapeVector::operator[](size_t index) const
   return figures_[index];
 }
 
-void ComFig::ShapeVector::append(IShape *figure)
+void ComFig::ShapeVector::insert(IShape *figure, size_t pos)
 {
+  if (pos > size_)
+  {
+    throw std::runtime_error("trying to insert element over array boundary");
+  }
   ensureCapacity(size_ + 1);
-  figures_[size_++] = figure;
-}
-
-void ComFig::ShapeVector::preappend(IShape *figure)
-{
-  ensureCapacity(size_ + 1);
-  ++size_;
-  for (size_t i = size_ - 1; i > 0; --i)
+  for (size_t i = size_; i > pos; --i)
   {
     figures_[i] = figures_[i - 1];
   }
-  figures_[0] = figure;
+  figures_[pos] = figure;
+  ++size_;
 }
 
 void ComFig::ShapeVector::ensureCapacity(size_t newSize)
