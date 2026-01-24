@@ -100,6 +100,7 @@ khasnulin::Polygon::Polygon(const Polygon &pol):
 {
   copy(pol.vertex, vertex, size);
 }
+
 khasnulin::Polygon::Polygon(Polygon &&pol):
     vertex(pol.vertex),
     size(pol.size),
@@ -107,6 +108,7 @@ khasnulin::Polygon::Polygon(Polygon &&pol):
 {
   pol.vertex = nullptr;
 }
+
 khasnulin::Polygon &khasnulin::Polygon::operator=(const Polygon &pol)
 {
   if (this == std::addressof(pol))

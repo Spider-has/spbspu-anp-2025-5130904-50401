@@ -13,10 +13,11 @@ namespace khasnulin
 
     Polygon(const Polygon &pol);
     Polygon(Polygon &&pol);
-    Polygon &operator=(const Polygon &pol);
-    Polygon &operator=(Polygon &&pol);
 
     ~Polygon();
+
+    Polygon &operator=(const Polygon &pol);
+    Polygon &operator=(Polygon &&pol);
 
     double getArea() const override;
     rectangle_t getFrameRect() const override;
