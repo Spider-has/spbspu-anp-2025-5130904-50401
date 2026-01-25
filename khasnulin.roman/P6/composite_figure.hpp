@@ -61,7 +61,9 @@ namespace khasnulin
       ~ShapeVector();
 
       void insert(IShape *figure, size_t pos);
+      void erase(size_t pos);
       size_t size() const noexcept;
+      bool empty() const;
 
     private:
       IShape **figures_;

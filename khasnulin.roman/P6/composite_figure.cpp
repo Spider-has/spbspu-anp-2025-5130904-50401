@@ -13,6 +13,7 @@ namespace
       to[i] = from[i];
     }
   }
+
 }
 
 using ComFig = khasnulin::CompositeFigure;
@@ -92,7 +93,7 @@ void ComFig::ShapeVector::insert(IShape *figure, size_t pos)
 {
   if (pos > size_)
   {
-    throw std::runtime_error("trying to insert element over array boundary");
+    throw std::out_of_range("trying to insert element over array boundary");
   }
   ensureCapacity(size_ + 1);
   for (size_t i = size_; i > pos; --i)
@@ -113,6 +114,23 @@ void ComFig::ShapeVector::ensureCapacity(size_t newSize)
   figures_ = newFigures;
 }
 
+bool ComFig::ShapeVector::empty() const
+{
+  return !size_;
+}
+
+void ComFig::ShapeVector::erase(size_t pos)
+{
+  if (pos >= size_)
+  {
+    throw std::out_of_range("trying to delete element over array boundary");
+  }
+  delete figures_[pos];
+  copyShapes(&figures_[pos + 1], &figures_[pos], size_ - pos - 1);
+  figures_[size_ - 1] = nullptr;
+  --size_;
+}
+
 void ComFig::preappend(IShape *figure)
 {
   figures.insert(figure, 0);
@@ -130,21 +148,37 @@ void ComFig::add(IShape *figure, size_t pos)
 
 khasnulin::IShape &ComFig::last()
 {
+  if (figures.empty())
+  {
+    throw std::runtime_error("can't get last element, array is empty");
+  }
   return *figures[figures.size() - 1];
 }
 
 khasnulin::IShape &ComFig::first()
 {
+  if (figures.empty())
+  {
+    throw std::runtime_error("can't get first element, array is empty");
+  }
   return *figures[0];
 }
 
 const khasnulin::IShape &ComFig::last() const
 {
+  if (figures.empty())
+  {
+    throw std::runtime_error("can't get last element, array is empty");
+  }
   return *figures[figures.size() - 1];
 }
 
 const khasnulin::IShape &ComFig::first() const
 {
+  if (figures.empty())
+  {
+    throw std::runtime_error("can't get first element, array is empty");
+  }
   return *figures[0];
 }
 
@@ -152,7 +186,7 @@ khasnulin::IShape &ComFig::at(size_t index)
 {
   if (index >= figures.size())
   {
-    throw std::runtime_error("index out of array boundaries");
+    throw std::out_of_range("index out of array boundaries");
   }
   return *figures[index];
 }
@@ -166,7 +200,7 @@ const khasnulin::IShape &ComFig::at(size_t index) const
 {
   if (index >= figures.size())
   {
-    throw std::runtime_error("index out of array boundaries");
+    throw std::out_of_range("index out of array boundaries");
   }
   return *figures[index];
 }
