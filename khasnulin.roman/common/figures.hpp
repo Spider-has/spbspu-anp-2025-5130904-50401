@@ -5,6 +5,7 @@
 #include "isotropical_scaling.hpp"
 #include "polygon.hpp"
 #include "rect.hpp"
+#include "utils.hpp"
 #include "xquare.hpp"
 
 #endif

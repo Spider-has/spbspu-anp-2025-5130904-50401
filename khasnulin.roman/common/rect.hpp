@@ -1,14 +1,14 @@
-#ifndef XQUARE_HPP
-#define XQUARE_HPP
+#ifndef RECT_HPP
+#define RECT_HPP
 
-#include <ishape.hpp>
+#include "ishape.hpp"
 
 namespace khasnulin
 {
-  class Xquare: public IShape
+  class Rectangle: public IShape
   {
   public:
-    Xquare(point_t cent, double d);
+    Rectangle(point_t pos, double w, double h);
 
     double getArea() const override;
     rectangle_t getFrameRect() const override;
@@ -18,9 +18,9 @@ namespace khasnulin
   private:
     const char *getShapeName() const override;
     void doScale(double k) override;
-    double diag;
-    point_t center;
+    rectangle_t rect;
   };
+
 }
 
 #endif

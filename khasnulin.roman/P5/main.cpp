@@ -1,7 +1,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "figures.hpp"
+#include <figures.hpp>
 
 int main()
 {
@@ -21,19 +21,8 @@ int main()
 
     double scale;
     point_t scale_pt;
-    std::cout << "before figures scaling: \n";
-    calculateAndPrintFiguresInfo(std::cout, shapes, size);
 
-    std::cin >> scale_pt.x >> scale_pt.y;
-    std::cin >> scale;
-    if (std::cin.fail())
-    {
-      throw std::runtime_error("incorrect input: fail to read arguments, must be 3 double");
-    }
-    if (scale <= 0)
-    {
-      throw std::runtime_error("incorrect input: scale coefficient must be more than zero");
-    }
+    readScaleInfo(std::cin, scale_pt, scale);
 
     for (size_t i = 0; i < size; i++)
     {

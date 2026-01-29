@@ -1,7 +1,6 @@
 #include "polygon.hpp"
+#include "point.hpp"
 #include <stdexcept>
-
-#include <point.hpp>
 
 namespace
 {

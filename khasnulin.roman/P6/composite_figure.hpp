@@ -76,6 +76,7 @@ namespace khasnulin
       IShape **figures_;
 
       void ensureCapacity(size_t newSize);
+      void makeShapesByCapacity(size_t capacity);
     };
 
     ShapeVector figures;

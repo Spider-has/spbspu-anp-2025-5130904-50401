@@ -1,6 +1,10 @@
 #include "figures_info.hpp"
 #include <iostream>
 
+namespace
+{
+}
+
 void khasnulin::printRectInfo(std::ostream &out, rectangle_t rect)
 {
   out << "rectangle center x:" << rect.pos.x << ", y: " << rect.pos.y << ", width: " << rect.width
@@ -19,20 +23,29 @@ khasnulin::rectangle_t khasnulin::getCommonRectangleFrame(rectangle_t r1, rectan
 void khasnulin::calculateAndPrintFiguresInfo(std::ostream &out, IShape **shapes, size_t size)
 {
   double sum_area = 0;
-  rectangle_t general_frame = calculateFiguresGeneralRectangleFrame(shapes, size);
   for (size_t i = 0; i < size; i++)
   {
+    printSingleShapeInfo(out, shapes[i], i);
     double area = shapes[i]->getArea();
-    out << "figure " << i << " area: " << shapes[i]->getArea() << "\n";
-    rectangle_t rect = shapes[i]->getFrameRect();
-    out << "figure " << i << " frame ";
-    printRectInfo(out, rect);
-
     sum_area += area;
   }
-  out << "area sum: " << sum_area << "\n";
+  rectangle_t general_frame = calculateFiguresGeneralRectangleFrame(shapes, size);
+  printGeneralInfo(out, general_frame, sum_area);
+}
+
+void khasnulin::printSingleShapeInfo(std::ostream &out, IShape *shape, size_t index)
+{
+  out << "figure " << index << " area: " << shape->getArea() << "\n";
+  rectangle_t rect = shape->getFrameRect();
+  out << "figure " << index << " frame ";
+  printRectInfo(out, rect);
+}
+
+void khasnulin::printGeneralInfo(std::ostream &out, rectangle_t gen_frame, double gen_area)
+{
+  out << "area sum: " << gen_area << "\n";
   out << "general figures frame ";
-  printRectInfo(out, general_frame);
+  printRectInfo(out, gen_frame);
 }
 
 khasnulin::rectangle_t khasnulin::calculateFiguresGeneralRectangleFrame(IShape **shapes, size_t size)

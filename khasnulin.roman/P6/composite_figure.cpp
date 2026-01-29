@@ -13,18 +13,16 @@ namespace
       to[i] = from[i];
     }
   }
-
 }
 
-using ComFig = khasnulin::CompositeFigure;
-ComFig::ShapeVector::ShapeVector() noexcept:
+khasnulin::CompositeFigure::ShapeVector::ShapeVector() noexcept:
     size_(0),
     capacity_(0),
     figures_(nullptr)
 {
 }
 
-ComFig::ShapeVector::ShapeVector(const ShapeVector &sv):
+khasnulin::CompositeFigure::ShapeVector::ShapeVector(const ShapeVector &sv):
     size_(sv.size_),
     capacity_(sv.capacity_),
     figures_(new IShape *[sv.capacity_])
@@ -32,7 +30,7 @@ ComFig::ShapeVector::ShapeVector(const ShapeVector &sv):
   copyShapes(sv.figures_, figures_, size_);
 }
 
-ComFig::ShapeVector::ShapeVector(ShapeVector &&sv) noexcept:
+khasnulin::CompositeFigure::ShapeVector::ShapeVector(ShapeVector &&sv) noexcept:
     size_(sv.size_),
     capacity_(sv.capacity_),
     figures_(sv.figures_)
@@ -42,7 +40,8 @@ ComFig::ShapeVector::ShapeVector(ShapeVector &&sv) noexcept:
   sv.size_ = 0;
 }
 
-ComFig::ShapeVector &ComFig::ShapeVector::operator=(const ShapeVector &sv)
+khasnulin::CompositeFigure::ShapeVector &
+khasnulin::CompositeFigure::ShapeVector::operator=(const ShapeVector &sv)
 {
   if (this == std::addressof(sv))
   {
@@ -58,7 +57,8 @@ ComFig::ShapeVector &ComFig::ShapeVector::operator=(const ShapeVector &sv)
   return *this;
 }
 
-ComFig::ShapeVector &ComFig::ShapeVector::operator=(ShapeVector &&sv) noexcept
+khasnulin::CompositeFigure::ShapeVector &
+khasnulin::CompositeFigure::ShapeVector::operator=(ShapeVector &&sv) noexcept
 {
   if (this == std::addressof(sv))
   {
@@ -70,23 +70,23 @@ ComFig::ShapeVector &ComFig::ShapeVector::operator=(ShapeVector &&sv) noexcept
   return *this;
 }
 
-ComFig::ShapeVector::~ShapeVector()
+khasnulin::CompositeFigure::ShapeVector::~ShapeVector()
 {
   clear();
   delete[] figures_;
 }
 
-size_t ComFig::ShapeVector::size() const noexcept
+size_t khasnulin::CompositeFigure::ShapeVector::size() const noexcept
 {
   return size_;
 }
 
-khasnulin::IShape *ComFig::ShapeVector::operator[](size_t index) const
+khasnulin::IShape *khasnulin::CompositeFigure::ShapeVector::operator[](size_t index) const
 {
   return figures_[index];
 }
 
-void ComFig::ShapeVector::insert(IShape *figure, size_t pos)
+void khasnulin::CompositeFigure::ShapeVector::insert(IShape *figure, size_t pos)
 {
   if (pos > size_)
   {
@@ -101,22 +101,18 @@ void ComFig::ShapeVector::insert(IShape *figure, size_t pos)
   ++size_;
 }
 
-void ComFig::ShapeVector::ensureCapacity(size_t newSize)
+void khasnulin::CompositeFigure::ShapeVector::ensureCapacity(size_t newSize)
 {
   size_t newCapacity = newSize > capacity_ * 2 ? newSize : capacity_ * 2;
-  IShape **newFigures = new IShape *[newCapacity];
-  copyShapes(figures_, newFigures, size_);
-  delete[] figures_;
-  capacity_ = newCapacity;
-  figures_ = newFigures;
+  makeShapesByCapacity(newCapacity);
 }
 
-bool ComFig::ShapeVector::empty() const
+bool khasnulin::CompositeFigure::ShapeVector::empty() const
 {
   return !size_;
 }
 
-void ComFig::ShapeVector::erase(size_t pos)
+void khasnulin::CompositeFigure::ShapeVector::erase(size_t pos)
 {
   if (pos >= size_)
   {
@@ -128,7 +124,7 @@ void ComFig::ShapeVector::erase(size_t pos)
   --size_;
 }
 
-void ComFig::ShapeVector::clear()
+void khasnulin::CompositeFigure::ShapeVector::clear()
 {
   for (size_t i = 0; i < size_; i++)
   {
@@ -137,32 +133,54 @@ void ComFig::ShapeVector::clear()
   size_ = 0;
 }
 
-void ComFig::ShapeVector::changeCapacity(size_t newCapacity)
+void khasnulin::CompositeFigure::ShapeVector::makeShapesByCapacity(size_t capacity)
 {
-  capacity_ = newCapacity > size_ ? newCapacity : size_;
+  IShape **newFigures = new IShape *[capacity];
+  copyShapes(figures_, newFigures, size_);
+  delete[] figures_;
+  capacity_ = capacity;
+  figures_ = newFigures;
 }
 
-size_t ComFig::ShapeVector::getCapacity() const
+void khasnulin::CompositeFigure::ShapeVector::changeCapacity(size_t newCapacity)
+{
+  newCapacity = newCapacity > size_ ? newCapacity : size_;
+  makeShapesByCapacity(newCapacity);
+}
+
+size_t khasnulin::CompositeFigure::ShapeVector::getCapacity() const
 {
   return capacity_;
 }
 
-void ComFig::preappend(IShape *figure)
+void khasnulin::CompositeFigure::preappend(IShape *figure)
 {
+  if (figure == nullptr)
+  {
+    throw std::invalid_argument("can't preappend figure, get nullptr instead of IShape pointer");
+  }
   figures.insert(figure, 0);
 }
 
-void ComFig::append(IShape *figure)
+void khasnulin::CompositeFigure::append(IShape *figure)
 {
+  if (figure == nullptr)
+  {
+    throw std::invalid_argument("can't append figure, get nullptr instead of IShape pointer");
+  }
   figures.insert(figure, figures.size());
 }
 
-void ComFig::add(IShape *figure, size_t pos)
+void khasnulin::CompositeFigure::add(IShape *figure, size_t pos)
 {
+  if (figure == nullptr)
+  {
+    throw std::invalid_argument("can't add figure, get nullptr instead of IShape pointer");
+  }
   figures.insert(figure, pos);
 }
 
-khasnulin::IShape &ComFig::last()
+khasnulin::IShape &khasnulin::CompositeFigure::last()
 {
   if (figures.empty())
   {
@@ -171,7 +189,7 @@ khasnulin::IShape &ComFig::last()
   return *figures[figures.size() - 1];
 }
 
-khasnulin::IShape &ComFig::first()
+khasnulin::IShape &khasnulin::CompositeFigure::first()
 {
   if (figures.empty())
   {
@@ -180,7 +198,7 @@ khasnulin::IShape &ComFig::first()
   return *figures[0];
 }
 
-const khasnulin::IShape &ComFig::last() const
+const khasnulin::IShape &khasnulin::CompositeFigure::last() const
 {
   if (figures.empty())
   {
@@ -189,7 +207,7 @@ const khasnulin::IShape &ComFig::last() const
   return *figures[figures.size() - 1];
 }
 
-const khasnulin::IShape &ComFig::first() const
+const khasnulin::IShape &khasnulin::CompositeFigure::first() const
 {
   if (figures.empty())
   {
@@ -198,7 +216,7 @@ const khasnulin::IShape &ComFig::first() const
   return *figures[0];
 }
 
-khasnulin::IShape &ComFig::at(size_t index)
+khasnulin::IShape &khasnulin::CompositeFigure::at(size_t index)
 {
   if (index >= figures.size())
   {
@@ -207,12 +225,12 @@ khasnulin::IShape &ComFig::at(size_t index)
   return *figures[index];
 }
 
-khasnulin::IShape &ComFig::get(size_t index)
+khasnulin::IShape &khasnulin::CompositeFigure::get(size_t index)
 {
   return *figures[index];
 }
 
-const khasnulin::IShape &ComFig::at(size_t index) const
+const khasnulin::IShape &khasnulin::CompositeFigure::at(size_t index) const
 {
   if (index >= figures.size())
   {
@@ -221,52 +239,52 @@ const khasnulin::IShape &ComFig::at(size_t index) const
   return *figures[index];
 }
 
-const khasnulin::IShape &ComFig::get(size_t index) const
+const khasnulin::IShape &khasnulin::CompositeFigure::get(size_t index) const
 {
   return *figures[index];
 }
 
-void ComFig::remove(size_t index)
+void khasnulin::CompositeFigure::remove(size_t index)
 {
   figures.erase(index);
 }
 
-void ComFig::dropFirst()
+void khasnulin::CompositeFigure::dropFirst()
 {
   figures.erase(0);
 }
 
-void ComFig::dropLast()
+void khasnulin::CompositeFigure::dropLast()
 {
-  figures.erase(figures.size() > 0 ? figures.size() - 1 : 0);
+  figures.erase(!figures.empty() ? figures.size() - 1 : 0);
 }
 
-void ComFig::clear()
+void khasnulin::CompositeFigure::clear()
 {
   figures.clear();
 }
 
-size_t ComFig::size() const
+size_t khasnulin::CompositeFigure::size() const
 {
   return figures.size();
 }
 
-bool ComFig::empty() const
+bool khasnulin::CompositeFigure::empty() const
 {
   return figures.empty();
 }
 
-void ComFig::reserve(size_t newCapacity)
+void khasnulin::CompositeFigure::reserve(size_t newCapacity)
 {
   figures.changeCapacity(newCapacity);
 }
 
-void ComFig::shrink()
+void khasnulin::CompositeFigure::shrink()
 {
   figures.changeCapacity(figures.size());
 }
 
-size_t ComFig::capacity() const
+size_t khasnulin::CompositeFigure::capacity() const
 {
   return figures.getCapacity();
 }

@@ -1,8 +1,8 @@
 #ifndef POLYGON_HPP
 #define POLYGON_HPP
 
+#include "ishape.hpp"
 #include <iosfwd>
-#include <ishape.hpp>
 
 namespace khasnulin
 {
