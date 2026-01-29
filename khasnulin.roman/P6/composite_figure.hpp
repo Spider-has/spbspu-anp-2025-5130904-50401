@@ -33,8 +33,8 @@ namespace khasnulin
 
     void remove(size_t index);
 
-    void dropFirst(size_t index);
-    void dropLast(size_t index);
+    void dropFirst();
+    void dropLast();
 
     void clear();
 
@@ -65,10 +65,15 @@ namespace khasnulin
       size_t size() const noexcept;
       bool empty() const;
 
+      void clear();
+
+      size_t getCapacity() const;
+      void changeCapacity(size_t newCapacity);
+
     private:
-      IShape **figures_;
       size_t size_;
       size_t capacity_;
+      IShape **figures_;
 
       void ensureCapacity(size_t newSize);
     };

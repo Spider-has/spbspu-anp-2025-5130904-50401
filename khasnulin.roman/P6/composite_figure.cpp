@@ -72,10 +72,7 @@ ComFig::ShapeVector &ComFig::ShapeVector::operator=(ShapeVector &&sv) noexcept
 
 ComFig::ShapeVector::~ShapeVector()
 {
-  for (size_t i = 0; i < size_; i++)
-  {
-    delete figures_[i];
-  }
+  clear();
   delete[] figures_;
 }
 
@@ -129,6 +126,25 @@ void ComFig::ShapeVector::erase(size_t pos)
   copyShapes(&figures_[pos + 1], &figures_[pos], size_ - pos - 1);
   figures_[size_ - 1] = nullptr;
   --size_;
+}
+
+void ComFig::ShapeVector::clear()
+{
+  for (size_t i = 0; i < size_; i++)
+  {
+    delete figures_[i];
+  }
+  size_ = 0;
+}
+
+void ComFig::ShapeVector::changeCapacity(size_t newCapacity)
+{
+  capacity_ = newCapacity > size_ ? newCapacity : size_;
+}
+
+size_t ComFig::ShapeVector::getCapacity() const
+{
+  return capacity_;
 }
 
 void ComFig::preappend(IShape *figure)
@@ -210,7 +226,47 @@ const khasnulin::IShape &ComFig::get(size_t index) const
   return *figures[index];
 }
 
+void ComFig::remove(size_t index)
+{
+  figures.erase(index);
+}
+
+void ComFig::dropFirst()
+{
+  figures.erase(0);
+}
+
+void ComFig::dropLast()
+{
+  figures.erase(figures.size() > 0 ? figures.size() - 1 : 0);
+}
+
+void ComFig::clear()
+{
+  figures.clear();
+}
+
 size_t ComFig::size() const
 {
   return figures.size();
+}
+
+bool ComFig::empty() const
+{
+  return figures.empty();
+}
+
+void ComFig::reserve(size_t newCapacity)
+{
+  figures.changeCapacity(newCapacity);
+}
+
+void ComFig::shrink()
+{
+  figures.changeCapacity(figures.size());
+}
+
+size_t ComFig::capacity() const
+{
+  return figures.getCapacity();
 }
